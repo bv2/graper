@@ -1,0 +1,25 @@
+Package: grpRR
+Type: Package
+Title: Fit a group-wise Regularised Regression using a Hierarchical Bayesian Model (grpRR)
+Version: 0.1.1
+Authors@R: person("Britta", "Velten", email = "britta.velten@embl.de", 
+	    role = c("aut", "cre"))
+Description: More about what it does (maybe more than one line)
+License: What license is it under?
+LazyData: TRUE
+Imports:
+	mvtnorm,
+	Matrix,
+	ggplot2,
+	glmnet,
+	gridExtra,
+	grpreg,
+	reshape2,
+	Rcpp
+LinkingTo: Rcpp,
+	RcppArmadillo
+RoxygenNote: 6.0.1
+Suggests: testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

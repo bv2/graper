@@ -1,0 +1,569 @@
+[
+    {
+        "definitions" : [
+            {
+                "column" : 12,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/fit_grpRR.cpp",
+                "kind" : 6,
+                "line" : 15,
+                "name" : "grRRCpp_dense_nf(arma::mat, arma::vec, arma::Row<int>, int, arma::vec, double, double, double, double, int, double, bool, bool, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@grRRCpp_dense_nf#$@N@arma@C@Mat>#d#$@N@arma@C@Col>#d#$@N@arma@C@Row>#I#I#S1_#d#d#d#d#I#d#b#b#I#"
+            },
+            {
+                "column" : 12,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/fit_grpRR.cpp",
+                "kind" : 6,
+                "line" : 27,
+                "name" : "grRRCpp_dense_ff(arma::mat, arma::vec, arma::Row<int>, int, arma::vec, double, double, double, double, int, double, bool, bool, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@grRRCpp_dense_ff#$@N@arma@C@Mat>#d#$@N@arma@C@Col>#d#$@N@arma@C@Row>#I#I#S1_#d#d#d#d#I#d#b#b#I#"
+            },
+            {
+                "column" : 12,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/fit_grpRR.cpp",
+                "kind" : 6,
+                "line" : 39,
+                "name" : "grRRCpp_sparse_ff(arma::mat, arma::vec, arma::Row<int>, int, arma::vec, double, double, double, double, double, double, int, double, bool, bool, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@grRRCpp_sparse_ff#$@N@arma@C@Mat>#d#$@N@arma@C@Col>#d#$@N@arma@C@Row>#I#I#S1_#d#d#d#d#d#d#I#d#b#b#I#"
+            },
+            {
+                "column" : 12,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/fit_grpRR.cpp",
+                "kind" : 6,
+                "line" : 50,
+                "name" : "grpRRCpp_logistic_nf(arma::mat, arma::vec, arma::Row<int>, int, arma::vec, double, double, int, double, bool, bool, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@grpRRCpp_logistic_nf#$@N@arma@C@Mat>#d#$@N@arma@C@Col>#d#$@N@arma@C@Row>#I#I#S1_#d#d#I#d#b#b#I#"
+            },
+            {
+                "column" : 12,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/fit_grpRR.cpp",
+                "kind" : 6,
+                "line" : 63,
+                "name" : "grpRRCpp_logistic_ff(arma::mat, arma::vec, arma::Row<int>, int, arma::vec, double, double, int, double, bool, bool, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@grpRRCpp_logistic_ff#$@N@arma@C@Mat>#d#$@N@arma@C@Col>#d#$@N@arma@C@Row>#I#I#S1_#d#d#I#d#b#b#I#"
+            }
+        ],
+        "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/fit_grpRR.cpp",
+        "file_last_write" : 1488796101
+    },
+    {
+        "definitions" : [
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRR_sparseclass_fullyfac.hpp",
+                "kind" : 2,
+                "line" : 13,
+                "name" : "grpRR_sparse_ff",
+                "parent_name" : "",
+                "usr" : "c:@C@grpRR_sparse_ff"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRR_sparseclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 108,
+                "name" : "fitModel",
+                "parent_name" : "grpRR_sparse_ff",
+                "usr" : "c:@C@grpRR_sparse_ff@F@fitModel#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRR_sparseclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 130,
+                "name" : "iterate",
+                "parent_name" : "grpRR_sparse_ff",
+                "usr" : "c:@C@grpRR_sparse_ff@F@iterate#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRR_sparseclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 151,
+                "name" : "update_param_beta",
+                "parent_name" : "grpRR_sparse_ff",
+                "usr" : "c:@C@grpRR_sparse_ff@F@update_param_beta#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRR_sparseclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 190,
+                "name" : "update_param_tau",
+                "parent_name" : "grpRR_sparse_ff",
+                "usr" : "c:@C@grpRR_sparse_ff@F@update_param_tau#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRR_sparseclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 195,
+                "name" : "update_param_gamma",
+                "parent_name" : "grpRR_sparse_ff",
+                "usr" : "c:@C@grpRR_sparse_ff@F@update_param_gamma#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRR_sparseclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 205,
+                "name" : "update_param_pi",
+                "parent_name" : "grpRR_sparse_ff",
+                "usr" : "c:@C@grpRR_sparse_ff@F@update_param_pi#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRR_sparseclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 217,
+                "name" : "update_exp_beta",
+                "parent_name" : "grpRR_sparse_ff",
+                "usr" : "c:@C@grpRR_sparse_ff@F@update_exp_beta#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRR_sparseclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 232,
+                "name" : "update_exp_tau",
+                "parent_name" : "grpRR_sparse_ff",
+                "usr" : "c:@C@grpRR_sparse_ff@F@update_exp_tau#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRR_sparseclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 237,
+                "name" : "update_exp_gamma",
+                "parent_name" : "grpRR_sparse_ff",
+                "usr" : "c:@C@grpRR_sparse_ff@F@update_exp_gamma#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRR_sparseclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 242,
+                "name" : "update_exp_pi",
+                "parent_name" : "grpRR_sparse_ff",
+                "usr" : "c:@C@grpRR_sparse_ff@F@update_exp_pi#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRR_sparseclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 255,
+                "name" : "calculate_ELBO",
+                "parent_name" : "grpRR_sparse_ff",
+                "usr" : "c:@C@grpRR_sparse_ff@F@calculate_ELBO#"
+            }
+        ],
+        "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRR_sparseclass_fullyfac.hpp",
+        "file_last_write" : 1490375393
+    },
+    {
+        "definitions" : [
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass.hpp",
+                "kind" : 2,
+                "line" : 12,
+                "name" : "grpRR",
+                "parent_name" : "",
+                "usr" : "c:@C@grpRR"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass.hpp",
+                "kind" : 7,
+                "line" : 82,
+                "name" : "fitModel",
+                "parent_name" : "grpRR",
+                "usr" : "c:@C@grpRR@F@fitModel#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass.hpp",
+                "kind" : 7,
+                "line" : 104,
+                "name" : "iterate",
+                "parent_name" : "grpRR",
+                "usr" : "c:@C@grpRR@F@iterate#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass.hpp",
+                "kind" : 7,
+                "line" : 123,
+                "name" : "update_param_beta",
+                "parent_name" : "grpRR",
+                "usr" : "c:@C@grpRR@F@update_param_beta#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass.hpp",
+                "kind" : 7,
+                "line" : 152,
+                "name" : "update_param_tau",
+                "parent_name" : "grpRR",
+                "usr" : "c:@C@grpRR@F@update_param_tau#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass.hpp",
+                "kind" : 7,
+                "line" : 157,
+                "name" : "update_param_gamma",
+                "parent_name" : "grpRR",
+                "usr" : "c:@C@grpRR@F@update_param_gamma#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass.hpp",
+                "kind" : 7,
+                "line" : 167,
+                "name" : "update_exp_beta",
+                "parent_name" : "grpRR",
+                "usr" : "c:@C@grpRR@F@update_exp_beta#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass.hpp",
+                "kind" : 7,
+                "line" : 173,
+                "name" : "update_exp_tau",
+                "parent_name" : "grpRR",
+                "usr" : "c:@C@grpRR@F@update_exp_tau#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass.hpp",
+                "kind" : 7,
+                "line" : 178,
+                "name" : "update_exp_gamma",
+                "parent_name" : "grpRR",
+                "usr" : "c:@C@grpRR@F@update_exp_gamma#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass.hpp",
+                "kind" : 7,
+                "line" : 184,
+                "name" : "calculate_ELBO",
+                "parent_name" : "grpRR",
+                "usr" : "c:@C@grpRR@F@calculate_ELBO#"
+            }
+        ],
+        "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass.hpp",
+        "file_last_write" : 1489755477
+    },
+    {
+        "definitions" : [
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_fullyfac.hpp",
+                "kind" : 2,
+                "line" : 12,
+                "name" : "grpRR_dense_ff",
+                "parent_name" : "",
+                "usr" : "c:@C@grpRR_dense_ff"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 88,
+                "name" : "fitModel",
+                "parent_name" : "grpRR_dense_ff",
+                "usr" : "c:@C@grpRR_dense_ff@F@fitModel#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 110,
+                "name" : "iterate",
+                "parent_name" : "grpRR_dense_ff",
+                "usr" : "c:@C@grpRR_dense_ff@F@iterate#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 129,
+                "name" : "update_param_beta",
+                "parent_name" : "grpRR_dense_ff",
+                "usr" : "c:@C@grpRR_dense_ff@F@update_param_beta#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 150,
+                "name" : "update_param_tau",
+                "parent_name" : "grpRR_dense_ff",
+                "usr" : "c:@C@grpRR_dense_ff@F@update_param_tau#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 155,
+                "name" : "update_param_gamma",
+                "parent_name" : "grpRR_dense_ff",
+                "usr" : "c:@C@grpRR_dense_ff@F@update_param_gamma#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 165,
+                "name" : "update_exp_beta",
+                "parent_name" : "grpRR_dense_ff",
+                "usr" : "c:@C@grpRR_dense_ff@F@update_exp_beta#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 171,
+                "name" : "update_exp_tau",
+                "parent_name" : "grpRR_dense_ff",
+                "usr" : "c:@C@grpRR_dense_ff@F@update_exp_tau#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 176,
+                "name" : "update_exp_gamma",
+                "parent_name" : "grpRR_dense_ff",
+                "usr" : "c:@C@grpRR_dense_ff@F@update_exp_gamma#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 182,
+                "name" : "calculate_ELBO",
+                "parent_name" : "grpRR_dense_ff",
+                "usr" : "c:@C@grpRR_dense_ff@F@calculate_ELBO#"
+            }
+        ],
+        "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_fullyfac.hpp",
+        "file_last_write" : 1489569526
+    },
+    {
+        "definitions" : [
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic.hpp",
+                "kind" : 2,
+                "line" : 12,
+                "name" : "grpRR_logistic_nf",
+                "parent_name" : "",
+                "usr" : "c:@C@grpRR_logistic_nf"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic.hpp",
+                "kind" : 7,
+                "line" : 84,
+                "name" : "sigmoid(double)",
+                "parent_name" : "grpRR_logistic_nf",
+                "usr" : "c:@C@grpRR_logistic_nf@F@sigmoid#d#"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic.hpp",
+                "kind" : 7,
+                "line" : 87,
+                "name" : "lambda(double)",
+                "parent_name" : "grpRR_logistic_nf",
+                "usr" : "c:@C@grpRR_logistic_nf@F@lambda#d#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic.hpp",
+                "kind" : 7,
+                "line" : 93,
+                "name" : "fitModel",
+                "parent_name" : "grpRR_logistic_nf",
+                "usr" : "c:@C@grpRR_logistic_nf@F@fitModel#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic.hpp",
+                "kind" : 7,
+                "line" : 115,
+                "name" : "iterate",
+                "parent_name" : "grpRR_logistic_nf",
+                "usr" : "c:@C@grpRR_logistic_nf@F@iterate#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic.hpp",
+                "kind" : 7,
+                "line" : 134,
+                "name" : "update_param_beta",
+                "parent_name" : "grpRR_logistic_nf",
+                "usr" : "c:@C@grpRR_logistic_nf@F@update_param_beta#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic.hpp",
+                "kind" : 7,
+                "line" : 167,
+                "name" : "update_param_xi",
+                "parent_name" : "grpRR_logistic_nf",
+                "usr" : "c:@C@grpRR_logistic_nf@F@update_param_xi#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic.hpp",
+                "kind" : 7,
+                "line" : 174,
+                "name" : "update_param_gamma",
+                "parent_name" : "grpRR_logistic_nf",
+                "usr" : "c:@C@grpRR_logistic_nf@F@update_param_gamma#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic.hpp",
+                "kind" : 7,
+                "line" : 184,
+                "name" : "update_exp_beta",
+                "parent_name" : "grpRR_logistic_nf",
+                "usr" : "c:@C@grpRR_logistic_nf@F@update_exp_beta#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic.hpp",
+                "kind" : 7,
+                "line" : 190,
+                "name" : "update_exp_gamma",
+                "parent_name" : "grpRR_logistic_nf",
+                "usr" : "c:@C@grpRR_logistic_nf@F@update_exp_gamma#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic.hpp",
+                "kind" : 7,
+                "line" : 196,
+                "name" : "calculate_ELBO",
+                "parent_name" : "grpRR_logistic_nf",
+                "usr" : "c:@C@grpRR_logistic_nf@F@calculate_ELBO#"
+            }
+        ],
+        "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic.hpp",
+        "file_last_write" : 1489569599
+    },
+    {
+        "definitions" : [
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic_fullyfac.hpp",
+                "kind" : 2,
+                "line" : 12,
+                "name" : "grpRR_logistic_ff",
+                "parent_name" : "",
+                "usr" : "c:@C@grpRR_logistic_ff"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 94,
+                "name" : "sigmoid(double)",
+                "parent_name" : "grpRR_logistic_ff",
+                "usr" : "c:@C@grpRR_logistic_ff@F@sigmoid#d#"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 97,
+                "name" : "lambda(double)",
+                "parent_name" : "grpRR_logistic_ff",
+                "usr" : "c:@C@grpRR_logistic_ff@F@lambda#d#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 103,
+                "name" : "fitModel",
+                "parent_name" : "grpRR_logistic_ff",
+                "usr" : "c:@C@grpRR_logistic_ff@F@fitModel#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 125,
+                "name" : "iterate",
+                "parent_name" : "grpRR_logistic_ff",
+                "usr" : "c:@C@grpRR_logistic_ff@F@iterate#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 144,
+                "name" : "update_param_beta",
+                "parent_name" : "grpRR_logistic_ff",
+                "usr" : "c:@C@grpRR_logistic_ff@F@update_param_beta#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 178,
+                "name" : "update_param_xi",
+                "parent_name" : "grpRR_logistic_ff",
+                "usr" : "c:@C@grpRR_logistic_ff@F@update_param_xi#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 186,
+                "name" : "update_param_gamma",
+                "parent_name" : "grpRR_logistic_ff",
+                "usr" : "c:@C@grpRR_logistic_ff@F@update_param_gamma#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 197,
+                "name" : "update_exp_beta",
+                "parent_name" : "grpRR_logistic_ff",
+                "usr" : "c:@C@grpRR_logistic_ff@F@update_exp_beta#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 203,
+                "name" : "update_exp_gamma",
+                "parent_name" : "grpRR_logistic_ff",
+                "usr" : "c:@C@grpRR_logistic_ff@F@update_exp_gamma#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic_fullyfac.hpp",
+                "kind" : 7,
+                "line" : 209,
+                "name" : "calculate_ELBO",
+                "parent_name" : "grpRR_logistic_ff",
+                "usr" : "c:@C@grpRR_logistic_ff@F@calculate_ELBO#"
+            }
+        ],
+        "file" : "/Users/bvelten/Documents/LassoVariants/multiviewHDR/grpRR/src/grpRRclass_logistic_fullyfac.hpp",
+        "file_last_write" : 1489569617
+    }
+]
