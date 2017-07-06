@@ -19,6 +19,8 @@ ImputeByMean <- function(x) {x[is.na(x)] <- mean(x, na.rm=TRUE); return(x)}
 
 
 EvaluateModel<-function(beta_est, intercept, X_test,y_test, beta0=NULL,family) {
+  if(is.null(intercept)) intercept <- 0
+  intercept <- as.numeric(intercept)
   p<-ncol(X_test)
   n_test<-nrow(X_test)
   stopifnot(family %in% c("gaussian", "binomial"))
@@ -60,6 +62,8 @@ EvaluateModel<-function(beta_est, intercept, X_test,y_test, beta0=NULL,family) {
               AUC=AUC,
               specificity=specificity,
               sensitivity=sensitivity,
+              FNR=FNR,
+              FPR=FPR,
               beta0=beta0,
               y_test=y_test,
               predprob=predprob,
