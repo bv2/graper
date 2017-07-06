@@ -92,3 +92,26 @@ simulate_grpLM<-function(n=100,p=1000, beta_best=3, G=10, block_cor=0.3, blockSi
 
   return(list(X=X, y=y, annot=annot, beta0=beta0, family=family))
 }
+
+
+simulateExplicit <- function(n,p, beta, sigma2, seed, block_cor=0, equiCor=0, blockSize=0){
+
+  stopifnot(p==length(beta)) #number of features should be a multiple of the number of groups
+  stopifnot(block_cor==0 | p%%blockSize==0) #number of features should be a multiple of the blockSize
+
+  set.seed(seed)
+
+  #construct design
+  if(block_cor!=0 | equiCor!=0){
+    block<-matrix(block_cor,nrow=blockSize, ncol=blockSize)
+    diag(block)<-1
+    Sigma<-Matrix::bdiag(rep(list(block),p/blockSize))
+    if(equiCor!=0) Sigma[Sigma==0]<-equiCor
+    X<- mvtnorm::rmvnorm(n,rep(0,p),as.matrix(Sigma))
+  } else X<-matrix(rnorm(p*n,0,1), ncol=p, nrow=n)
+
+  #simulate response
+  y<-X%*%beta+rnorm(n,0,sigma2)
+
+  return(list(y=y, X=X))
+}
