@@ -1,3 +1,4 @@
+#' @export
 
 getPenaltyFactors <- function(AllFits) {
   G <- AllFits$G
@@ -9,6 +10,8 @@ getPenaltyFactors <- function(AllFits) {
   return(pfmat)
 }
 
+#' @export
+
 getSparsityLevel <- function(AllFits) {
   G <- AllFits$G
   sparsity_mat <- sapply(AllFits$summaryList, function(l) {
@@ -19,6 +22,7 @@ getSparsityLevel <- function(AllFits) {
   return(sparsity_mat)
 }
 
+#' @export
 
 getCoefficients <- function(AllFits) {
   p <- AllFits$p
@@ -30,6 +34,8 @@ getCoefficients <- function(AllFits) {
   return(coefmat)
 }
 
+#' @export
+
 getIntercept <- function(AllFits) {
   sapply(AllFits$summaryList, function(l) {
     intercept <- l$intercept
@@ -37,6 +43,8 @@ getIntercept <- function(AllFits) {
     intercept
   })
 }
+
+#' @export
 
 getRunTime <- function(AllFits) {
   sapply(AllFits$summaryList, function(l) {
@@ -46,6 +54,8 @@ getRunTime <- function(AllFits) {
   })
 }
 
+#' @export
+
 getRMSE <- function(AllFits) {
   sapply(AllFits$summaryList, function(l) {
     RMSE <- l$RMSE
@@ -53,6 +63,8 @@ getRMSE <- function(AllFits) {
     RMSE
   })
 }
+
+#' @export
 
 getMSE <- function(AllFits) {
   sapply(AllFits$summaryList, function(l) {
@@ -62,6 +74,8 @@ getMSE <- function(AllFits) {
   })
 }
 
+#' @export
+
 getFNR <- function(AllFits) {
   sapply(AllFits$summaryList, function(l) {
     FNR <- l$FNR
@@ -69,6 +83,8 @@ getFNR <- function(AllFits) {
     FNR
   })
 }
+
+#' @export
 
 getFPR <- function(AllFits) {
   sapply(AllFits$summaryList, function(l) {
@@ -78,6 +94,8 @@ getFPR <- function(AllFits) {
   })
 }
 
+#' @export
+
 getl1error_beta <- function(AllFits) {
   sapply(AllFits$summaryList, function(l) {
     l1error_beta <- l$l1error_beta
@@ -85,6 +103,8 @@ getl1error_beta <- function(AllFits) {
     l1error_beta
   })
 }
+
+#' @export
 
 getl1error_intercept <- function(AllFits) {
   sapply(AllFits$summaryList, function(l) {
