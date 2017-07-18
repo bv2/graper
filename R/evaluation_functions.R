@@ -428,6 +428,8 @@ evaluateFits <- function(allFits, Xtest, ytest){
 #' #'
 #' Function to plot method comparison across several runs
 #' @param resultList List as in simulation_setting1.Rmd
+#' @import dplyr
+#' @import reshape2
 #' @export
 
 plotMethodComparison <- function(resultList){
