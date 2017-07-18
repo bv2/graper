@@ -5,7 +5,7 @@
 \title{fit_by_MCMC}
 \usage{
 fit_by_MCMC(X, y, annot, iter = 12000, warmup = 2000, chains = 3,
-  verbose = T)
+  verbose = T, thin = 1, ...)
 }
 \arguments{
 \item{X}{Design matrix of size n x p}
