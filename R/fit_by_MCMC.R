@@ -46,17 +46,17 @@ fit_by_MCMC <- function(X,y, annot, iter=12000, warmup=2000, chains=3, verbose=T
   
   model {                     // ***Model block
   vector[N] mu;
-  vector[P] long_gamma;     //transfomed value of gamma
+  vector[P] long_invgamma;     //transfomed value of gamma
   int gr;
   
   mu <- X * beta;           // Creation of linear predictor
   for (i in 1:P) {
   gr = annot[i];
-  long_gamma[i] = gamma[gr];  //transform gamma using the normal cdf
+  long_invgamma[i] = 1/gamma[gr];  //transform gamma using the normal cdf
   }
   
   // priors
-  beta ~  normal(zeros, long_gamma);
+  beta ~  normal(zeros, long_invgamma);
   tau ~ gamma(0.001,0.001);
   gamma ~ gamma(0.001,0.001);
   
