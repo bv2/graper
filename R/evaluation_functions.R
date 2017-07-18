@@ -31,6 +31,7 @@
 #' @import glmnet
 #' @import gridExtra
 #' @import GRridge
+#' @export 
 
 #ToDo: Option to standardize the input and then re-adjust estimates coefficeints to not standardized
 RunMethods<-function(Xtrain, ytrain, annot, beta0=NULL, trueintercept=NULL, max_iter=500, intercept=T, plotit=T, standardize=F, verbose=F, compareGRridge=F,
@@ -41,6 +42,9 @@ RunMethods<-function(Xtrain, ytrain, annot, beta0=NULL, trueintercept=NULL, max_
   if(intercept & family=="binomial") warning("Intercept not yet implemented for logistic regression")
 
   stopifnot(nrow(Xtrain)==length(ytrain))
+
+  if(!is.null(beta0)) stopifnot(ncol(Xtrain)==length(beta0))
+
 
   if(constantXcol) stopifnot(var(Xtrain[,1])==0)
   if(constantXcol) {
@@ -54,7 +58,7 @@ RunMethods<-function(Xtrain, ytrain, annot, beta0=NULL, trueintercept=NULL, max_
   #turn annot to facotr
   annot <- as.factor(annot)
   # need to strucute annot - TO DO
-  stopifnot(all(order(annot) == 1:p))
+  # stopifnot(all(order(annot) == 1:p))
 
   #extract important parameters and names
   p <- ncol(Xtrain)
@@ -320,6 +324,7 @@ RunMethods<-function(Xtrain, ytrain, annot, beta0=NULL, trueintercept=NULL, max_
 #' @param Xtest Design matrix of size n' x p (same feature structure as used in runMethods)
 #' @param ytest Response vector of size n'
 #' @return List as prodcused by \code{\link{runMethods}} with additional predicition performance slots
+#' @export
 
 
 evaluateFits <- function(allFits, Xtest, ytest){
@@ -399,7 +404,7 @@ evaluateFits <- function(allFits, Xtest, ytest){
     if(!is.null(beta0)){
       summaryList <- lapply(summaryList, function(summary) {
         beta <- summary$beta
-        if(!is.null(beta)) summary$l1error_beta <- sum(abs(beta- beta0))
+        if(!is.null(beta)) summary$l1error_beta <-sum(abs(beta- beta0))
         summary
       })
     }
@@ -423,6 +428,7 @@ evaluateFits <- function(allFits, Xtest, ytest){
 #' #'
 #' Function to plot method comparison across several runs
 #' @param resultList List as in simulation_setting1.Rmd
+#' @export
 
 plotMethodComparison <- function(resultList){
 # get results in dataframe format
@@ -460,6 +466,7 @@ gg_beta <- ggplot(beta_summary, aes(x=beta, fill= group, group=group)) +
   geom_histogram(alpha=0.6,position="identity") + facet_wrap(~method, scales = "free") +
   ggtitle("Distribution of estimated coefficients per group")
 print(gg_beta)
+
 
 gg_runtime <- ggplot(runtime_summary, aes(x=method, y=runtime, group=method, fill = method)) + geom_boxplot()+
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Runtime") +ylab("secs")
