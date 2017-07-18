@@ -31,7 +31,7 @@
 
 #' @useDynLib grpRR
 #' @import Rcpp
-#'
+#' @export
 
 
 fit_grpRR<-function(X,y,annot, factoriseQ=T, spikeslab= F, d_tau=0.001, r_tau=0.001, d_gamma=0.001, r_gamma=0.001,

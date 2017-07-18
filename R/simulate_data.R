@@ -31,6 +31,7 @@
 #' \item{annot}{factor containing group assignemnt of featrues}
 #' \item{beta0}{true coefficients in the model}
 #' \item{family}{family used for response}
+#' @export
 # -----------------------
 
 simulate_grpLM<-function(n=100,p=1000, beta_best=3, G=10, block_cor=0.3, blockSize=10, equiCor=0.1,
@@ -93,6 +94,9 @@ simulate_grpLM<-function(n=100,p=1000, beta_best=3, G=10, block_cor=0.3, blockSi
   return(list(X=X, y=y, annot=annot, beta0=beta0, family=family))
 }
 
+#' Simulate Data According to a linear model with given coefficients
+#'
+#' @export
 
 simulateExplicit <- function(n,p, beta, sigma2, seed, block_cor=0, equiCor=0, blockSize=0){
 

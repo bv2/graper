@@ -8,6 +8,7 @@
 #' @import ggplot2
 #' @import gridExtra
 #' @import reshape2
+#' @export
 
 # ---------------------------
 plotPosterior<-function(result, beta0=NULL, gamma0=NULL, tau0=NULL, whichParam=c("tau", "beta", "gamma")){
