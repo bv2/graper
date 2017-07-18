@@ -38,7 +38,7 @@ RunMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
 \item{calcELB}{boolean, indicating wether to calculate ELB}
 }
 \value{
-List of fitted models and data frame DFresult with coeffcients and penalty factors
+List of fitted models and two data frames with coeffcients and penalty factors
 }
 \description{
 Function to run serveral different methods for high-dimensional regression
