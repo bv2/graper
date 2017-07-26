@@ -5,7 +5,7 @@ Version: 0.1.1
 Authors@R: person("Britta", "Velten", email = "britta.velten@embl.de", 
 	    role = c("aut", "cre"))
 Description: More about what it does (maybe more than one line)
-Note in Imports below the following packages are only for comparison, can be removed later: ipflasso, GRridge, randomForest, rstan
+Note in Imports below the following packages are only for comparison, can be removed later: ipflasso, randomForest, rstan - Grudge s also used for ROC and AUC calculation
 License: What license is it under?
 LazyData: TRUE
 Imports:

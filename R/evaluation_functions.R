@@ -1,7 +1,22 @@
-# evaluation_functions This file contains functions used for comparison to other methods and evaluation of the produced fit -
-# RunMethods: Run a number of different methods for estimation in the model including - Bayes Linear Regression with groupwise
-# prior - Bayes Linear Regression with groupwise prior and fully-factorized inference - Ridge - Lasso - Group Lasso -
-# evalResult: Compare Estimates produced in RunMethods by MSE and estimation error ---------------------------
+#  evaluation_functions
+# This file contains functions used for comparison to other methods and evaluation of the produced fit
+#   - RunMethods: Run a number of different methods for estimation in the model including
+#        - Bayes Model with groupwise normal prior
+#         - Bayes Model with groupwise normal prior and fully-factorized inference
+#         - Bayes Modeln with groupwise spike and slab prior and fully-factorized inference
+#         - Bayes Model with groupwise spike and slab prior and fully-factorized inference and feature selection
+#         - Ridge
+#         - Lasso
+#         - Group Lasso
+#         - Random forest
+#         - Adaptive Lasso
+#         - Elastic Net
+#         - IPF-Lasso
+#         - GRridge
+#   - evalResult: Compare Estimates produced in RunMethods by MSE and estimation error
+#   - plotMethodComparison: Plot comparison results from evalResult
+---------------------------
+
 #' RunMethods
 #'
 #' Function to run serveral different methods for high-dimensional regression
@@ -17,6 +32,8 @@
 #' @param calcELB boolean, indicating wether to calculate ELB
 #' @param verbose boolean, indicating wether to print out intermediate messages during fitting
 #' @param compareGRridge boolean, indicating wether to fit a GRridge model (might cause errors, look for stable version!)
+#' @param compareIPF boolean, indicating wether to fit a IPFLasso (might cause errors, look for stable version!)
+#' @param compareAdaLasso boolean, indicating wether to fit an adpative lasso
 #' @param freqELB determines frequency at which ELB is to be calculated, i.e. each feqELB-th iteration
 #' @return List of fitted models and two data frames with coeffcients and penalty factors
 #' @import ggplot2
@@ -431,7 +448,7 @@ evaluateFits <- function(allFits, Xtest, ytest) {
             intercept <- summary$intercept
             if (!is.null(beta)) {
                 # for cases without linear coeeficients e.g. Random Forest
-                eval.out <- EvaluateModel(beta, intercept = intercept, Xtest, ytest, beta0 = beta0, family = "gaussian")
+                eval.out <- EvaluateModel(beta, intercept = intercept, Xtest, ytest, beta0 = beta0, family = family)
                 summary$FPR <- eval.out$FPR
                 summary$FNR <- eval.out$FNR
             }
@@ -469,7 +486,6 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 
 
 #' #'  plotMethodComparison
-#' #'
 #' Function to plot method comparison across several runs
 #' @param resultList List as in simulation_setting1.Rmd
 #' @import dplyr
@@ -477,10 +493,15 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 #' @import ggplot2
 #' @export
 
-plotMethodComparison <- function(resultList, plotbeta = F) {
+plotMethodComparison <- function(resultList, plotbeta = F, family = "gaussin") {
     # get results in dataframe format
+    if(family=="gaussian"){
     eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR, RMSE = l$RMSE, l1error_beta = l$l1error_beta)),
         varnames = c("measure", "method"), level = "run")
+    } else {
+      eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR, BS = l$BS,ROC = l$ROC, AUC = l$AUC, l1error_beta = l$l1error_beta)),
+                           varnames = c("measure", "method"), level = "run")
+    }
 
     pf_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$pf_mat, varnames = c("group", "method"),
         value.name = "penalty_factor"), Lrun = i)) %>% bind_rows()
@@ -522,141 +543,3 @@ plotMethodComparison <- function(resultList, plotbeta = F) {
         hjust = 1)) + ggtitle("Runtime") + ylab("secs")
     print(gg_runtime)
 }
-
-
-
-
-
-
-# old verison below for plotting useful but need to be adapted to new eval fucntion above
-#'
-#' # ---------------------------
-#' #'  plotMethodComparison
-#' #'
-#' #' Function to plot evaluation results (MSE, Peanlty Factors...)
-#' #' @param allFits List as produced by \code{\link{runMethods}}
-#' #' @param Xtest Design matrix of size n' x p (same feature structure as used in runMethods)
-#' #' @param ytest Response vector of size n'
-#' #' @param plotit Boolean, indication wether to produce plots of MSE and penalty factors
-#' #' @return Datframe containing error measures per method
-#'
-#' plotMethodComparison<-function(allFits, Xtest, ytest, plotit=T, family='gaussian', plotbeta=F, saveit=F, filenm=''){
-#'
-#'   coefficients <- allFits$coefficients
-#'   penaltyFactors <- allFits$penaltyFactors
-#'   UseIntercept <- allFits$intercept
-#'   beta0 <- allFits$beta0
-#'
-#'   # Plot group-wise penalties
-#'   ggrelPenal <- ggplot(penaltyFactors, aes(x=group, y=penalty_factor, group=method, fill=method))+geom_bar(stat='summary', position='dodge', fun.y='mean')+
-#'     ggtitle('Penalty factor per group') +facet_wrap(~method, scales = 'free_y')+
-#'     theme(axis.text.x = element_text(angle = 60, hjust = 1))
-#'   if(plotit) print(ggrelPenal)
-#'
-#'   #Extract estimatedmodel coefficinets
-#'   if(is.null(beta0)) coefficients<-coefficients[,!grepl('beta_true', colnames(coefficients))]
-#'   betaDF <- coefficients[,grepl('beta', colnames(coefficients))]
-#'
-#'
-#'   #For gaussian family calculate MSE as measure of prediciton performance
-#'   if(family=='gaussian'){
-#'     if(UseIntercept) MSE<-apply(betaDF, 2, function(beta) 1/length(ytest)*sum((cbind(1,Xtest)%*%beta- as.vector(ytest))^2))
-#'     else MSE<-apply(betaDF, 2, function(beta) 1/length(ytest)*sum((Xtest%*%beta- as.vector(ytest))^2))
-#'     if('RFout' %in% names(allFits)) MSE<-c(MSE, RF=1/length(ytest)*sum((predict(allFits$RFout, Xtest)-ytest)^2))
-#'
-#'     EvalDF<-data.frame(method= names(MSE), MSE=MSE)
-#'     ggMSE<-ggplot(EvalDF, aes(x=method, y=MSE, fill=method))+geom_bar(stat='identity')+ggtitle('MSE')+
-#'       theme(axis.text.x = element_text(angle = 60, hjust = 1))
-#'     if(plotit) print(ggMSE)
-#'   }
-#'   #For binomial family calculate ROC, aUC and Brier Score
-#'   else if(family=='binomial'){
-#'     #ROC curve
-#'     if(UseIntercept) {
-#'       interceptDF = betaDF[1,]
-#'       betaDF_withoutIntercept = betaDF[-1,]
-#'     } else{
-#'       interceptDF=rep(0,ncol(betaDF))
-#'       betaDF_withoutIntercept = betaDF
-#'     }
-#'
-#'     ROC<-lapply(1:ncol(betaDF),function( idx) EvaluateModel(betaDF_withoutIntercept[,idx], intercept=interceptDF[idx],
-#'                                                             Xtest,ytest,
-#'                                                             beta0=beta0, family='binomial')$ROC)
-#'     if(plotit){
-#'     colors4method<-rainbow(ncol(betaDF))
-#'     names(colors4method)<-colnames(betaDF)
-#'     plot(NA,xlim=c(0,1), ylim=c(0,1), xlab='FPR', ylab='TPR')
-#'     for(idx in 1:ncol(betaDF)) lines(ROC[[idx]][1,], ROC[[idx]][2,], col=colors4method[colnames(betaDF)[idx]])
-#'     legend(x=0.4,y=0.3, legend=names(colors4method), fill=colors4method)
-#'     }
-#'     #AUC
-#'     AUC<-sapply(1:ncol(betaDF),function( idx) EvaluateModel(betaDF_withoutIntercept[,idx], intercept=interceptDF[idx],
-#'                                                             Xtest,ytest,
-#'                                                            beta0=beta0, family='binomial')$AUC)
-#'
-#'     #Test prediction performance (Brier Score)
-#'     BS<-sapply(1:ncol(betaDF),function( idx) EvaluateModel(betaDF_withoutIntercept[,idx], intercept=interceptDF[idx],
-#'                                                            Xtest,ytest,
-#'                                                           beta0=beta0, family='binomial')$BrierScore)
-#'     EvalDF<-data.frame(method= colnames(betaDF), AUC=AUC, BS=BS)
-#'     ggAUC<-ggplot(EvalDF, aes(x=method, y=AUC, fill=method))+geom_bar(stat='identity')+ggtitle('AUC')+
-#'       theme(axis.text.x = element_text(angle = 60, hjust = 1))
-#'     ggBS<-ggplot(EvalDF, aes(x=method, y=BS, fill=method))+geom_bar(stat='identity')+ggtitle('Brier Score')+
-#'       theme(axis.text.x = element_text(angle = 60, hjust = 1))
-#'     if(plotit) gridExtra::grid.arrange(ggAUC, ggBS, ncol=2)
-#'   }
-#'   #No other families implemented
-#'   else('Family not known')
-#'
-#'
-#'   #evaluate estimates
-#'   if(!is.null(beta0)){
-#'     #l1-Error in estimation of coeffcients
-#'     L1DiffBeta <- apply(betaDF, 2, function(beta) sum(abs(beta[-1]- betaDF$beta_true[-1])))
-#'     #l1-Error in estimation of intercept
-#'     if(UseIntercept) InterceptDiff<-apply(betaDF, 2, function(beta) sum(abs(beta[1]- betaDF$beta_true[1]))) else InterceptDiff<-NA
-#'
-#'     ggL1 <- ggplot(EvalDF, aes(x=method, y=L1DiffBeta, fill=method))+geom_bar(stat='identity')+ggtitle('L1 error in estimated coeffcients')+
-#'       theme(axis.text.x = element_text(angle = 60, hjust = 1))
-#'     if(UseIntercept)ggInterceptDiff<-ggplot(EvalDF, aes(x=method, y=InterceptDiff, fill=method))+geom_bar(stat='identity')+ggtitle('abs error in estimated intercept')+
-#'       theme(axis.text.x = element_text(angle = 60, hjust = 1))
-#'
-#'      if('RFout' %in% names(allFits)) {
-#'        #at the moment only works if RF is last
-#'        stopifnot(EvalDF$method[nrow(EvalDF)]=='RF')
-#'        L1DiffBeta<-c(L1DiffBeta,NA)
-#'        InterceptDiff<-c(InterceptDiff,NA)
-#'        }
-#'
-#'     EvalDF <- cbind(EvalDF, L1DiffBeta=L1DiffBeta,
-#'                        InterceptDiff=InterceptDiff)
-#'
-#'   if(plotit){
-#'     if(UseIntercept) gridExtra::grid.arrange(ggL1,ggInterceptDiff, ncol=2)
-#'     else print(ggL1)
-#'   }
-#'   }
-#'
-#'   betaDF$group <- allFits$coefficients$group
-#'   if(UseIntercept) betaDF$Feature<-allFits$coefficients$id
-#'   if(UseIntercept) betaDF$FeatureNo <- 0:ncol(Xtest) else betaDF$FeatureNo <- 1:ncol(Xtest)
-#'   moltenbetaDF<-melt(betaDF[betaDF$Feature!='intercept',], id.vars = c('Feature', 'group', 'FeatureNo'))
-#'   ggbeta<-ggplot(moltenbetaDF, aes(x=as.numeric(FeatureNo), y=value, fill=group))+geom_bar(stat='identity', position = 'dodge')+facet_wrap(~variable, scales = 'free_y')+
-#'     theme(axis.text.x = element_text(angle = 60, hjust = 1))
-#'
-#'
-#'   if(plotbeta){
-#'     print(ggbeta)
-#'   }
-#'   if(saveit) save(list(EvalDF=EvalDF, DFGroupPenalties=dfgp, betaDF=moltenbetaDF), file = paste(filenm,'_evalgrpRR.RData', sep=''))
-#'
-#'   return(list(EvalDF=EvalDF, betaDF=moltenbetaDF))
-#'   }
-#'
-#'
-#'
-#'
-#'
-#'
-#'
