@@ -175,7 +175,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     Lasso_summary$pf <- rep(LassoFit$lambda.min, G)
     Lasso_summary$beta <- beta_lasso
     Lasso_summary$intercept <- ifelse(intercept, as.vector(coef(LassoFit, LassoFit$lambda.min))[1], NULL)
-    Lasso_summary$sparsity <- sapply(1:G, function(gr) sum(beta_lasso[annot == gr] != 0)/sum(annot == gr))
+    Lasso_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta_lasso[annot == gr] != 0)/sum(annot == gr))
     Lasso_summary$out <- LassoFit
     rm(LassoFit, beta_lasso)
     summaryList$Lasso <- Lasso_summary
@@ -193,7 +193,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     ElasticNet_summary$pf <- rep(ENFit$lambda.min, G)
     ElasticNet_summary$beta <- beta_EN
     ElasticNet_summary$intercept <- ifelse(intercept, as.vector(coef(ENFit, ENFit$lambda.min))[1], NULL)
-    ElasticNet_summary$sparsity <- sapply(1:G, function(gr) sum(beta_EN[annot == gr] != 0)/sum(annot == gr))
+    ElasticNet_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta_EN[annot == gr] != 0)/sum(annot == gr))
     ElasticNet_summary$out <- ENFit
     rm(ENFit, beta_EN)
     summaryList$ElasticNet <- ElasticNet_summary
@@ -233,7 +233,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
             GroupLasso_summary$pf <- rep(GrpLassoFit$lambda.min, G)
             GroupLasso_summary$beta <- beta_GrpLasso
             GroupLasso_summary$intercept <- ifelse(intercept, as.vector(coef(GrpLassoFit, GrpLassoFit$lambda.min))[1], NULL)
-            GroupLasso_summary$sparsity <- sapply(1:G, function(gr) sum(beta_GrpLasso[annot == gr] != 0)/sum(annot == gr))
+            GroupLasso_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta_GrpLasso[annot == gr] != 0)/sum(annot == gr))
             GroupLasso_summary$out <- GrpLassoFit
             rm(GrpLassoFit, beta_GrpLasso)
             summaryList$GroupLasso <- GroupLasso_summary
@@ -293,7 +293,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
         TrueModel_summary$pf <- 1/sapply(unique(annot), function(gr) mean(abs(beta0[annot == gr])))
         TrueModel_summary$beta <- beta0
         TrueModel_summary$intercept <- trueintercept
-        TrueModel_summary$sparsity <- sapply(1:G, function(gr) sum(beta0[annot == gr] != 0)/sum(annot == gr))
+        TrueModel_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta0[annot == gr] != 0)/sum(annot == gr))
         TrueModel_summary$out <- NULL
         summaryList$TrueModel <- TrueModel_summary
     }
@@ -308,7 +308,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
         pflist <- lapply(seq_len(nrow(pfgrid)), function(i) pfgrid[i, ])
         type.measure <- ifelse(family == "gaussian", "mse", "class")
         ipf.out <- try(ipflasso::cvr2.ipflasso(Xtrain, ytrain, alpha = 1, standardize = standardize, family = family, type.measure = type.measure,
-            blocks = lapply(1:G, function(gr) which(annot == gr)), pflist = pflist, nfolds = 10, ncv = 1))  #using same cv parameter as standard glmnet
+            blocks = lapply(unique(annot), function(gr) which(annot == gr)), pflist = pflist, nfolds = 10, ncv = 1))  #using same cv parameter as standard glmnet
         tmp <- difftime(Sys.time(), tmp, units = "secs")
 
         if (class(ipf.out) == "try-error") {
@@ -346,10 +346,10 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
 
         adaLasso_summary <- list()
         adaLasso_summary$runtime <- as.numeric(tmp)
-        adaLasso_summary$pf <- sapply(1:G, function(gr) mean(adaLassoFit$lambda.min * penaltyFac * wRidge[annot == gr]))
+        adaLasso_summary$pf <- sapply(unique(annot), function(gr) mean(adaLassoFit$lambda.min * penaltyFac * wRidge[annot == gr]))
         adaLasso_summary$beta <- beta_adalasso
         adaLasso_summary$intercept <- ifelse(intercept, as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))[1], NULL)
-        adaLasso_summary$sparsity <- sapply(1:G, function(gr) sum(beta_adalasso[annot == gr] != 0)/sum(annot == gr))
+        adaLasso_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta_adalasso[annot == gr] != 0)/sum(annot == gr))
         adaLasso_summary$out <- adaLassoFit
         rm(adaLassoFit, beta_adalasso)
         summaryList$adaptiveLasso <- adaLasso_summary
