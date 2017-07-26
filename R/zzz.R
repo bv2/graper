@@ -1,3 +1,1 @@
-# .onLoad<-function(){
-#   # Rcpp::loadRcppModules()
-# }
+# .onLoad<-function(){ # Rcpp::loadRcppModules() }

@@ -13,20 +13,20 @@
 #' @export 
 
 
-fit_by_MCMC <- function(X,y, annot, iter=12000, warmup=2000, chains=3, verbose=T,thin=1,...){
-
-  y <- as.vector(y)
-  y <- scale(y, center = T, scale = F)
-  X <- scale(X, center = T, scale = F)
-  stopifnot(length(y) == nrow(X))
-  stopifnot(length(annot) == ncol(X))
-  
-  n <- nrow(X)
-  p <- ncol(X)
-  G <- length(unique(annot))
+fit_by_MCMC <- function(X, y, annot, iter = 12000, warmup = 2000, chains = 3, verbose = T, thin = 1, ...) {
+    
+    y <- as.vector(y)
+    y <- scale(y, center = T, scale = F)
+    X <- scale(X, center = T, scale = F)
+    stopifnot(length(y) == nrow(X))
+    stopifnot(length(annot) == ncol(X))
+    
+    n <- nrow(X)
+    p <- ncol(X)
+    G <- length(unique(annot))
     
     
-  stanmodelcode = "
+    stanmodelcode = "
   data {                      // ***Data block
   int<lower=1> N;           // Sample size
   int<lower=1> P;           // Dimension of model matrix  
@@ -65,27 +65,27 @@ fit_by_MCMC <- function(X,y, annot, iter=12000, warmup=2000, chains=3, verbose=T
   y ~ normal(mu, 1/tau);
   }
   "
-  
-  dat4MCMC <- list(N = n, P = p, G = G, y = as.vector(y) , X = X, annot = annot, zeros= rep(0,p))
-
-
-  ### Run the model and examine results ###
-  tmp <- Sys.time()
-  fit_MCMC = stan(model_code=stanmodelcode, data=dat4MCMC,  iter=iter,
-               warmup=warmup, thin=thin, chains=chains, verbose=verbose, ...)
-  time_MCMC <- Sys.time() - tmp
-  
-  # Get all relevant quantities in same format as for other methods
-  MCMCbetas <- get_posterior_mean(fit_MCMC, pars="beta")[,chains+1]
-  MCMCintercept <- attr(y, "scaled:center")-attr(X, "scaled:center")%*%MCMCbetas
-  MCMCgammas <- get_posterior_mean(fit_MCMC, pars="gamma")[,chains+1]
-  MCMCsummary <- list()
-  MCMCsummary$runtime <- as.numeric(time_MCMC)
-  MCMCsummary$pf <- as.numeric(MCMCgammas)
-  MCMCsummary$beta <- MCMCbetas
-  MCMCsummary$intercept <- MCMCintercept
-  MCMCsummary$sparsity <- NULL
-  MCMCsummary$out <- fit_MCMC
-  
-  return(MCMCsummary)
+    
+    dat4MCMC <- list(N = n, P = p, G = G, y = as.vector(y), X = X, annot = annot, zeros = rep(0, p))
+    
+    
+    ### Run the model and examine results ###
+    tmp <- Sys.time()
+    fit_MCMC = stan(model_code = stanmodelcode, data = dat4MCMC, iter = iter, warmup = warmup, thin = thin, chains = chains, verbose = verbose, 
+        ...)
+    time_MCMC <- Sys.time() - tmp
+    
+    # Get all relevant quantities in same format as for other methods
+    MCMCbetas <- get_posterior_mean(fit_MCMC, pars = "beta")[, chains + 1]
+    MCMCintercept <- attr(y, "scaled:center") - attr(X, "scaled:center") %*% MCMCbetas
+    MCMCgammas <- get_posterior_mean(fit_MCMC, pars = "gamma")[, chains + 1]
+    MCMCsummary <- list()
+    MCMCsummary$runtime <- as.numeric(time_MCMC)
+    MCMCsummary$pf <- as.numeric(MCMCgammas)
+    MCMCsummary$beta <- MCMCbetas
+    MCMCsummary$intercept <- MCMCintercept
+    MCMCsummary$sparsity <- NULL
+    MCMCsummary$out <- fit_MCMC
+    
+    return(MCMCsummary)
 }

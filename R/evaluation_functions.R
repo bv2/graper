@@ -1,15 +1,7 @@
-# evaluation_functions
-#
-# This file contains functions used for comparison to other methods and evaluation of the produced fit
-#         - RunMethods: Run a number of different methods for estimation in the model including
-#                       - Bayes Linear Regression with groupwise prior
-#                       - Bayes Linear Regression with groupwise prior and fully-factorized inference
-#                       - Ridge
-#                       - Lasso
-#                       - Group Lasso
-#         - evalResult: Compare Estimates produced in RunMethods by MSE and estimation error
-#
-# ---------------------------
+# evaluation_functions This file contains functions used for comparison to other methods and evaluation of the produced fit -
+# RunMethods: Run a number of different methods for estimation in the model including - Bayes Linear Regression with groupwise
+# prior - Bayes Linear Regression with groupwise prior and fully-factorized inference - Ridge - Lasso - Group Lasso -
+# evalResult: Compare Estimates produced in RunMethods by MSE and estimation error ---------------------------
 #' RunMethods
 #'
 #' Function to run serveral different methods for high-dimensional regression
@@ -28,352 +20,351 @@
 #' @param freqELB determines frequency at which ELB is to be calculated, i.e. each feqELB-th iteration
 #' @return List of fitted models and two data frames with coeffcients and penalty factors
 #' @import ggplot2
-#' @import glmnet
-#' @import gridExtra
-#' @import GRridge
-#' @import randomForest
-#' @import grpreg
-#' @import ipflasso
-#' @export 
+#' @export
 
-#ToDo: Option to standardize the input and then re-adjust estimates coefficeints to not standardized
-RunMethods<-function(Xtrain, ytrain, annot, beta0=NULL, trueintercept=NULL, max_iter=500, intercept=T, plotit=T, standardize=F, verbose=F, compareGRridge=F,
-                     freqELB=10, calcELB=T, include_nonfacQ=T, family="gaussian", constantXcol=F, compareGroupLasso=T, includeRF=T, th=1e-7,
-                     compareIPF=T, compareAdaLasso=T){
+# ToDo: Option to standardize the input and then re-adjust estimates coefficeints to not standardized
+RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL, max_iter = 500, intercept = T, plotit = T, standardize = F,
+    verbose = F, compareGRridge = F, freqELB = 10, calcELB = T, include_nonfacQ = T, family = "gaussian", constantXcol = F, compareGroupLasso = T,
+    includeRF = T, th = 1e-07, compareIPF = T, compareAdaLasso = T) {
 
-  if(!standardize) warning("Group Lasso and Grridge are standardized despite of standardized = F")
+    if (!standardize)
+        warning("Group Lasso and Grridge are standardized despite of standardized = F")
 
-  if(intercept & family=="binomial") warning("Intercept not yet implemented for logistic regression")
+    if (intercept & family == "binomial")
+        warning("Intercept not yet implemented for logistic regression")
 
-  stopifnot(nrow(Xtrain)==length(ytrain))
+    stopifnot(nrow(Xtrain) == length(ytrain))
 
-  if(!is.null(beta0)) stopifnot(ncol(Xtrain)==length(beta0))
+    if (!is.null(beta0))
+        stopifnot(ncol(Xtrain) == length(beta0))
 
 
-  if(constantXcol) stopifnot(var(Xtrain[,1])==0)
-  if(constantXcol) {
-    if(intercept) {warning("Intercept not used, as constant X columns included") ;intercept<-F}
-    penaltyFac <- c(0,rep(1,ncol(Xtrain)-1))
-    } else penaltyFac <- rep(1,ncol(Xtrain))
+    if (constantXcol)
+        stopifnot(var(Xtrain[, 1]) == 0)
+    if (constantXcol) {
+        if (intercept) {
+            warning("Intercept not used, as constant X columns included")
+            intercept <- F
+        }
+        penaltyFac <- c(0, rep(1, ncol(Xtrain) - 1))
+    } else penaltyFac <- rep(1, ncol(Xtrain))
 
-  # not yet implemented
-  if(family=="binomial" & intercept) stop()
+    # not yet implemented
+    if (family == "binomial" & intercept)
+        stop()
 
-  #turn annot to facotr
-  annot <- as.factor(annot)
-  # need to strucute annot - TO DO
-  # stopifnot(all(order(annot) == 1:p))
+    # turn annot to facotr
+    annot <- as.factor(annot)
+    # need to strucute annot - TO DO stopifnot(all(order(annot) == 1:p))
 
-  #extract important parameters and names
-  p <- ncol(Xtrain)
-  n <- nrow(Xtrain)
-  G <- length(unique(annot))
-  groupnames <- as.character(annot)
-  varnames <- colnames(Xtrain)
-  if(length(varnames)==0) varnames<-factor(paste("Feautre",1:ncol(Xtrain), sep=""))
+    # extract important parameters and names
+    p <- ncol(Xtrain)
+    n <- nrow(Xtrain)
+    G <- length(unique(annot))
+    groupnames <- as.character(annot)
+    varnames <- colnames(Xtrain)
+    if (length(varnames) == 0)
+        varnames <- factor(paste("Feautre", 1:ncol(Xtrain), sep = ""))
 
-  ####
-  #RUN DIFFERENT METHODS
-  #####
-  summaryList <- list()
+    #### RUN DIFFERENT METHODS
+    summaryList <- list()
 
-  # grpRR: not fully factorized, normal prior
-    if(include_nonfacQ){
-      tmp <- Sys.time()
-      grpRR <- fit_grpRR(Xtrain, ytrain, annot=annot, factoriseQ=F, spikeslab= F, max_iter = max_iter, intercept=intercept,
-                        verbose = verbose, freqELB = freqELB, calcELB = calcELB, family = family, th=th)
-      timeNF <- difftime( Sys.time(), tmp, units = "secs")
-      if(plotit) plotVBFit(grpRR, whichParam = c("ELB", "tau", "gamma"))
+    # grpRR: not fully factorized, normal prior
+    if (include_nonfacQ) {
+        tmp <- Sys.time()
+        grpRR <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = F, spikeslab = F, max_iter = max_iter, intercept = intercept,
+            verbose = verbose, freqELB = freqELB, calcELB = calcELB, family = family, th = th)
+        timeNF <- difftime(Sys.time(), tmp, units = "secs")
+        if (plotit)
+            plotVBFit(grpRR, whichParam = c("ELB", "tau", "gamma"))
 
-      grpRR_summary <- list()
-      grpRR_summary$runtime <- as.numeric(timeNF)
-      grpRR_summary$pf <- as.numeric(grpRR$EW_gamma)
-      grpRR_summary$beta <- grpRR$EW_beta
-      grpRR_summary$intercept <- grpRR$intercept
-      grpRR_summary$sparsity <- rep(1, G)  #dense - no sparsity per groups
-      grpRR_summary$out <- grpRR
-      rm(grpRR)
-      summaryList$grpRR <-grpRR_summary
+        grpRR_summary <- list()
+        grpRR_summary$runtime <- as.numeric(timeNF)
+        grpRR_summary$pf <- as.numeric(grpRR$EW_gamma)
+        grpRR_summary$beta <- grpRR$EW_beta
+        grpRR_summary$intercept <- grpRR$intercept
+        grpRR_summary$sparsity <- rep(1, G)  #dense - no sparsity per groups
+        grpRR_summary$out <- grpRR
+        rm(grpRR)
+        summaryList$grpRR <- grpRR_summary
     }
 
-  # grpRR_FF : fully factorized, normal prior
-    tmp<-Sys.time()
-    grpRR_FF <- fit_grpRR(Xtrain, ytrain, annot=annot, factoriseQ = T, spikeslab= F, max_iter = max_iter, intercept=intercept,
-                        verbose = verbose, freqELB = freqELB, calcELB = calcELB, family = family, th=th)
-    timeFF <- difftime( Sys.time(), tmp, units = "secs")
-    if(plotit) plotVBFit(grpRR_FF, whichParam = c("ELB", "tau", "gamma"))
+    # grpRR_FF : fully factorized, normal prior
+    tmp <- Sys.time()
+    grpRR_FF <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = T, spikeslab = F, max_iter = max_iter, intercept = intercept,
+        verbose = verbose, freqELB = freqELB, calcELB = calcELB, family = family, th = th)
+    timeFF <- difftime(Sys.time(), tmp, units = "secs")
+    if (plotit)
+        plotVBFit(grpRR_FF, whichParam = c("ELB", "tau", "gamma"))
 
     grpRR_FF_summary <- list()
     grpRR_FF_summary$runtime <- as.numeric(timeFF)
     grpRR_FF_summary$pf <- as.numeric(grpRR_FF$EW_gamma)
     grpRR_FF_summary$beta <- grpRR_FF$EW_beta
     grpRR_FF_summary$intercept <- grpRR_FF$intercept
-    grpRR_FF_summary$sparsity <- rep(1, G) #dense - no sparsity per groups
+    grpRR_FF_summary$sparsity <- rep(1, G)  #dense - no sparsity per groups
     grpRR_FF_summary$out <- grpRR_FF
     rm(grpRR_FF)
-    summaryList$grpRR_FF <-grpRR_FF_summary
+    summaryList$grpRR_FF <- grpRR_FF_summary
 
 
 
-  #grpRR_SS: fully factorized, spike and slab
-  # This part is only implemented for gaussian so far
-    if(family=="gaussian"){
-      includeSS<-T
+    # grpRR_SS: fully factorized, spike and slab This part is only implemented for gaussian so far
+    if (family == "gaussian") {
+        includeSS <- T
 
-      tmp<-Sys.time()
-      grpRR_SS <- fit_grpRR(Xtrain, ytrain, annot=annot, factoriseQ = T, spikeslab= T, max_iter = max_iter, intercept=intercept,
-                        verbose = verbose, freqELB = freqELB, calcELB = calcELB, th=th)
-      timeSS <- difftime( Sys.time(), tmp, units = "secs")
-      if(plotit) plotVBFit(grpRR_SS, whichParam = c("ELB", "tau", "gamma"))
+        tmp <- Sys.time()
+        grpRR_SS <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = T, spikeslab = T, max_iter = max_iter, intercept = intercept,
+            verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th)
+        timeSS <- difftime(Sys.time(), tmp, units = "secs")
+        if (plotit)
+            plotVBFit(grpRR_SS, whichParam = c("ELB", "tau", "gamma"))
 
-      grpRR_SS_summary <- list()
-      grpRR_SS_summary$runtime <- as.numeric(timeSS)
-      grpRR_SS_summary$pf <- as.numeric(grpRR_SS$EW_gamma)
-      grpRR_SS_summary$beta <- grpRR_SS$EW_beta
-      grpRR_SS_summary$intercept <- grpRR_SS$intercept
-      grpRR_SS_summary$sparsity <- grpRR_SS$EW_pi
-      grpRR_SS_summary$out <- grpRR_SS
-      summaryList$grpRR_SS <-grpRR_SS_summary
+        grpRR_SS_summary <- list()
+        grpRR_SS_summary$runtime <- as.numeric(timeSS)
+        grpRR_SS_summary$pf <- as.numeric(grpRR_SS$EW_gamma)
+        grpRR_SS_summary$beta <- grpRR_SS$EW_beta
+        grpRR_SS_summary$intercept <- grpRR_SS$intercept
+        grpRR_SS_summary$sparsity <- grpRR_SS$EW_pi
+        grpRR_SS_summary$out <- grpRR_SS
+        summaryList$grpRR_SS <- grpRR_SS_summary
 
-      # set factos with low a posteriori probability to zero
-      grpRR_SScutoff_summary<- list()
-      grpRR_SScutoff_summary$runtime <- as.numeric(timeSS)
-      grpRR_SScutoff_summary$pf <- as.numeric(grpRR_SS$EW_gamma)
-      grpRR_SScutoff_summary$beta <- ifelse(grpRR_SS$EW_s < 0.5, 0 ,grpRR_SS$EW_beta)
-      grpRR_SScutoff_summary$intercept <- grpRR_SS$intercept
-      grpRR_SScutoff_summary$sparsity <- grpRR_SS$EW_pi
-      grpRR_SScutoff_summary$out <- NULL
-      summaryList$grpRR_SScutoff <-grpRR_SScutoff_summary
+        # set factos with low a posteriori probability to zero
+        grpRR_SScutoff_summary <- list()
+        grpRR_SScutoff_summary$runtime <- as.numeric(timeSS)
+        grpRR_SScutoff_summary$pf <- as.numeric(grpRR_SS$EW_gamma)
+        grpRR_SScutoff_summary$beta <- ifelse(grpRR_SS$EW_s < 0.5, 0, grpRR_SS$EW_beta)
+        grpRR_SScutoff_summary$intercept <- grpRR_SS$intercept
+        grpRR_SScutoff_summary$sparsity <- grpRR_SS$EW_pi
+        grpRR_SScutoff_summary$out <- NULL
+        summaryList$grpRR_SScutoff <- grpRR_SScutoff_summary
 
-      rm(grpRR_SS)
+        rm(grpRR_SS)
 
-  } else includeSS<-F
+    } else includeSS <- F
 
 
-  #ridge regression
-    tmp<-Sys.time()
-    RidgeFit <- cv.glmnet(Xtrain, ytrain, alpha=0, intercept=intercept, standardize=standardize, family=family, penalty.factor=penaltyFac)
-    tmp <- difftime( Sys.time(), tmp, units = "secs")
-    if(intercept) beta_ridge <- as.vector(coef(RidgeFit, RidgeFit$lambda.min))[-1]
-        else beta_ridge <- as.vector(coef(RidgeFit, RidgeFit$lambda.min))
+    # ridge regression
+    tmp <- Sys.time()
+    RidgeFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 0, intercept = intercept, standardize = standardize, family = family, penalty.factor = penaltyFac)
+    tmp <- difftime(Sys.time(), tmp, units = "secs")
+    if (intercept)
+        beta_ridge <- as.vector(coef(RidgeFit, RidgeFit$lambda.min))[-1] else beta_ridge <- as.vector(coef(RidgeFit, RidgeFit$lambda.min))
 
     Ridge_summary <- list()
     Ridge_summary$runtime <- as.numeric(tmp)
     Ridge_summary$pf <- rep(RidgeFit$lambda.min, G)
     Ridge_summary$beta <- beta_ridge
     Ridge_summary$intercept <- ifelse(intercept, as.vector(coef(RidgeFit, RidgeFit$lambda.min))[1], NULL)
-    Ridge_summary$sparsity <- rep(1, G) #dense - no sparsity per groups
+    Ridge_summary$sparsity <- rep(1, G)  #dense - no sparsity per groups
     Ridge_summary$out <- RidgeFit
     rm(RidgeFit, beta_ridge)
-    summaryList$Ridge <-Ridge_summary
+    summaryList$Ridge <- Ridge_summary
 
 
 
-  #Lasso
-    tmp<-Sys.time()
-    LassoFit <- cv.glmnet(Xtrain, ytrain, alpha=1, intercept=intercept, standardize=standardize, family=family, penalty.factor=penaltyFac)
-    tmp <- difftime( Sys.time(), tmp, units = "secs")
-    if(intercept) beta_lasso <- as.vector(coef(LassoFit, LassoFit$lambda.min))[-1]
-    else beta_lasso <- as.vector(coef(LassoFit, LassoFit$lambda.min))
+    # Lasso
+    tmp <- Sys.time()
+    LassoFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 1, intercept = intercept, standardize = standardize, family = family, penalty.factor = penaltyFac)
+    tmp <- difftime(Sys.time(), tmp, units = "secs")
+    if (intercept)
+        beta_lasso <- as.vector(coef(LassoFit, LassoFit$lambda.min))[-1] else beta_lasso <- as.vector(coef(LassoFit, LassoFit$lambda.min))
 
-    Lasso_summary<- list()
+    Lasso_summary <- list()
     Lasso_summary$runtime <- as.numeric(tmp)
     Lasso_summary$pf <- rep(LassoFit$lambda.min, G)
     Lasso_summary$beta <- beta_lasso
     Lasso_summary$intercept <- ifelse(intercept, as.vector(coef(LassoFit, LassoFit$lambda.min))[1], NULL)
-    Lasso_summary$sparsity <- sapply(1:G, function(gr) sum(beta_lasso[annot==gr]!=0)/sum(annot==gr))
+    Lasso_summary$sparsity <- sapply(1:G, function(gr) sum(beta_lasso[annot == gr] != 0)/sum(annot == gr))
     Lasso_summary$out <- LassoFit
     rm(LassoFit, beta_lasso)
     summaryList$Lasso <- Lasso_summary
 
 
-  #EN
-    tmp<-Sys.time()
-    ENFit <- cv.glmnet(Xtrain, ytrain, alpha=0.2, intercept=intercept, standardize=standardize, family=family, penalty.factor=penaltyFac)
-    tmp <- difftime( Sys.time(), tmp, units = "secs")
-    if(intercept) beta_EN <- as.vector(coef(ENFit, ENFit$lambda.min))[-1]
-    else beta_EN <- as.vector(coef(ENFit, ENFit$lambda.min))
+    # EN
+    tmp <- Sys.time()
+    ENFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 0.2, intercept = intercept, standardize = standardize, family = family, penalty.factor = penaltyFac)
+    tmp <- difftime(Sys.time(), tmp, units = "secs")
+    if (intercept)
+        beta_EN <- as.vector(coef(ENFit, ENFit$lambda.min))[-1] else beta_EN <- as.vector(coef(ENFit, ENFit$lambda.min))
 
-    ElasticNet_summary<- list()
+    ElasticNet_summary <- list()
     ElasticNet_summary$runtime <- as.numeric(tmp)
     ElasticNet_summary$pf <- rep(ENFit$lambda.min, G)
     ElasticNet_summary$beta <- beta_EN
     ElasticNet_summary$intercept <- ifelse(intercept, as.vector(coef(ENFit, ENFit$lambda.min))[1], NULL)
-    ElasticNet_summary$sparsity <- sapply(1:G, function(gr) sum(beta_EN[annot==gr]!=0)/sum(annot==gr))
+    ElasticNet_summary$sparsity <- sapply(1:G, function(gr) sum(beta_EN[annot == gr] != 0)/sum(annot == gr))
     ElasticNet_summary$out <- ENFit
     rm(ENFit, beta_EN)
     summaryList$ElasticNet <- ElasticNet_summary
 
-  #Random Forest
-    if(includeRF) {
-      tmp<-Sys.time()
-      rf.out <- randomForest(x = Xtrain, y = ytrain)
-      tmp <- difftime( Sys.time(), tmp, units = "secs")
+    # Random Forest
+    if (includeRF) {
+        tmp <- Sys.time()
+        rf.out <- randomForest::randomForest(x = Xtrain, y = ytrain)
+        tmp <- difftime(Sys.time(), tmp, units = "secs")
 
-      RandomForest_summary<- list()
-      RandomForest_summary$runtime <- as.numeric(tmp)
-      RandomForest_summary$pf <- NULL
-      RandomForest_summary$beta <- NULL
-      RandomForest_summary$intercept <- NULL
-      RandomForest_summary$sparsity <- NULL
-      RandomForest_summary$out <- rf.out
-      rm(rf.out)
-      summaryList$RandomForest <- RandomForest_summary
+        RandomForest_summary <- list()
+        RandomForest_summary$runtime <- as.numeric(tmp)
+        RandomForest_summary$pf <- NULL
+        RandomForest_summary$beta <- NULL
+        RandomForest_summary$intercept <- NULL
+        RandomForest_summary$sparsity <- NULL
+        RandomForest_summary$out <- rf.out
+        rm(rf.out)
+        summaryList$RandomForest <- RandomForest_summary
 
     }
 
-  #group lasso
-    if(compareGroupLasso){
-      tmp<-Sys.time()
-      GrpLassoFit <- try(grpreg::cv.grpreg(Xtrain, ytrain,
-                                   group=as.factor(annot), penalty="grLasso",
-                                   intercept=intercept, family=family))
-      tmp <- difftime( Sys.time(), tmp, units = "secs")
-      if(class(GrpLassoFit)=="try-error") {
-        warning("Group Lasso encountered errors, not included in the comparison!")
+    # group lasso
+    if (compareGroupLasso) {
+        tmp <- Sys.time()
+        GrpLassoFit <- try(grpreg::cv.grpreg(Xtrain, ytrain, group = as.factor(annot), penalty = "grLasso", intercept = intercept,
+            family = family))
+        tmp <- difftime(Sys.time(), tmp, units = "secs")
+        if (class(GrpLassoFit) == "try-error") {
+            warning("Group Lasso encountered errors, not included in the comparison!")
         } else {
-          if(intercept) beta_GrpLasso <- as.vector(coef(GrpLassoFit, GrpLassoFit$lambda.min))[-1]
-          else beta_GrpLasso <- as.vector(coef(GrpLassoFit, GrpLassoFit$lambda.min))
+            if (intercept)
+                beta_GrpLasso <- as.vector(coef(GrpLassoFit, GrpLassoFit$lambda.min))[-1] else beta_GrpLasso <- as.vector(coef(GrpLassoFit, GrpLassoFit$lambda.min))
 
-          GroupLasso_summary <- list()
-          GroupLasso_summary$runtime <- as.numeric(tmp)
-          GroupLasso_summary$pf <- rep(GrpLassoFit$lambda.min,G)
-          GroupLasso_summary$beta <- beta_GrpLasso
-          GroupLasso_summary$intercept <- ifelse(intercept, as.vector(coef(GrpLassoFit, GrpLassoFit$lambda.min))[1], NULL)
-          GroupLasso_summary$sparsity <-  sapply(1:G, function(gr) sum(beta_GrpLasso[annot==gr]!=0)/sum(annot==gr))
-          GroupLasso_summary$out <- GrpLassoFit
-          rm(GrpLassoFit, beta_GrpLasso)
-          summaryList$GroupLasso <- GroupLasso_summary
+            GroupLasso_summary <- list()
+            GroupLasso_summary$runtime <- as.numeric(tmp)
+            GroupLasso_summary$pf <- rep(GrpLassoFit$lambda.min, G)
+            GroupLasso_summary$beta <- beta_GrpLasso
+            GroupLasso_summary$intercept <- ifelse(intercept, as.vector(coef(GrpLassoFit, GrpLassoFit$lambda.min))[1], NULL)
+            GroupLasso_summary$sparsity <- sapply(1:G, function(gr) sum(beta_GrpLasso[annot == gr] != 0)/sum(annot == gr))
+            GroupLasso_summary$out <- GrpLassoFit
+            rm(GrpLassoFit, beta_GrpLasso)
+            summaryList$GroupLasso <- GroupLasso_summary
 
         }
     }
 
-  #grridge
-  if(compareGRridge){
-    tmp<-Sys.time()
-    partition<-CreatePartition(as.factor(annot))
-    if(intercept) MessagesGR <- capture.output(GRfit <- try(grridge(t(Xtrain), as.numeric(ytrain), list(partition), unpenal=~1)))
-      else MessagesGR<-capture.output(GRfit <- try(grridge(t(Xtrain), as.numeric(ytrain), list(partition), unpenal=~0)))
-    tmp <- difftime( Sys.time(), tmp, units = "secs")
+    # grridge
+    if (compareGRridge) {
+        tmp <- Sys.time()
+        partition <- GRridge::CreatePartition(as.factor(annot))
+        if (intercept) {
+            MessagesGR <- capture.output(GRfit <- try(GRridge::grridge(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~1)))
+        } else MessagesGR <- capture.output(GRfit <- try(GRridge::grridge(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~0)))
+        tmp <- difftime(Sys.time(), tmp, units = "secs")
 
-    if(verbose) MessagesGR
+        if (verbose)
+            MessagesGR
 
-    if(class(GRfit)=="try-error") {
-      warning("GRridge encountered errors, not included in the comparison!")
-    } else{
-      GRridge_summary <- list()
-      GRridge_summary$runtime <- as.numeric(tmp)
-      GRridge_summary$pf <- as.numeric(GRfit$lambdamults[[1]])
-      GRridge_summary$beta <- GRfit$betas
-      GRridge_summary$intercept <- ifelse(intercept, GRfit$predobj$GroupRegul@unpenalized, NULL)
-      GRridge_summary$sparsity <-  rep(1,G)
-      GRridge_summary$out <- GRfit
-      rm(GRfit)
-      summaryList$GRridge <- GRridge_summary
+        if (class(GRfit) == "try-error") {
+            warning("GRridge encountered errors, not included in the comparison!")
+        } else {
+            GRridge_summary <- list()
+            GRridge_summary$runtime <- as.numeric(tmp)
+            GRridge_summary$pf <- as.numeric(GRfit$lambdamults[[1]])
+            GRridge_summary$beta <- GRfit$betas
+            GRridge_summary$intercept <- ifelse(intercept, GRfit$predobj$GroupRegul@unpenalized, NULL)
+            GRridge_summary$sparsity <- rep(1, G)
+            GRridge_summary$out <- GRfit
+            rm(GRfit)
+            summaryList$GRridge <- GRridge_summary
 
-    }
-  }
-
-  #zero model
-    if(intercept){
-      tmp <- Sys.time()
-      intercept_zeromodel <- mean(ytrain)
-      tmp <- difftime( Sys.time(), tmp, units = "secs")
-
-      NullModel_summary <- list()
-      NullModel_summary$runtime <- as.numeric(tmp)
-      NullModel_summary$pf <- rep(Inf,G)
-      NullModel_summary$beta <- rep(0,p)
-      NullModel_summary$intercept <- intercept_zeromodel
-      NullModel_summary$sparsity <-  rep(0,G)
-      NullModel_summary$out <- NULL
-      summaryList$NullModel <- NullModel_summary
-
+        }
     }
 
-    if(!is.null(beta0))  {
-      TrueModel_summary <- list()
-      TrueModel_summary$runtime <- 0
-      # TO DO What the best correspondence?
-      TrueModel_summary$pf <- 1/sapply(unique(annot), function(gr) mean(abs(beta0[annot==gr])))
-      TrueModel_summary$beta <- beta0
-      TrueModel_summary$intercept <- trueintercept
-      TrueModel_summary$sparsity <-  sapply(1:G, function(gr) sum(beta0[annot==gr]!=0)/sum(annot==gr))
-      TrueModel_summary$out <- NULL
-      summaryList$TrueModel <- TrueModel_summary
+    # zero model
+    if (intercept) {
+        tmp <- Sys.time()
+        intercept_zeromodel <- mean(ytrain)
+        tmp <- difftime(Sys.time(), tmp, units = "secs")
+
+        NullModel_summary <- list()
+        NullModel_summary$runtime <- as.numeric(tmp)
+        NullModel_summary$pf <- rep(Inf, G)
+        NullModel_summary$beta <- rep(0, p)
+        NullModel_summary$intercept <- intercept_zeromodel
+        NullModel_summary$sparsity <- rep(0, G)
+        NullModel_summary$out <- NULL
+        summaryList$NullModel <- NullModel_summary
+
     }
 
-    # IPF -Lasso
-    # NOTE alwyas fit an intercept
-    # error because cv.glmnet and its element cv.glmnet$glmnet.fit haev different lambda sequences? Can happen if some cvsd are NA nas = is.na(cvsd)???
-    if(compareIPF) {
-      # penalty factors to consider for cross-validation (unclear how to choose)
-      lambda_1d <- seq(1, 10, 2)
-      tmp<-Sys.time()
-      pfgrid <- expand.grid(rep(list(lambda_grid1d),G))
-      pflist <- lapply(seq_len(nrow(pfgrid)), function(i) pfgrid[i,])
-      type.measure <- ifelse(family=="gaussian", "mse", "class")
-      ipf.out <- try(cvr2.ipflasso(Xtrain, ytrain, alpha=1, standardize=standardize, family=family, type.measure=type.measure,
-                               blocks = lapply(1:G, function(gr) which(annot == gr)), pflist=pflist,
-                               nfolds=10, ncv = 1))  #using same cv parameter as standard glmnet
-      tmp <- difftime( Sys.time(), tmp, units = "secs")
-      
-      if(class(ipf.out)=="try-error") {
-        warning("ipf-lasso encountered errors, not included in the comparison!")
-      } else{
-      IPFLasso_summary<- list()
-      IPFLasso_summary$runtime <- as.numeric(tmp)
-      IPFLasso_summary$pf <- ind.bestpf
-      IPFLasso_summary$beta <- NULL
-      IPFLasso_summary$intercept <- NULL
-      IPFLasso_summary$sparsity <- NULL
-      IPFLasso_summary$out <- rf.out
-      rm(ipf.out)
-      summaryList$IPFLasso <- IPFLasso_summary
-      }
-      
+    if (!is.null(beta0)) {
+        TrueModel_summary <- list()
+        TrueModel_summary$runtime <- 0
+        # TO DO What the best correspondence?
+        TrueModel_summary$pf <- 1/sapply(unique(annot), function(gr) mean(abs(beta0[annot == gr])))
+        TrueModel_summary$beta <- beta0
+        TrueModel_summary$intercept <- trueintercept
+        TrueModel_summary$sparsity <- sapply(1:G, function(gr) sum(beta0[annot == gr] != 0)/sum(annot == gr))
+        TrueModel_summary$out <- NULL
+        summaryList$TrueModel <- TrueModel_summary
     }
-    
+
+    # IPF -Lasso NOTE alwyas fit an intercept error because cv.glmnet and its element cv.glmnet$glmnet.fit haev different lambda
+    # sequences? Can happen if some cvsd are NA nas = is.na(cvsd)???
+    if (compareIPF) {
+        # penalty factors to consider for cross-validation (unclear how to choose)
+        lambda_1d <- seq(1, 10, 2)
+        tmp <- Sys.time()
+        pfgrid <- expand.grid(rep(list(lambda_grid1d), G))
+        pflist <- lapply(seq_len(nrow(pfgrid)), function(i) pfgrid[i, ])
+        type.measure <- ifelse(family == "gaussian", "mse", "class")
+        ipf.out <- try(ipflasso::cvr2.ipflasso(Xtrain, ytrain, alpha = 1, standardize = standardize, family = family, type.measure = type.measure,
+            blocks = lapply(1:G, function(gr) which(annot == gr)), pflist = pflist, nfolds = 10, ncv = 1))  #using same cv parameter as standard glmnet
+        tmp <- difftime(Sys.time(), tmp, units = "secs")
+
+        if (class(ipf.out) == "try-error") {
+            warning("ipf-lasso encountered errors, not included in the comparison!")
+        } else {
+            IPFLasso_summary <- list()
+            IPFLasso_summary$runtime <- as.numeric(tmp)
+            IPFLasso_summary$pf <- ind.bestpf
+            IPFLasso_summary$beta <- NULL
+            IPFLasso_summary$intercept <- NULL
+            IPFLasso_summary$sparsity <- NULL
+            IPFLasso_summary$out <- rf.out
+            rm(ipf.out)
+            summaryList$IPFLasso <- IPFLasso_summary
+        }
+
+    }
+
     # Adaptive Lasso
-    if(compareAdaLasso) {
-      tmp<-Sys.time()
-      ## Ridge Regression to create the Adaptive Weights Vector
-      RidgeFit <- cv.glmnet(Xtrain, ytrain, alpha=0, intercept=intercept, standardize=standardize, family=family, penalty.factor=penaltyFac)
-      wRidge <- pmin(1/abs((coef(RidgeFit, s=RidgeFit$lambda.min))), 1e300)
-      if(intercept) wRidge <- wRidge[-1]
+    if (compareAdaLasso) {
+        tmp <- Sys.time()
+        ## Ridge Regression to create the Adaptive Weights Vector
+        RidgeFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 0, intercept = intercept, standardize = standardize, family = family, penalty.factor = penaltyFac)
+        wRidge <- pmin(1/abs((coef(RidgeFit, s = RidgeFit$lambda.min))), 1e+300)
+        if (intercept)
+            wRidge <- wRidge[-1]
 
-      ## Adaptive Lasso
-      adaLassoFit <- cv.glmnet(Xtrain, ytrain, alpha=1, intercept=intercept, standardize=standardize, family=family, penalty.factor=penaltyFac*wRidge)
-      tmp <- difftime( Sys.time(), tmp, units = "secs")
-      
-      if(intercept) beta_adalasso <- as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))[-1]
-      else beta_adalasso <- as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))
+        ## Adaptive Lasso
+        adaLassoFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 1, intercept = intercept, standardize = standardize, family = family, penalty.factor = penaltyFac *
+            wRidge)
+        tmp <- difftime(Sys.time(), tmp, units = "secs")
 
-      adaLasso_summary<- list()
-      adaLasso_summary$runtime <- as.numeric(tmp)
-      adaLasso_summary$pf <- sapply(1:G, function(gr) mean(adaLassoFit$lambda.min * penaltyFac * wRidge[annot==gr]))
-      adaLasso_summary$beta <- beta_adalasso
-      adaLasso_summary$intercept <- ifelse(intercept, as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))[1], NULL)
-      adaLasso_summary$sparsity <- sapply(1:G, function(gr) sum(beta_adalasso[annot==gr]!=0)/sum(annot==gr))
-      adaLasso_summary$out <- adaLassoFit
-      rm(adaLassoFit, beta_adalasso)
-      summaryList$adaptiveLasso <- adaLasso_summary
+        if (intercept)
+            beta_adalasso <- as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))[-1] else beta_adalasso <- as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))
+
+        adaLasso_summary <- list()
+        adaLasso_summary$runtime <- as.numeric(tmp)
+        adaLasso_summary$pf <- sapply(1:G, function(gr) mean(adaLassoFit$lambda.min * penaltyFac * wRidge[annot == gr]))
+        adaLasso_summary$beta <- beta_adalasso
+        adaLasso_summary$intercept <- ifelse(intercept, as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))[1], NULL)
+        adaLasso_summary$sparsity <- sapply(1:G, function(gr) sum(beta_adalasso[annot == gr] != 0)/sum(annot == gr))
+        adaLasso_summary$out <- adaLassoFit
+        rm(adaLassoFit, beta_adalasso)
+        summaryList$adaptiveLasso <- adaLasso_summary
     }
     # #Ridge with PF by average marginal coefficients...better use significance instead of effect size....
-    # marg<-MarginalCoefficient(ytrain, scale(Xtrain), family = family)
-    # avMargGroup<-sapply(annot, function(g) mean(abs(marg[1,annot==g])))
-    # pf_margCoeff<-1/abs(avMargGroup)  #estimates
-    # RidgeavMargFit<-cv.glmnet(Xtrain,ytrain, alpha=0, intercept=intercept, penalty.factor=pf_margCoeff,standardize=standardize, family=family)
-    # beta_RidgeavMarg<-as.vector(coef(RidgeavMargFit$glmnet.fit, RidgeavMargFit$lambda.min))
-    #
-    # #Lasso with PF by average marginal coefficients
-    # marg<-MarginalCoefficient(ytrain, Xtrain)
-    # avMargGroup<-sapply(annot, function(g) mean(abs(marg[1,annot==g])))
-    # pf_margCoeff<-1/abs(avMargGroup)  #estimates
-    # LassoavMargFit<-cv.glmnet(Xtrain,ytrain, alpha=1, intercept=intercept, penalty.factor=pf_margCoeff,standardize=standardize, family=family)
+    # marg<-MarginalCoefficient(ytrain, scale(Xtrain), family = family) avMargGroup<-sapply(annot, function(g)
+    # mean(abs(marg[1,annot==g]))) pf_margCoeff<-1/abs(avMargGroup) #estimates RidgeavMargFit<-cv.glmnet(Xtrain,ytrain, alpha=0,
+    # intercept=intercept, penalty.factor=pf_margCoeff,standardize=standardize, family=family)
+    # beta_RidgeavMarg<-as.vector(coef(RidgeavMargFit$glmnet.fit, RidgeavMargFit$lambda.min)) #Lasso with PF by average marginal
+    # coefficients marg<-MarginalCoefficient(ytrain, Xtrain) avMargGroup<-sapply(annot, function(g) mean(abs(marg[1,annot==g])))
+    # pf_margCoeff<-1/abs(avMargGroup) #estimates LassoavMargFit<-cv.glmnet(Xtrain,ytrain, alpha=1, intercept=intercept,
+    # penalty.factor=pf_margCoeff,standardize=standardize, family=family)
     # beta_LassoavMarg<-as.vector(coef(LassoavMargFit$glmnet.fit, LassoavMargFit$lambda.min))
 
-    return(list(summaryList=summaryList, groupnames=groupnames, varnames=varnames, family=family, n = n, p = p, G = G, annot=annot))
+    return(list(summaryList = summaryList, groupnames = groupnames, varnames = varnames, family = family, n = n, p = p, G = G, annot = annot))
 }
 
 # ---------------------------
@@ -387,95 +378,88 @@ RunMethods<-function(Xtrain, ytrain, annot, beta0=NULL, trueintercept=NULL, max_
 #' @export
 
 
-evaluateFits <- function(allFits, Xtest, ytest){
+evaluateFits <- function(allFits, Xtest, ytest) {
 
-  stopifnot(nrow(Xtest)==length(ytest))
-  stopifnot(ncol(Xtest)==length(allFits$summaryList[[1]]$beta))
+    stopifnot(nrow(Xtest) == length(ytest))
+    stopifnot(ncol(Xtest) == length(allFits$summaryList[[1]]$beta))
 
-  family <- allFits$family
-  summaryList <- allFits$summaryList
-  ytest <- as.vector(ytest)
-  ntest <- length(ytest)
-  beta0 <- summaryList$TrueModel$beta
-  intercept0 <- summaryList$TrueModel$intercept
+    family <- allFits$family
+    summaryList <- allFits$summaryList
+    ytest <- as.vector(ytest)
+    ntest <- length(ytest)
+    beta0 <- summaryList$TrueModel$beta
+    intercept0 <- summaryList$TrueModel$intercept
 
-  ######
-  # Prediction Performance
-  ######
+    ###### Prediction Performance
 
-  #For gaussian family calculate RMSE as measure of prediciton performance
-  if(family=="gaussian"){
-    summaryList <-lapply(summaryList, function(summary){
-                      beta <- summary$beta
-                      intercept <- summary$intercept
-                      if(!is.null(beta)) { # for cases without linear coeeficients e.g. Random Forest
-                         RMSE <-  EvaluateModel(beta, intercept=intercept,
-                                                    Xtest,ytest,
-                                                    beta0=beta0,
-                                                    family="gaussian")$RMSE_test
-                      summary$RMSE <- RMSE
-                      }
-                      summary
-                    })
-    if("RandomForest" %in% names(summaryList))
-      summaryList$RandomForest$RMSE <- sqrt(1/length(ytest)*sum((predict(summaryList$RandomForest$out, Xtest)-ytest)^2))
-  }
-
-  #For binomial family calculate ROC, AUC and Brier Score
-  else if(family=="binomial"){
-    summaryList <-lapply(summaryList, function(summary){
-      beta <- summary$beta
-      intercept <- summary$intercept
-      if(!is.null(beta)) { # for cases without linear coeeficients e.g. Random Forest
-        eval.out <- EvaluateModel(beta, intercept=intercept,Xtest,ytest, beta0=beta0, family="binomial")
-        summary$AUC <- eval.out$AUC
-        summary$ROC <- eval.out$ROC
-        summary$BS <- eval.out$BS
-      }
-      summary
-    })
-  }
-
-  ######
-  # Feature Recovery
-  ######
-  if(!is.null(beta0)){
-    summaryList <-lapply(summaryList, function(summary){
-      beta <- summary$beta
-      intercept <- summary$intercept
-      if(!is.null(beta)) { # for cases without linear coeeficients e.g. Random Forest
-        eval.out <-  EvaluateModel(beta, intercept=intercept,
-                              Xtest,ytest,
-                              beta0=beta0,
-                              family="gaussian")
-        summary$FPR <- eval.out$FPR
-        summary$FNR <- eval.out$FNR
-      }
-      summary
-    })
-  }
-
-
-    ######
-    # Error on estimate
-    ######
-
-    #l1-Error in estimation of coeffcients
-    if(!is.null(beta0)){
-      summaryList <- lapply(summaryList, function(summary) {
-        beta <- summary$beta
-        if(!is.null(beta)) summary$l1error_beta <-sum(abs(beta- beta0))
-        summary
-      })
+    # For gaussian family calculate RMSE as measure of prediciton performance
+    if (family == "gaussian") {
+        summaryList <- lapply(summaryList, function(summary) {
+            beta <- summary$beta
+            intercept <- summary$intercept
+            if (!is.null(beta)) {
+                # for cases without linear coeeficients e.g. Random Forest
+                RMSE <- EvaluateModel(beta, intercept = intercept, Xtest, ytest, beta0 = beta0, family = "gaussian")$RMSE_test
+                summary$RMSE <- RMSE
+            }
+            summary
+        })
+        if ("RandomForest" %in% names(summaryList))
+            summaryList$RandomForest$RMSE <- sqrt(1/length(ytest) * sum((predict(summaryList$RandomForest$out, Xtest) - ytest)^2))
     }
 
-    #l1-Error in estimation of intercept
-    if(!is.null(intercept0)) {
-      summaryList <- lapply(summaryList, function(summary) {
-        intercept <- summary$intercept
-        if(!is.null(intercept)) summary$l1error_intercept <- sum(abs(intercept- intercept0))
-        summary
-      })
+    # For binomial family calculate ROC, AUC and Brier Score
+    if (family == "binomial") {
+        summaryList <- lapply(summaryList, function(summary) {
+            beta <- summary$beta
+            intercept <- summary$intercept
+            if (!is.null(beta)) {
+                # for cases without linear coeeficients e.g. Random Forest
+                eval.out <- EvaluateModel(beta, intercept = intercept, Xtest, ytest, beta0 = beta0, family = "binomial")
+                summary$AUC <- eval.out$AUC
+                summary$ROC <- eval.out$ROC
+                summary$BS <- eval.out$BS
+            }
+            summary
+        })
+    }
+
+    ###### Feature Recovery
+    if (!is.null(beta0)) {
+        summaryList <- lapply(summaryList, function(summary) {
+            beta <- summary$beta
+            intercept <- summary$intercept
+            if (!is.null(beta)) {
+                # for cases without linear coeeficients e.g. Random Forest
+                eval.out <- EvaluateModel(beta, intercept = intercept, Xtest, ytest, beta0 = beta0, family = "gaussian")
+                summary$FPR <- eval.out$FPR
+                summary$FNR <- eval.out$FNR
+            }
+            summary
+        })
+    }
+
+
+    ###### Error on estimate
+
+    # l1-Error in estimation of coeffcients
+    if (!is.null(beta0)) {
+        summaryList <- lapply(summaryList, function(summary) {
+            beta <- summary$beta
+            if (!is.null(beta))
+                summary$l1error_beta <- sum(abs(beta - beta0))
+            summary
+        })
+    }
+
+    # l1-Error in estimation of intercept
+    if (!is.null(intercept0)) {
+        summaryList <- lapply(summaryList, function(summary) {
+            intercept <- summary$intercept
+            if (!is.null(intercept))
+                summary$l1error_intercept <- sum(abs(intercept - intercept0))
+            summary
+        })
     }
 
     allFits$summaryList <- summaryList
@@ -493,55 +477,58 @@ evaluateFits <- function(allFits, Xtest, ytest){
 #' @import ggplot2
 #' @export
 
-plotMethodComparison <- function(resultList, plotbeta=F){
-# get results in dataframe format
-eval_summary <- melt(lapply(resultList, function(l) rbind(FPR=l$FPR, FNR=l$FNR, RMSE=l$RMSE, l1error_beta=l$l1error_beta)), varnames=c("measure","method"), level="run")
+plotMethodComparison <- function(resultList, plotbeta = F) {
+    # get results in dataframe format
+    eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR, RMSE = l$RMSE, l1error_beta = l$l1error_beta)),
+        varnames = c("measure", "method"), level = "run")
 
-pf_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$pf_mat, varnames = c("group", "method"), value.name =  "penalty_factor"), Lrun = i)) %>% bind_rows()
+    pf_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$pf_mat, varnames = c("group", "method"),
+        value.name = "penalty_factor"), Lrun = i)) %>% bind_rows()
 
-sparsity_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$sparsity_mat, varnames = c("group", "method"), value.name =  "sparsity_level"), Lrun = i)) %>% bind_rows()
+    sparsity_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$sparsity_mat, varnames = c("group",
+        "method"), value.name = "sparsity_level"), Lrun = i)) %>% bind_rows()
 
-beta_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$beta_mat, varnames = c("feature", "method"), value.name =  "beta"), Lrun = i)) %>% bind_rows()
-# the folowing only works if annot is names properly, needs to be fixes
-beta_summary$group <- sapply(1:nrow(beta_summary), function(i) resultList[[beta_summary$Lrun[i]]]$annot[beta_summary$feature[i]])
+    beta_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$beta_mat, varnames = c("feature", "method"),
+        value.name = "beta"), Lrun = i)) %>% bind_rows()
+    # the folowing only works if annot is names properly, needs to be fixes
+    beta_summary$group <- sapply(1:nrow(beta_summary), function(i) resultList[[beta_summary$Lrun[i]]]$annot[beta_summary$feature[i]])
 
-intercepts_summary <- melt(lapply(resultList, function(l) t(l$intercepts)), varnames = c("const", "method"), value.name =  "intercept", level = "run")[,2:4]
+    intercepts_summary <- melt(lapply(resultList, function(l) t(l$intercepts)), varnames = c("const", "method"), value.name = "intercept",
+        level = "run")[, 2:4]
 
-runtime_summary <- melt(lapply(resultList, function(l) t(l$runtime)), varnames = c("const","method"), value.name =  "runtime", level = "run")[,2:4]
+    runtime_summary <- melt(lapply(resultList, function(l) t(l$runtime)), varnames = c("const", "method"), value.name = "runtime",
+        level = "run")[, 2:4]
 
-gg_pf <- ggplot(pf_summary, aes(x=group, y=penalty_factor, fill= group, group= group)) +
-  geom_boxplot() + facet_wrap(~method, scales = "free_y") + ggtitle("Penalty Factors per group")+
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))
-print(gg_pf)
+    gg_pf <- ggplot(pf_summary, aes(x = group, y = penalty_factor, fill = group, group = group)) + geom_boxplot() + facet_wrap(~method,
+        scales = "free_y") + ggtitle("Penalty Factors per group") + theme(axis.text.x = element_text(angle = 60, hjust = 1))
+    print(gg_pf)
 
-gg_sparse <-ggplot(sparsity_summary, aes(x=group, y=sparsity_level, fill= group, group= group)) +
-  geom_boxplot() + facet_wrap(~method, scales = "free_y") + ggtitle("Sparsity Level per group (1=dense)")+
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))
-print(gg_sparse)
+    gg_sparse <- ggplot(sparsity_summary, aes(x = group, y = sparsity_level, fill = group, group = group)) + geom_boxplot() + facet_wrap(~method,
+        scales = "free_y") + ggtitle("Sparsity Level per group (1=dense)") + theme(axis.text.x = element_text(angle = 60, hjust = 1))
+    print(gg_sparse)
 
-gg_perf <- ggplot(filter(eval_summary, method != "TrueModel"), aes(x=method, y=value, fill= method)) +
-  geom_boxplot() + ggtitle("Method comparison") +facet_wrap(~measure, scales = "free_y") +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Performance measures")
-print(gg_perf)
+    gg_perf <- ggplot(filter(eval_summary, method != "TrueModel"), aes(x = method, y = value, fill = method)) + geom_boxplot() +
+        ggtitle("Method comparison") + facet_wrap(~measure, scales = "free_y") + theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+        ggtitle("Performance measures")
+    print(gg_perf)
 
-if(plotbeta){
-gg_beta <- ggplot(beta_summary, aes(x=beta, fill= group, group=group)) +
-  geom_histogram(alpha=0.6,position="identity") + facet_wrap(~method, scales = "free") +
-  ggtitle("Distribution of estimated coefficients per group")
-print(gg_beta)
+    if (plotbeta) {
+        gg_beta <- ggplot(beta_summary, aes(x = beta, fill = group, group = group)) + geom_histogram(alpha = 0.6, position = "identity") +
+            facet_wrap(~method, scales = "free") + ggtitle("Distribution of estimated coefficients per group")
+        print(gg_beta)
+    }
+
+    gg_runtime <- ggplot(runtime_summary, aes(x = method, y = runtime, group = method, fill = method)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 60,
+        hjust = 1)) + ggtitle("Runtime") + ylab("secs")
+    print(gg_runtime)
 }
 
-gg_runtime <- ggplot(runtime_summary, aes(x=method, y=runtime, group=method, fill = method)) + geom_boxplot()+
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Runtime") +ylab("secs")
-print(gg_runtime)
-}
 
 
 
 
 
-
-#old verison below for plotting useful but need to be adapted to new eval fucntion above
+# old verison below for plotting useful but need to be adapted to new eval fucntion above
 #'
 #' # ---------------------------
 #' #'  plotMethodComparison
@@ -553,7 +540,7 @@ print(gg_runtime)
 #' #' @param plotit Boolean, indication wether to produce plots of MSE and penalty factors
 #' #' @return Datframe containing error measures per method
 #'
-#' plotMethodComparison<-function(allFits, Xtest, ytest, plotit=T, family="gaussian", plotbeta=F, saveit=F, filenm=""){
+#' plotMethodComparison<-function(allFits, Xtest, ytest, plotit=T, family='gaussian', plotbeta=F, saveit=F, filenm=''){
 #'
 #'   coefficients <- allFits$coefficients
 #'   penaltyFactors <- allFits$penaltyFactors
@@ -561,29 +548,29 @@ print(gg_runtime)
 #'   beta0 <- allFits$beta0
 #'
 #'   # Plot group-wise penalties
-#'   ggrelPenal <- ggplot(penaltyFactors, aes(x=group, y=penalty_factor, group=method, fill=method))+geom_bar(stat="summary", position="dodge", fun.y="mean")+
-#'     ggtitle("Penalty factor per group") +facet_wrap(~method, scales = "free_y")+
+#'   ggrelPenal <- ggplot(penaltyFactors, aes(x=group, y=penalty_factor, group=method, fill=method))+geom_bar(stat='summary', position='dodge', fun.y='mean')+
+#'     ggtitle('Penalty factor per group') +facet_wrap(~method, scales = 'free_y')+
 #'     theme(axis.text.x = element_text(angle = 60, hjust = 1))
 #'   if(plotit) print(ggrelPenal)
 #'
 #'   #Extract estimatedmodel coefficinets
-#'   if(is.null(beta0)) coefficients<-coefficients[,!grepl("beta_true", colnames(coefficients))]
-#'   betaDF <- coefficients[,grepl("beta", colnames(coefficients))]
+#'   if(is.null(beta0)) coefficients<-coefficients[,!grepl('beta_true', colnames(coefficients))]
+#'   betaDF <- coefficients[,grepl('beta', colnames(coefficients))]
 #'
 #'
 #'   #For gaussian family calculate MSE as measure of prediciton performance
-#'   if(family=="gaussian"){
+#'   if(family=='gaussian'){
 #'     if(UseIntercept) MSE<-apply(betaDF, 2, function(beta) 1/length(ytest)*sum((cbind(1,Xtest)%*%beta- as.vector(ytest))^2))
 #'     else MSE<-apply(betaDF, 2, function(beta) 1/length(ytest)*sum((Xtest%*%beta- as.vector(ytest))^2))
-#'     if("RFout" %in% names(allFits)) MSE<-c(MSE, RF=1/length(ytest)*sum((predict(allFits$RFout, Xtest)-ytest)^2))
+#'     if('RFout' %in% names(allFits)) MSE<-c(MSE, RF=1/length(ytest)*sum((predict(allFits$RFout, Xtest)-ytest)^2))
 #'
 #'     EvalDF<-data.frame(method= names(MSE), MSE=MSE)
-#'     ggMSE<-ggplot(EvalDF, aes(x=method, y=MSE, fill=method))+geom_bar(stat="identity")+ggtitle("MSE")+
+#'     ggMSE<-ggplot(EvalDF, aes(x=method, y=MSE, fill=method))+geom_bar(stat='identity')+ggtitle('MSE')+
 #'       theme(axis.text.x = element_text(angle = 60, hjust = 1))
 #'     if(plotit) print(ggMSE)
 #'   }
 #'   #For binomial family calculate ROC, aUC and Brier Score
-#'   else if(family=="binomial"){
+#'   else if(family=='binomial'){
 #'     #ROC curve
 #'     if(UseIntercept) {
 #'       interceptDF = betaDF[1,]
@@ -595,32 +582,32 @@ print(gg_runtime)
 #'
 #'     ROC<-lapply(1:ncol(betaDF),function( idx) EvaluateModel(betaDF_withoutIntercept[,idx], intercept=interceptDF[idx],
 #'                                                             Xtest,ytest,
-#'                                                             beta0=beta0, family="binomial")$ROC)
+#'                                                             beta0=beta0, family='binomial')$ROC)
 #'     if(plotit){
 #'     colors4method<-rainbow(ncol(betaDF))
 #'     names(colors4method)<-colnames(betaDF)
-#'     plot(NA,xlim=c(0,1), ylim=c(0,1), xlab="FPR", ylab="TPR")
+#'     plot(NA,xlim=c(0,1), ylim=c(0,1), xlab='FPR', ylab='TPR')
 #'     for(idx in 1:ncol(betaDF)) lines(ROC[[idx]][1,], ROC[[idx]][2,], col=colors4method[colnames(betaDF)[idx]])
 #'     legend(x=0.4,y=0.3, legend=names(colors4method), fill=colors4method)
 #'     }
 #'     #AUC
 #'     AUC<-sapply(1:ncol(betaDF),function( idx) EvaluateModel(betaDF_withoutIntercept[,idx], intercept=interceptDF[idx],
 #'                                                             Xtest,ytest,
-#'                                                            beta0=beta0, family="binomial")$AUC)
+#'                                                            beta0=beta0, family='binomial')$AUC)
 #'
 #'     #Test prediction performance (Brier Score)
 #'     BS<-sapply(1:ncol(betaDF),function( idx) EvaluateModel(betaDF_withoutIntercept[,idx], intercept=interceptDF[idx],
 #'                                                            Xtest,ytest,
-#'                                                           beta0=beta0, family="binomial")$BrierScore)
+#'                                                           beta0=beta0, family='binomial')$BrierScore)
 #'     EvalDF<-data.frame(method= colnames(betaDF), AUC=AUC, BS=BS)
-#'     ggAUC<-ggplot(EvalDF, aes(x=method, y=AUC, fill=method))+geom_bar(stat="identity")+ggtitle("AUC")+
+#'     ggAUC<-ggplot(EvalDF, aes(x=method, y=AUC, fill=method))+geom_bar(stat='identity')+ggtitle('AUC')+
 #'       theme(axis.text.x = element_text(angle = 60, hjust = 1))
-#'     ggBS<-ggplot(EvalDF, aes(x=method, y=BS, fill=method))+geom_bar(stat="identity")+ggtitle("Brier Score")+
+#'     ggBS<-ggplot(EvalDF, aes(x=method, y=BS, fill=method))+geom_bar(stat='identity')+ggtitle('Brier Score')+
 #'       theme(axis.text.x = element_text(angle = 60, hjust = 1))
-#'     if(plotit) grid.arrange(ggAUC, ggBS, ncol=2)
+#'     if(plotit) gridExtra::grid.arrange(ggAUC, ggBS, ncol=2)
 #'   }
 #'   #No other families implemented
-#'   else("Family not known")
+#'   else('Family not known')
 #'
 #'
 #'   #evaluate estimates
@@ -630,14 +617,14 @@ print(gg_runtime)
 #'     #l1-Error in estimation of intercept
 #'     if(UseIntercept) InterceptDiff<-apply(betaDF, 2, function(beta) sum(abs(beta[1]- betaDF$beta_true[1]))) else InterceptDiff<-NA
 #'
-#'     ggL1 <- ggplot(EvalDF, aes(x=method, y=L1DiffBeta, fill=method))+geom_bar(stat="identity")+ggtitle("L1 error in estimated coeffcients")+
+#'     ggL1 <- ggplot(EvalDF, aes(x=method, y=L1DiffBeta, fill=method))+geom_bar(stat='identity')+ggtitle('L1 error in estimated coeffcients')+
 #'       theme(axis.text.x = element_text(angle = 60, hjust = 1))
-#'     if(UseIntercept)ggInterceptDiff<-ggplot(EvalDF, aes(x=method, y=InterceptDiff, fill=method))+geom_bar(stat="identity")+ggtitle("abs error in estimated intercept")+
+#'     if(UseIntercept)ggInterceptDiff<-ggplot(EvalDF, aes(x=method, y=InterceptDiff, fill=method))+geom_bar(stat='identity')+ggtitle('abs error in estimated intercept')+
 #'       theme(axis.text.x = element_text(angle = 60, hjust = 1))
 #'
-#'      if("RFout" %in% names(allFits)) {
+#'      if('RFout' %in% names(allFits)) {
 #'        #at the moment only works if RF is last
-#'        stopifnot(EvalDF$method[nrow(EvalDF)]=="RF")
+#'        stopifnot(EvalDF$method[nrow(EvalDF)]=='RF')
 #'        L1DiffBeta<-c(L1DiffBeta,NA)
 #'        InterceptDiff<-c(InterceptDiff,NA)
 #'        }
@@ -646,7 +633,7 @@ print(gg_runtime)
 #'                        InterceptDiff=InterceptDiff)
 #'
 #'   if(plotit){
-#'     if(UseIntercept) grid.arrange(ggL1,ggInterceptDiff, ncol=2)
+#'     if(UseIntercept) gridExtra::grid.arrange(ggL1,ggInterceptDiff, ncol=2)
 #'     else print(ggL1)
 #'   }
 #'   }
@@ -654,15 +641,15 @@ print(gg_runtime)
 #'   betaDF$group <- allFits$coefficients$group
 #'   if(UseIntercept) betaDF$Feature<-allFits$coefficients$id
 #'   if(UseIntercept) betaDF$FeatureNo <- 0:ncol(Xtest) else betaDF$FeatureNo <- 1:ncol(Xtest)
-#'   moltenbetaDF<-melt(betaDF[betaDF$Feature!="intercept",], id.vars = c("Feature", "group", "FeatureNo"))
-#'   ggbeta<-ggplot(moltenbetaDF, aes(x=as.numeric(FeatureNo), y=value, fill=group))+geom_bar(stat="identity", position = "dodge")+facet_wrap(~variable, scales = "free_y")+
+#'   moltenbetaDF<-melt(betaDF[betaDF$Feature!='intercept',], id.vars = c('Feature', 'group', 'FeatureNo'))
+#'   ggbeta<-ggplot(moltenbetaDF, aes(x=as.numeric(FeatureNo), y=value, fill=group))+geom_bar(stat='identity', position = 'dodge')+facet_wrap(~variable, scales = 'free_y')+
 #'     theme(axis.text.x = element_text(angle = 60, hjust = 1))
 #'
 #'
 #'   if(plotbeta){
 #'     print(ggbeta)
 #'   }
-#'   if(saveit) save(list(EvalDF=EvalDF, DFGroupPenalties=dfgp, betaDF=moltenbetaDF), file = paste(filenm,"_evalgrpRR.RData", sep=""))
+#'   if(saveit) save(list(EvalDF=EvalDF, DFGroupPenalties=dfgp, betaDF=moltenbetaDF), file = paste(filenm,'_evalgrpRR.RData', sep=''))
 #'
 #'   return(list(EvalDF=EvalDF, betaDF=moltenbetaDF))
 #'   }

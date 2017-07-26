@@ -23,25 +23,15 @@
 #' @usage data(CLLOmics)
 NULL
 
-# inputdir<-"~/Documents/LassoVariants/DataCompendium/CLL_views/R"
-# allfiles<-list.files(inputdir)
-# allfiles<-allfiles[grepl(".rds",allfiles)]
-# CLLOmics<-lapply(allfiles, function(file) {
-#   print(file)
-#   readRDS(file.path(inputdir,file))
-# })
-# #mislabeled mRNA and linRNA adn overlapping miRNA and lncRNa
-# load("/Users/bvelten/Documents/cll/Preprocessing_omics/proc170116/expr_miRNA.RData")
-# load("/Users/bvelten/Documents/cll/Preprocessing_omics/proc170116/expr_mRNA.RData")
-# load("/Users/bvelten/Documents/cll/Preprocessing_omics/proc170116/expr_lincRNA.RData")
-# names(CLLOmics)<-sapply(allfiles, function(str) sub(".rds", "",str))
-# sapply(CLLOmics, dim)
-#
-# CLLOmics$expr_lincRNA<-lincRNA[rownames(CLLOmics$surv1),]
-# CLLOmics$expr_mRNA<-mRNA[rownames(CLLOmics$surv1),]
-# CLLOmics$expr_miRNA<-miRNA[rownames(CLLOmics$surv1),]
-# sapply(CLLOmics, dim)
-# save(CLLOmics, file="~/svn/huber/users/bvelten/LassoVariants/grpRR/data/CLLOmics.RData")
+# inputdir<-'~/Documents/LassoVariants/DataCompendium/CLL_views/R' allfiles<-list.files(inputdir)
+# allfiles<-allfiles[grepl('.rds',allfiles)] CLLOmics<-lapply(allfiles, function(file) { print(file)
+# readRDS(file.path(inputdir,file)) }) #mislabeled mRNA and linRNA adn overlapping miRNA and lncRNa
+# load('/Users/bvelten/Documents/cll/Preprocessing_omics/proc170116/expr_miRNA.RData')
+# load('/Users/bvelten/Documents/cll/Preprocessing_omics/proc170116/expr_mRNA.RData')
+# load('/Users/bvelten/Documents/cll/Preprocessing_omics/proc170116/expr_lincRNA.RData') names(CLLOmics)<-sapply(allfiles,
+# function(str) sub('.rds', '',str)) sapply(CLLOmics, dim) CLLOmics$expr_lincRNA<-lincRNA[rownames(CLLOmics$surv1),]
+# CLLOmics$expr_mRNA<-mRNA[rownames(CLLOmics$surv1),] CLLOmics$expr_miRNA<-miRNA[rownames(CLLOmics$surv1),] sapply(CLLOmics,
+# dim) save(CLLOmics, file='~/svn/huber/users/bvelten/LassoVariants/grpRR/data/CLLOmics.RData')
 
 
 #' GSDC multi-omic data
@@ -59,7 +49,7 @@ NULL
 #'   \item{ic50}{IC50 values for p=265 drugs}
 #'   \item{speedScoreBinary}{Speed Score from expression data, p=22}
 #'   \item{X}{joint design matrix, p=19009}
-#'   \item{annot}{annotation to 5 groups "mut"   "meth"  "CNA"   "expr"  "speed" }
+#'   \item{annot}{annotation to 5 groups 'mut'   'meth'  'CNA'   'expr'  'speed' }
 #' }
 #' @name gdsc1000
 #' @usage data(gdsc1000)

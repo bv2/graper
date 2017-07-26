@@ -14,7 +14,7 @@
   \item{ic50}{IC50 values for p=265 drugs}
   \item{speedScoreBinary}{Speed Score from expression data, p=22}
   \item{X}{joint design matrix, p=19009}
-  \item{annot}{annotation to 5 groups "mut"   "meth"  "CNA"   "expr"  "speed" }
+  \item{annot}{annotation to 5 groups 'mut'   'meth'  'CNA'   'expr'  'speed' }
 }}
 \usage{
 data(gdsc1000)
