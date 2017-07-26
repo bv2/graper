@@ -33,11 +33,13 @@
 #' @import GRridge
 #' @import randomForest
 #' @import grpreg
+#' @import ipflasso
 #' @export 
 
 #ToDo: Option to standardize the input and then re-adjust estimates coefficeints to not standardized
 RunMethods<-function(Xtrain, ytrain, annot, beta0=NULL, trueintercept=NULL, max_iter=500, intercept=T, plotit=T, standardize=F, verbose=F, compareGRridge=F,
-                     freqELB=10, calcELB=T, include_nonfacQ=T, family="gaussian", constantXcol=F, compareGroupLasso=T, includeRF=T, th=1e-7){
+                     freqELB=10, calcELB=T, include_nonfacQ=T, family="gaussian", constantXcol=F, compareGroupLasso=T, includeRF=T, th=1e-7,
+                     compareIPF=T, compareAdaLasso=T){
 
   if(!standardize) warning("Group Lasso and Grridge are standardized despite of standardized = F")
 
@@ -301,6 +303,62 @@ RunMethods<-function(Xtrain, ytrain, annot, beta0=NULL, trueintercept=NULL, max_
       summaryList$TrueModel <- TrueModel_summary
     }
 
+    # IPF -Lasso
+    # NOTE alwyas fit an intercept
+    # error because cv.glmnet and its element cv.glmnet$glmnet.fit haev different lambda sequences? Can happen if some cvm are NA ???
+    if(compareIPF) {
+      # penalty factors to consider for cross-validation (unclear how to choose)
+      lambda_1d <- seq(1, 10, 2)
+      tmp<-Sys.time()
+      pfgrid <- expand.grid(rep(list(lambda_grid1d),G))
+      pflist <- lapply(seq_len(nrow(pfgrid)), function(i) pfgrid[i,])
+      type.measure <- ifelse(family=="gaussian", "mse", "class")
+      ipf.out <- try(cvr2.ipflasso(Xtrain, ytrain, alpha=1, standardize=standardize, family=family, type.measure=type.measure,
+                               blocks = lapply(1:G, function(gr) which(annot == gr)), pflist=pflist,
+                               nfolds=10, ncv = 1))  #using same cv parameter as standard glmnet
+      tmp <- difftime( Sys.time(), tmp, units = "secs")
+      
+      if(class(ipf.out)=="try-error") {
+        warning("ipf-lasso encountered errors, not included in the comparison!")
+      } else{
+      IPFLasso_summary<- list()
+      IPFLasso_summary$runtime <- as.numeric(tmp)
+      IPFLasso_summary$pf <- ind.bestpf
+      IPFLasso_summary$beta <- NULL
+      IPFLasso_summary$intercept <- NULL
+      IPFLasso_summary$sparsity <- NULL
+      IPFLasso_summary$out <- rf.out
+      rm(ipf.out)
+      summaryList$IPFLasso <- IPFLasso_summary
+      }
+      
+    }
+    
+    # Adaptive Lasso
+    if(compareAdaLasso) {
+      tmp<-Sys.time()
+      ## Ridge Regression to create the Adaptive Weights Vector
+      RidgeFit <- cv.glmnet(Xtrain, ytrain, alpha=0, intercept=intercept, standardize=standardize, family=family, penalty.factor=penaltyFac)
+      wRidge <- pmin(1/abs((coef(RidgeFit, s=RidgeFit$lambda.min))), 1e300)
+      if(intercept) wRidge <- wRidge[-1]
+
+      ## Adaptive Lasso
+      adaLassoFit <- cv.glmnet(Xtrain, ytrain, alpha=1, intercept=intercept, standardize=standardize, family=family, penalty.factor=penaltyFac*wRidge)
+      tmp <- difftime( Sys.time(), tmp, units = "secs")
+      
+      if(intercept) beta_adalasso <- as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))[-1]
+      else beta_adalasso <- as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))
+
+      adaLasso_summary<- list()
+      adaLasso_summary$runtime <- as.numeric(tmp)
+      adaLasso_summary$pf <- sapply(1:G, function(gr) mean(adaLassoFit$lambda.min * penaltyFac * wRidge[annot==gr]))
+      adaLasso_summary$beta <- beta_adalasso
+      adaLasso_summary$intercept <- ifelse(intercept, as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))[1], NULL)
+      adaLasso_summary$sparsity <- sapply(1:G, function(gr) sum(beta_adalasso[annot==gr]!=0)/sum(annot==gr))
+      adaLasso_summary$out <- adaLassoFit
+      rm(adaLassoFit, beta_adalasso)
+      summaryList$adaLasso <- adaLasso_summary
+    }
     # #Ridge with PF by average marginal coefficients...better use significance instead of effect size....
     # marg<-MarginalCoefficient(ytrain, scale(Xtrain), family = family)
     # avMargGroup<-sapply(annot, function(g) mean(abs(marg[1,annot==g])))
@@ -432,6 +490,7 @@ evaluateFits <- function(allFits, Xtest, ytest){
 #' @param resultList List as in simulation_setting1.Rmd
 #' @import dplyr
 #' @import reshape2
+#' @import ggplot2
 #' @export
 
 plotMethodComparison <- function(resultList){
@@ -445,7 +504,8 @@ sparsity_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultL
 sparsity_summary$group <- as.factor(sparsity_summary$group)
 
 beta_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$beta_mat, varnames = c("feature", "method"), value.name =  "beta"), Lrun = i)) %>% bind_rows()
-beta_summary$group <- resultList[[1]]$annot[beta_summary$feature]
+# the folowing only works if annot is names properly, needs to be fixes
+beta_summary$group <- sapply(1:nrow(beta_summary), function(i) resultList[[beta_summary$Lrun[i]]]$annot[beta_summary$feature[i]])
 
 intercepts_summary <- melt(lapply(resultList, function(l) t(l$intercepts)), varnames = c("const", "method"), value.name =  "intercept", level = "run")[,2:4]
 
