@@ -1,7 +1,7 @@
 # R function to call the different C functions defined in fit_grpRR.cpp fit_grpRR This file contains the main function to fit a
 # grpRR model.
 
----------------------------
+# ---------------------------
 #'  Fit grpRR model
 #'
 #'  Main function to fit a grpRR model.

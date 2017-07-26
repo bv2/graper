@@ -15,7 +15,7 @@
 #         - GRridge
 #   - evalResult: Compare Estimates produced in RunMethods by MSE and estimation error
 #   - plotMethodComparison: Plot comparison results from evalResult
----------------------------
+# ---------------------------
 
 #' RunMethods
 #'
