@@ -305,7 +305,7 @@ RunMethods<-function(Xtrain, ytrain, annot, beta0=NULL, trueintercept=NULL, max_
 
     # IPF -Lasso
     # NOTE alwyas fit an intercept
-    # error because cv.glmnet and its element cv.glmnet$glmnet.fit haev different lambda sequences? Can happen if some cvm are NA ???
+    # error because cv.glmnet and its element cv.glmnet$glmnet.fit haev different lambda sequences? Can happen if some cvsd are NA nas = is.na(cvsd)???
     if(compareIPF) {
       # penalty factors to consider for cross-validation (unclear how to choose)
       lambda_1d <- seq(1, 10, 2)
@@ -357,7 +357,7 @@ RunMethods<-function(Xtrain, ytrain, annot, beta0=NULL, trueintercept=NULL, max_
       adaLasso_summary$sparsity <- sapply(1:G, function(gr) sum(beta_adalasso[annot==gr]!=0)/sum(annot==gr))
       adaLasso_summary$out <- adaLassoFit
       rm(adaLassoFit, beta_adalasso)
-      summaryList$adaLasso <- adaLasso_summary
+      summaryList$adaptiveLasso <- adaLasso_summary
     }
     # #Ridge with PF by average marginal coefficients...better use significance instead of effect size....
     # marg<-MarginalCoefficient(ytrain, scale(Xtrain), family = family)
@@ -493,15 +493,13 @@ evaluateFits <- function(allFits, Xtest, ytest){
 #' @import ggplot2
 #' @export
 
-plotMethodComparison <- function(resultList){
+plotMethodComparison <- function(resultList, plotbeta=F){
 # get results in dataframe format
 eval_summary <- melt(lapply(resultList, function(l) rbind(FPR=l$FPR, FNR=l$FNR, RMSE=l$RMSE, l1error_beta=l$l1error_beta)), varnames=c("measure","method"), level="run")
 
 pf_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$pf_mat, varnames = c("group", "method"), value.name =  "penalty_factor"), Lrun = i)) %>% bind_rows()
-pf_summary$group <- as.factor(pf_summary$group)
 
 sparsity_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$sparsity_mat, varnames = c("group", "method"), value.name =  "sparsity_level"), Lrun = i)) %>% bind_rows()
-sparsity_summary$group <- as.factor(sparsity_summary$group)
 
 beta_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$beta_mat, varnames = c("feature", "method"), value.name =  "beta"), Lrun = i)) %>% bind_rows()
 # the folowing only works if annot is names properly, needs to be fixes
@@ -526,11 +524,12 @@ gg_perf <- ggplot(filter(eval_summary, method != "TrueModel"), aes(x=method, y=v
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Performance measures")
 print(gg_perf)
 
+if(plotbeta){
 gg_beta <- ggplot(beta_summary, aes(x=beta, fill= group, group=group)) +
   geom_histogram(alpha=0.6,position="identity") + facet_wrap(~method, scales = "free") +
   ggtitle("Distribution of estimated coefficients per group")
 print(gg_beta)
-
+}
 
 gg_runtime <- ggplot(runtime_summary, aes(x=method, y=runtime, group=method, fill = method)) + geom_boxplot()+
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + ggtitle("Runtime") +ylab("secs")
