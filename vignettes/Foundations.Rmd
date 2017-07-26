@@ -5,10 +5,10 @@ date: "`r Sys.Date()`"
 output:
   BiocStyle::html_document:
     toc: true
-vignette: >
-  %\VignetteIndexEntry{Foundations}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+# vignette: >
+#   %\VignetteIndexEntry{Foundations}
+#   %\VignetteEngine{knitr::rmarkdown}
+#   %\VignetteEncoding{UTF-8}
 ---
 
 #Variational Bayes approach with a normal prior
