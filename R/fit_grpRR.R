@@ -40,16 +40,16 @@ fit_grpRR<-function(X,y,annot, factoriseQ=T, spikeslab= F, d_tau=0.001, r_tau=0.
   stopifnot(ncol(X)==length(annot))
 
   #check structure of annot: needs to be 1:g with 1 <-> frist group etc
-  annot<-as.factor(annot)
+  annot <- factor(annot, levels = unique(annot))
 
   #get data dimension
-  p<-ncol(X) #no of features
-  n<-nrow(X) #no of samples
+  p <- ncol(X) #no of features
+  n <- nrow(X) #no of samples
 
   #get group structure
-  g<-length(unique(annot))
-  NoPerGroup<-sapply(unique(annot), function(x) sum(annot==x))
-  names(NoPerGroup)<-unique(annot)
+  g <- length(unique(annot))
+  NoPerGroup <- sapply(unique(annot), function(x) sum(annot==x))
+  names(NoPerGroup) <- unique(annot)
 
   if(family=="gaussian"){
   if(intercept){
@@ -69,6 +69,8 @@ fit_grpRR<-function(X,y,annot, factoriseQ=T, spikeslab= F, d_tau=0.001, r_tau=0.
   #calculate intercept
   if(intercept) intercept<-attr(y, "scaled:center")-attr(X, "scaled:center")%*%res$EW_beta else intercept<-NULL
 
+  # give proper names
+  rownames(res$EW_gamma) <- unique(annot)
   #return mean of approximate posterior (other quantities of interes: tau, lower bound on model evidence etc)
   return(append(res, list(intercept=intercept)))
   }
