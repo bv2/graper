@@ -128,7 +128,8 @@ public:
     sp_mat Id_n = speye(n,n);
     vec gamma_annot(p);
     for(int i = 0; i< p; i++) {
-      gamma_annot(i)=EW_gamma(annot(i)-1);      // minus one as annot starts counting at 1 instead of 0
+      gamma_annot(i)=EW_gamma(annot(i)-1) + 1e-7;      // minus one as annot starts counting at 1 instead of 0
+       //to avoid singular matrixes bound away from 0 - stability? TO DO 
     }
 
 
