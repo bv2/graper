@@ -6,7 +6,7 @@
 #'
 Function to plot method comparison across several runs}
 \usage{
-plotMethodComparison(resultList)
+plotMethodComparison(resultList, plotbeta = F)
 }
 \arguments{
 \item{resultList}{List as in simulation_setting1.Rmd}

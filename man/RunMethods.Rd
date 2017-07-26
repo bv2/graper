@@ -8,7 +8,8 @@ RunMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
   max_iter = 500, intercept = T, plotit = T, standardize = F,
   verbose = F, compareGRridge = F, freqELB = 10, calcELB = T,
   include_nonfacQ = T, family = "gaussian", constantXcol = F,
-  compareGroupLasso = T, includeRF = T, th = 1e-07)
+  compareGroupLasso = T, includeRF = T, th = 1e-07, compareIPF = T,
+  compareAdaLasso = T)
 }
 \arguments{
 \item{Xtrain}{Design matrix of size n x p}
