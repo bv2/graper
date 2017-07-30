@@ -321,7 +321,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
         # penalty factors to consider for cross-validation (unclear how to choose)
         lambda_1d <- seq(1, 10, 2)
         tmp <- Sys.time()
-        pfgrid <- expand.grid(rep(list(lambda_grid1d), G))
+        pfgrid <- expand.grid(rep(list(lambda_1d), G))
         pflist <- lapply(seq_len(nrow(pfgrid)), function(i) pfgrid[i, ])
         type.measure <- ifelse(family == "gaussian", "mse", "class")
         ipf.out <- try(ipflasso::cvr2.ipflasso(Xtrain, ytrain, alpha = 1, standardize = standardize, family = family, type.measure = type.measure,
