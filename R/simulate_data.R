@@ -71,8 +71,8 @@ simulate_grpLM <- function(n = 100, p = 1000, beta_best = 3, G = 10, block_cor =
     
     # simulate response according to model and family
     if (model == "linear" & family == "gaussian") 
-        y <- X %*% beta0 + rnorm(n, 0, sigma2) else if (model == "log" & family == "gaussian") 
-        y <- log(X + 1000) %*% beta0 + rnorm(n, 0, sigma2) else if (model == "linear" & family == "binomial") {
+        y <- X %*% beta0 + rnorm(n, 0, sqrt(sigma2)) else if (model == "log" & family == "gaussian") 
+        y <- log(X + 1000) %*% beta0 + rnorm(n, 0, sqrt(sigma2)) else if (model == "linear" & family == "binomial") {
         exponent <- X %*% beta0
         prob <- exp(exponent)/(1 + exp(exponent))
         y <- rbinom(length(prob), 1, prob)
@@ -110,7 +110,7 @@ simulateExplicit <- function(n, p, beta, sigma2, seed, block_cor = 0, equiCor = 
     } else X <- matrix(rnorm(p * n, 0, 1), ncol = p, nrow = n)
     
     # simulate response
-    y <- X %*% beta + rnorm(n, 0, sigma2)
+    y <- X %*% beta + rnorm(n, 0, sqrt(sigma2))
     
     return(list(y = y, X = X))
 }
