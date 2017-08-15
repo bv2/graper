@@ -263,8 +263,12 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
         tmp <- Sys.time()
         partition <- GRridge::CreatePartition(as.factor(annot))
         if (intercept) {
-            MessagesGR <- capture.output(GRfit <- try(GRridge::grridge(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~1)))
-        } else MessagesGR <- capture.output(GRfit <- try(GRridge::grridge(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~0)))
+          if(family=="gaussian") MessagesGR <- capture.output(GRfit <- try(GRridge::grridgelin(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~1)))
+            else MessagesGR <- capture.output(GRfit <- try(GRridge::grridge(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~1)))
+        } else {
+          if(family=="gaussian") MessagesGR <- capture.output(GRfit <- try(GRridge::grridgelin(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~0)))
+            else  MessagesGR <- capture.output(GRfit <- try(GRridge::grridge(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~0)))
+        }
         tmp <- difftime(Sys.time(), tmp, units = "secs")
 
         if (verbose)
@@ -277,7 +281,8 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
             GRridge_summary$runtime <- as.numeric(tmp)
             GRridge_summary$pf <- as.numeric(GRfit$lambdamults[[1]])
             GRridge_summary$beta <- GRfit$betas
-            GRridge_summary$intercept <- ifelse(intercept, GRfit$predobj$GroupRegul@unpenalized, NULL)
+            if(family=="gaussian") GRridge_summary$intercept <- ifelse(intercept, coef(GRfit$predobj$GroupRegul)[1], NULL)
+              else GRridge_summary$intercept <- ifelse(intercept, GRfit$predobj$GroupRegul@unpenalized, NULL) 
             GRridge_summary$sparsity <- rep(1, G)
             GRridge_summary$out <- GRfit
             rm(GRfit)
@@ -493,7 +498,7 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 #' @import ggplot2
 #' @export
 
-plotMethodComparison <- function(resultList, plotbeta = F, family = "gaussin") {
+plotMethodComparison <- function(resultList, plotbeta = F, family = "gaussian") {
     # get results in dataframe format
     if(family=="gaussian"){
     eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR, RMSE = l$RMSE, l1error_beta = l$l1error_beta)),
