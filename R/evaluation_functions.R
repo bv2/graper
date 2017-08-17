@@ -525,11 +525,11 @@ plotMethodComparison <- function(resultList, plotbeta = F, family = "gaussian") 
     runtime_summary <- melt(lapply(resultList, function(l) t(l$runtime)), varnames = c("const", "method"), value.name = "runtime",
         level = "run")[, 2:4]
 
-    gg_pf <- ggplot(pf_summary, aes(x = group, y = penalty_factor, fill = group, group = group)) + geom_boxplot() + facet_wrap(~method,
+    gg_pf <- ggplot(pf_summary, aes(x = as.factor(group), y = penalty_factor, fill = as.factor(group), group = as.factor(group))) + geom_boxplot() + facet_wrap(~method,
         scales = "free_y") + ggtitle("Penalty Factors per group") + theme(axis.text.x = element_text(angle = 60, hjust = 1))
     print(gg_pf)
 
-    gg_sparse <- ggplot(sparsity_summary, aes(x = group, y = sparsity_level, fill = group, group = group)) + geom_boxplot() + facet_wrap(~method,
+    gg_sparse <- ggplot(sparsity_summary, aes(x = as.factor(group), y = sparsity_level, fill = as.factor(group), group = as.factor(group))) + geom_boxplot() + facet_wrap(~method,
         scales = "free_y") + ggtitle("Sparsity Level per group (1=dense)") + theme(axis.text.x = element_text(angle = 60, hjust = 1))
     print(gg_sparse)
 
