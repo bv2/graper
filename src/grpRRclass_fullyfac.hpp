@@ -172,8 +172,14 @@ public:
 
   //function to update expected values of beta
   void update_exp_beta(){
+      if(verbose) Rcout << "Updating expected values containing beta.." << endl;
+      auto start_beta=get_time::now();
+
     EW_betasq=square(mu_beta)+sigma2_beta;
-    EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % (Sigma_beta+mu_beta*trans(mu_beta))));
+    //EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % (Sigma_beta+mu_beta*trans(mu_beta))));
+    EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(diagXtX % Sigma_beta.diag()) + trans(mu_beta)*XtX*mu_beta);
+      auto time_beta = get_time::now() - start_beta;
+      if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_beta).count()<<" ms "<<endl;
   }
 
   //function to update expected values of tau
