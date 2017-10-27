@@ -14,7 +14,7 @@ class  grpRR_dense_ff {
 private:
   // values remaining constant
   mat  X, XtX;
-  vec y, Xty;
+  vec y, Xty, diagXtX;
   rowvec ytX;
   Row<int> annot;
   double yty;
@@ -53,6 +53,7 @@ public:
   , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
   , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
   , XtX(trans(X)*X)
+  , diagXtX(XtX.diag())
   , Xty(trans(X)*y)
   , ytX(trans(y)*X)
   , yty(as_scalar(trans(y)*y))
@@ -111,12 +112,12 @@ public:
     n_iter=n_iter+1;                          //increasing counter by 1
     if(verbose) Rcout << "iteration " << n_iter << endl;
 
-    update_param_beta();
-    update_exp_beta();
-    update_param_tau();
-    update_exp_tau();
-    update_param_gamma();
-    update_exp_gamma();
+      update_param_beta();  
+      update_exp_beta();    //time-consuming for large p
+      update_param_tau();
+      update_exp_tau();
+      update_param_gamma();
+      update_exp_gamma();
 
     //optional: calculate ELB every freqELB-th step
     if(calcELB & n_iter%freqELB==0) calculate_ELBO();
@@ -135,11 +136,19 @@ public:
       gamma_annot(i)=EW_gamma(annot(i)-1);      // minus one as annot starts counting at 1 instead of 0
     }
 
-      sigma2_beta=1/(EW_tau*XtX.diag()+gamma_annot);
+      sigma2_beta=1/(EW_tau*diagXtX+gamma_annot);
       Sigma_beta.diag() = sigma2_beta;
 
+    vec vec1 = X*mu_beta;
     for(int i = 0; i< p; i++){
-    mu_beta(i)=sigma2_beta(i)* EW_tau * (Xty(i)- accu(XtX.row(i)%trans(mu_beta)) + XtX(i,i)*mu_beta(i));
+        
+    //mu_beta(i)=sigma2_beta(i)* EW_tau * (Xty(i)- accu(XtX.row(i)%trans(mu_beta)) + XtX(i,i)*mu_beta(i));
+    // keep track of ld mu for efficient update of vec1
+    double old_mu_i = mu_beta(i);
+    //update mean mu
+    mu_beta(i)=sigma2_beta(i)* EW_tau * (Xty(i)- accu(X.col(i) % vec1) + diagXtX(i)*mu_beta(i));
+    //update vec1 (only in new coordinate of mu to avoid recomputing the full pxp product and get linear complexity)
+    vec1 = vec1 + (mu_beta(i) - old_mu_i)*X.col(i);
     }
 
     auto time_beta = get_time::now() - start_beta;
