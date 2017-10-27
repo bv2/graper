@@ -167,7 +167,7 @@ public:
     sigma2_tildebeta_0=1/gamma_annot;
     //mu_tildebeta_0.fill(0); stays always the same
     //parameter of normal distribution given s=1 and probability of s=1
-    sigma2_tildebeta_1=1/(EW_tau*XtX.diag()+gamma_annot);
+    sigma2_tildebeta_1=1/(EW_tau*diagXtX+gamma_annot);
     
     vec vec1 = X*mu_beta;
     for(int i = 0; i< p; i++){
@@ -176,7 +176,7 @@ public:
         // keep track of ld mu for efficient update of vec1
         double old_mu_i = mu_beta(i);
         
-        mu_tildebeta_1(i)= sigma2_tildebeta_1(i)* EW_tau * (Xty(i)- accu(X.col(i) % vec1) + XtX(i,i)*mu_beta(i));
+        mu_tildebeta_1(i)= sigma2_tildebeta_1(i)* EW_tau * (Xty(i)- accu(X.col(i) % vec1) + diagXtX(i)*mu_beta(i));
 
         
         //probability of s=1
@@ -227,6 +227,7 @@ public:
       if(verbose) Rcout << "Updating expected values containing beta.." << endl;
       auto start_beta=get_time::now();
     EW_betatildesq=psi%(square(mu_tildebeta_1) +sigma2_tildebeta_1) + (1-psi)% (square(mu_tildebeta_0) +sigma2_tildebeta_0);
+      
 
     //expected value of beta^2= tildebeta^2*s
     mu_betasq=psi%(square(mu_tildebeta_1)+sigma2_tildebeta_1);
@@ -237,14 +238,8 @@ public:
 
     //expected value of least squares expression
       // outer product of mu not very efficient, faster way?
-      EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % (Sigma_beta+mu_beta*trans(mu_beta))));
-//      double tmp;
-//      for(int i = 0; i< p; i++){
-//          for(int j = 0; j< p; j++){
-//              tmp = tmp + as_scalar(XtX(i,j)*mu_beta(i)*mu_beta(j));
-//              if(i==j) tmp = tmp + as_scalar(XtX(i,j)*Sigma_beta.diag()(i));
-//          }}
-//      EW_leastSquares=as_scalar(yty-2*ytX*mu_beta +tmp);
+      //EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % (Sigma_beta+mu_beta*trans(mu_beta))));
+      EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(diagXtX % Sigma_beta.diag()) + trans(mu_beta)*XtX*mu_beta);
       auto time_beta = get_time::now() - start_beta;
       if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_beta).count()<<" ms "<<endl;
   }
