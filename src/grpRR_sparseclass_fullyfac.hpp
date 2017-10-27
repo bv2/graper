@@ -15,7 +15,7 @@ class  grpRR_sparse_ff {
 private:
   // values remaining constant
   mat  X, XtX;
-  vec y, Xty;
+  vec y, Xty, diagXtX;
   rowvec ytX;
   Row<int> annot;
   double yty;
@@ -64,6 +64,7 @@ public:
   , d_pi(d_pi)                      // hyperparameters of Beta distribution for pi
   , r_pi(r_pi)                       // hyperparameters of Beta distribution for pi
   , XtX(trans(X)*X)
+  , diagXtX(XtX.diag())
   , Xty(trans(X)*y)
   , ytX(trans(y)*X)
   , yty(as_scalar(trans(y)*y))
@@ -140,7 +141,6 @@ public:
     update_param_gamma();
     update_exp_gamma();
 
-
     //optional: calculate ELB every freqELB-th step
     if(calcELB & n_iter%freqELB==0) calculate_ELBO();
     ELB_trace(n_iter-1)=ELB;
@@ -156,6 +156,7 @@ public:
     for(int i = 0; i< p; i++) {
       gamma_annot(i)=EW_gamma(annot(i)-1);      // minus one as annot starts counting at 1 instead of 0
     }
+      
     vec EW_logfrac_pi_annot(p);
     for(int i = 0; i< p; i++){
       int k = annot[i]-1;           //group of feautre i
@@ -165,20 +166,28 @@ public:
     //parameter of normal distribution given s=0
     sigma2_tildebeta_0=1/gamma_annot;
     //mu_tildebeta_0.fill(0); stays always the same
-
     //parameter of normal distribution given s=1 and probability of s=1
     sigma2_tildebeta_1=1/(EW_tau*XtX.diag()+gamma_annot);
-
+    
+    vec vec1 = X*mu_beta;
     for(int i = 0; i< p; i++){
       //mean of component for s=1
-      mu_tildebeta_1(i)=sigma2_tildebeta_1(i)* EW_tau * (Xty(i)- accu(XtX.row(i)%trans(mu_beta)) + XtX(i,i)*mu_beta(i));
+        //  mu_tildebeta_1(i)= sigma2_tildebeta_1(i)* EW_tau * (Xty(i)- accu(XtX.row(i)%trans(mu_beta)) + XtX(i,i)*mu_beta(i));
+        // keep track of ld mu for efficient update of vec1
+        double old_mu_i = mu_beta(i);
+        
+        mu_tildebeta_1(i)= sigma2_tildebeta_1(i)* EW_tau * (Xty(i)- accu(X.col(i) % vec1) + XtX(i,i)*mu_beta(i));
 
-      //probability of s=1
-      double term= EW_logfrac_pi_annot(i) + 0.5*log(sigma2_tildebeta_1(i)) - 0.5*log(sigma2_tildebeta_0(i)) + 0.5*mu_tildebeta_1(i)*mu_tildebeta_1(i)*(1/sigma2_tildebeta_1(i));
-      psi(i) = 1/(1+exp(-term));
+        
+        //probability of s=1
+        double term= EW_logfrac_pi_annot(i) + 0.5*log(sigma2_tildebeta_1(i)) - 0.5*log(sigma2_tildebeta_0(i)) + 0.5*mu_tildebeta_1(i)*mu_tildebeta_1(i)*(1/sigma2_tildebeta_1(i));
+        psi(i) = 1/(1+exp(-term));
+        //expected values of beta=tildebeta*s
+        mu_beta(i) = mu_tildebeta_1(i)*psi(i);
+        
+    //update vec1 (only in new coordinate of mu to avoid recomputing the full pxp product and get linear complexity)
+    vec1 = vec1 + (mu_beta(i) - old_mu_i)*X.col(i);
 
-      //expected values of beta=tildebeta*s
-      mu_beta(i) = mu_tildebeta_1(i)*psi(i);
     }
     EW_s=psi;
 
@@ -215,6 +224,8 @@ public:
 
   //function to update expected values of beta
   void update_exp_beta(){
+      if(verbose) Rcout << "Updating expected values containing beta.." << endl;
+      auto start_beta=get_time::now();
     EW_betatildesq=psi%(square(mu_tildebeta_1) +sigma2_tildebeta_1) + (1-psi)% (square(mu_tildebeta_0) +sigma2_tildebeta_0);
 
     //expected value of beta^2= tildebeta^2*s
@@ -225,7 +236,17 @@ public:
     Sigma_beta.diag()=(mu_betasq-square(mu_beta));
 
     //expected value of least squares expression
-    EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % (Sigma_beta+mu_beta*trans(mu_beta))));
+      // outer product of mu not very efficient, faster way?
+      EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % (Sigma_beta+mu_beta*trans(mu_beta))));
+//      double tmp;
+//      for(int i = 0; i< p; i++){
+//          for(int j = 0; j< p; j++){
+//              tmp = tmp + as_scalar(XtX(i,j)*mu_beta(i)*mu_beta(j));
+//              if(i==j) tmp = tmp + as_scalar(XtX(i,j)*Sigma_beta.diag()(i));
+//          }}
+//      EW_leastSquares=as_scalar(yty-2*ytX*mu_beta +tmp);
+      auto time_beta = get_time::now() - start_beta;
+      if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_beta).count()<<" ms "<<endl;
   }
 
   //function to update expected values of tau
