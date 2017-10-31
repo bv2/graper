@@ -42,9 +42,9 @@ private:
 public:
 
   //initaliser list
-  grpRR_dense_ff(mat X, vec y, Row<int> annot, int g, vec NoPerGroup, double d_tau =0.001, double r_tau =0.001,
-       double d_gamma =0.001, double r_gamma =0.001, int max_iter=1000, double th=1e-7, bool calcELB=true, bool verbose=true,
-       int freqELB =10):
+  grpRR_dense_ff(mat X, vec y, Row<int> annot, int g, vec NoPerGroup, double d_tau, double r_tau,
+       double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose,
+       int freqELB, vec mu_init):
   X(X)                                // design matrix
   , y(y)                                // response vector
   , annot(annot)                        // assignement of each feautre to a group
@@ -70,7 +70,7 @@ public:
   , alpha_tau(r_tau+n/2)                //parameter of gamma distribution for tau (stays same in each iteration)
   , sigma2_beta(p)                      //variance parameter of normal distribution for beta
   , Sigma_beta(speye(p,p))              //diagonal covariance matrix
-  , mu_beta(p)                          //initialise by 0
+  , mu_beta(mu_init)                    //initialised by randomly
   , EW_gamma(g)                         //initialise by expected value of a gamma distribution, one value per group
   , alpha_gamma(g)                      //parameter of gamma distribution for tau (stays same in each iteration)
   , beta_gamma(g)
@@ -81,8 +81,6 @@ public:
   {
     EW_gamma.fill(r_gamma/d_gamma);
     alpha_gamma=r_gamma+NoPerGroup/2;
-    mu_beta.fill(0);
-
   }
 
   //main function: fit  model
@@ -113,13 +111,13 @@ public:
     if(verbose) Rcout << "iteration " << n_iter << endl;
 
       update_param_beta();  
-      update_exp_beta();    //time-consuming for large p
+      update_exp_beta();
       update_param_tau();
       update_exp_tau();
       update_param_gamma();
       update_exp_gamma();
 
-    //optional: calculate ELB every freqELB-th step
+    //calculate ELB every freqELB-th step to monitor convergence
     if(calcELB & n_iter%freqELB==0) calculate_ELBO();
     ELB_trace(n_iter-1)=ELB;
 
@@ -128,8 +126,8 @@ public:
 
   //function to calculate updated parameters for beta variational distirbution
   void update_param_beta(){
-    if(verbose) Rcout << "Updating beta.." << endl;
-    auto start_beta=get_time::now();
+    // if(verbose) Rcout << "Updating beta.." << endl;
+    // auto start_beta=get_time::now();
 
     vec gamma_annot(p);
     for(int i = 0; i< p; i++) {
@@ -141,18 +139,17 @@ public:
 
     vec vec1 = X*mu_beta;
     for(int i = 0; i< p; i++){
-        
     //mu_beta(i)=sigma2_beta(i)* EW_tau * (Xty(i)- accu(XtX.row(i)%trans(mu_beta)) + XtX(i,i)*mu_beta(i));
-    // keep track of ld mu for efficient update of vec1
+    // keep track of old mu for efficient update of vec1
     double old_mu_i = mu_beta(i);
     //update mean mu
     mu_beta(i)=sigma2_beta(i)* EW_tau * (Xty(i)- accu(X.col(i) % vec1) + diagXtX(i)*mu_beta(i));
-    //update vec1 (only in new coordinate of mu to avoid recomputing the full pxp product and get linear complexity)
+    //update vec1 (only in new coordinate of mu to avoid recomputing the full pxp product and get linear complexity in inner loops)
     vec1 = vec1 + (mu_beta(i) - old_mu_i)*X.col(i);
     }
 
-    auto time_beta = get_time::now() - start_beta;
-    if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_beta).count()<<" ms "<<endl;
+    // auto time_beta = get_time::now() - start_beta;
+    // if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_beta).count()<<" ms "<<endl;
   }
 
   //function to calculate updated parameters for tau variational distribution
@@ -170,24 +167,24 @@ public:
     }
   }
 
-  //function to update expected values of beta
+  //function to update expected values involving beta
   void update_exp_beta(){
-      if(verbose) Rcout << "Updating expected values containing beta.." << endl;
-      auto start_beta=get_time::now();
+      // if(verbose) Rcout << "Updating expected values containing beta.." << endl;
+      // auto start_beta=get_time::now();
 
     EW_betasq=square(mu_beta)+sigma2_beta;
     //EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % (Sigma_beta+mu_beta*trans(mu_beta))));
-    EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(diagXtX % Sigma_beta.diag()) + trans(mu_beta)*XtX*mu_beta);
-      auto time_beta = get_time::now() - start_beta;
-      if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_beta).count()<<" ms "<<endl;
+    EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(diagXtX % sigma2_beta) + trans(mu_beta)*XtX*mu_beta);
+      // auto time_beta = get_time::now() - start_beta;
+      // if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_beta).count()<<" ms "<<endl;
   }
 
-  //function to update expected values of tau
+  //function to update expected values involving tau
   void update_exp_tau(){
     EW_tau=alpha_tau/beta_tau;
   }
 
-  //function to update expected values of gamma
+  //function to update expected values involving gamma
   void update_exp_gamma(){
     EW_gamma=alpha_gamma/beta_gamma;
   }
@@ -195,8 +192,8 @@ public:
 
   //function to calculate ELBO
   void calculate_ELBO(){
-    if(verbose) Rcout<<"Calculating ELB.."<<endl;
-    auto start_ELB=get_time::now();
+    // if(verbose) Rcout<<"Calculating ELB.."<<endl;
+    // auto start_ELB=get_time::now();
 
     double ELB_old = ELB;
 
@@ -238,13 +235,11 @@ public:
     ELB=exp_Djoint+entropy_beta +entropy_gamma+entropy_tau;
     diff=ELB-ELB_old;
 
-    auto time_ELB = get_time::now() - start_ELB;
-    if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_ELB).count()<<" ms "<<endl;
+    // auto time_ELB = get_time::now() - start_ELB;
+    // if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_ELB).count()<<" ms "<<endl;
 
     if(verbose){
-      Rcout<<"ELB="<<ELB<<endl;
-      Rcout<<"ELB improved by "<<diff<<endl;
-      Rcout<<endl;
+      Rcout<<"ELB="<<ELB<<" diff="<<diff<<endl;
     }
 
   }
