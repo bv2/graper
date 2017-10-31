@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // grRRCpp_dense_nf
 Rcpp::List grRRCpp_dense_nf(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_tau, double r_tau, double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose, int freqELB);
-RcppExport SEXP grpRR_grRRCpp_dense_nf(SEXP XSEXP, SEXP ySEXP, SEXP annotSEXP, SEXP gSEXP, SEXP NoPerGroupSEXP, SEXP d_tauSEXP, SEXP r_tauSEXP, SEXP d_gammaSEXP, SEXP r_gammaSEXP, SEXP max_iterSEXP, SEXP thSEXP, SEXP calcELBSEXP, SEXP verboseSEXP, SEXP freqELBSEXP) {
+RcppExport SEXP _grpRR_grRRCpp_dense_nf(SEXP XSEXP, SEXP ySEXP, SEXP annotSEXP, SEXP gSEXP, SEXP NoPerGroupSEXP, SEXP d_tauSEXP, SEXP r_tauSEXP, SEXP d_gammaSEXP, SEXP r_gammaSEXP, SEXP max_iterSEXP, SEXP thSEXP, SEXP calcELBSEXP, SEXP verboseSEXP, SEXP freqELBSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -31,8 +31,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // grRRCpp_dense_ff
-Rcpp::List grRRCpp_dense_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_tau, double r_tau, double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose, int freqELB);
-RcppExport SEXP grpRR_grRRCpp_dense_ff(SEXP XSEXP, SEXP ySEXP, SEXP annotSEXP, SEXP gSEXP, SEXP NoPerGroupSEXP, SEXP d_tauSEXP, SEXP r_tauSEXP, SEXP d_gammaSEXP, SEXP r_gammaSEXP, SEXP max_iterSEXP, SEXP thSEXP, SEXP calcELBSEXP, SEXP verboseSEXP, SEXP freqELBSEXP) {
+Rcpp::List grRRCpp_dense_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_tau, double r_tau, double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose, int freqELB, arma::vec mu_init);
+RcppExport SEXP _grpRR_grRRCpp_dense_ff(SEXP XSEXP, SEXP ySEXP, SEXP annotSEXP, SEXP gSEXP, SEXP NoPerGroupSEXP, SEXP d_tauSEXP, SEXP r_tauSEXP, SEXP d_gammaSEXP, SEXP r_gammaSEXP, SEXP max_iterSEXP, SEXP thSEXP, SEXP calcELBSEXP, SEXP verboseSEXP, SEXP freqELBSEXP, SEXP mu_initSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -50,13 +50,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type calcELB(calcELBSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
     Rcpp::traits::input_parameter< int >::type freqELB(freqELBSEXP);
-    rcpp_result_gen = Rcpp::wrap(grRRCpp_dense_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB));
+    Rcpp::traits::input_parameter< arma::vec >::type mu_init(mu_initSEXP);
+    rcpp_result_gen = Rcpp::wrap(grRRCpp_dense_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init));
     return rcpp_result_gen;
 END_RCPP
 }
 // grRRCpp_sparse_ff
-Rcpp::List grRRCpp_sparse_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_tau, double r_tau, double d_gamma, double r_gamma, double r_pi, double d_pi, int max_iter, double th, bool calcELB, bool verbose, int freqELB);
-RcppExport SEXP grpRR_grRRCpp_sparse_ff(SEXP XSEXP, SEXP ySEXP, SEXP annotSEXP, SEXP gSEXP, SEXP NoPerGroupSEXP, SEXP d_tauSEXP, SEXP r_tauSEXP, SEXP d_gammaSEXP, SEXP r_gammaSEXP, SEXP r_piSEXP, SEXP d_piSEXP, SEXP max_iterSEXP, SEXP thSEXP, SEXP calcELBSEXP, SEXP verboseSEXP, SEXP freqELBSEXP) {
+Rcpp::List grRRCpp_sparse_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_tau, double r_tau, double d_gamma, double r_gamma, double r_pi, double d_pi, int max_iter, double th, bool calcELB, bool verbose, int freqELB, arma::vec mu_init, arma::vec psi_init);
+RcppExport SEXP _grpRR_grRRCpp_sparse_ff(SEXP XSEXP, SEXP ySEXP, SEXP annotSEXP, SEXP gSEXP, SEXP NoPerGroupSEXP, SEXP d_tauSEXP, SEXP r_tauSEXP, SEXP d_gammaSEXP, SEXP r_gammaSEXP, SEXP r_piSEXP, SEXP d_piSEXP, SEXP max_iterSEXP, SEXP thSEXP, SEXP calcELBSEXP, SEXP verboseSEXP, SEXP freqELBSEXP, SEXP mu_initSEXP, SEXP psi_initSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -76,13 +77,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type calcELB(calcELBSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
     Rcpp::traits::input_parameter< int >::type freqELB(freqELBSEXP);
-    rcpp_result_gen = Rcpp::wrap(grRRCpp_sparse_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB));
+    Rcpp::traits::input_parameter< arma::vec >::type mu_init(mu_initSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type psi_init(psi_initSEXP);
+    rcpp_result_gen = Rcpp::wrap(grRRCpp_sparse_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init));
     return rcpp_result_gen;
 END_RCPP
 }
 // grpRRCpp_logistic_nf
 Rcpp::List grpRRCpp_logistic_nf(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose, int freqELB);
-RcppExport SEXP grpRR_grpRRCpp_logistic_nf(SEXP XSEXP, SEXP ySEXP, SEXP annotSEXP, SEXP gSEXP, SEXP NoPerGroupSEXP, SEXP d_gammaSEXP, SEXP r_gammaSEXP, SEXP max_iterSEXP, SEXP thSEXP, SEXP calcELBSEXP, SEXP verboseSEXP, SEXP freqELBSEXP) {
+RcppExport SEXP _grpRR_grpRRCpp_logistic_nf(SEXP XSEXP, SEXP ySEXP, SEXP annotSEXP, SEXP gSEXP, SEXP NoPerGroupSEXP, SEXP d_gammaSEXP, SEXP r_gammaSEXP, SEXP max_iterSEXP, SEXP thSEXP, SEXP calcELBSEXP, SEXP verboseSEXP, SEXP freqELBSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -104,7 +107,7 @@ END_RCPP
 }
 // grpRRCpp_logistic_ff
 Rcpp::List grpRRCpp_logistic_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose, int freqELB);
-RcppExport SEXP grpRR_grpRRCpp_logistic_ff(SEXP XSEXP, SEXP ySEXP, SEXP annotSEXP, SEXP gSEXP, SEXP NoPerGroupSEXP, SEXP d_gammaSEXP, SEXP r_gammaSEXP, SEXP max_iterSEXP, SEXP thSEXP, SEXP calcELBSEXP, SEXP verboseSEXP, SEXP freqELBSEXP) {
+RcppExport SEXP _grpRR_grpRRCpp_logistic_ff(SEXP XSEXP, SEXP ySEXP, SEXP annotSEXP, SEXP gSEXP, SEXP NoPerGroupSEXP, SEXP d_gammaSEXP, SEXP r_gammaSEXP, SEXP max_iterSEXP, SEXP thSEXP, SEXP calcELBSEXP, SEXP verboseSEXP, SEXP freqELBSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -126,11 +129,11 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"grpRR_grRRCpp_dense_nf", (DL_FUNC) &grpRR_grRRCpp_dense_nf, 14},
-    {"grpRR_grRRCpp_dense_ff", (DL_FUNC) &grpRR_grRRCpp_dense_ff, 14},
-    {"grpRR_grRRCpp_sparse_ff", (DL_FUNC) &grpRR_grRRCpp_sparse_ff, 16},
-    {"grpRR_grpRRCpp_logistic_nf", (DL_FUNC) &grpRR_grpRRCpp_logistic_nf, 12},
-    {"grpRR_grpRRCpp_logistic_ff", (DL_FUNC) &grpRR_grpRRCpp_logistic_ff, 12},
+    {"_grpRR_grRRCpp_dense_nf", (DL_FUNC) &_grpRR_grRRCpp_dense_nf, 14},
+    {"_grpRR_grRRCpp_dense_ff", (DL_FUNC) &_grpRR_grRRCpp_dense_ff, 15},
+    {"_grpRR_grRRCpp_sparse_ff", (DL_FUNC) &_grpRR_grRRCpp_sparse_ff, 18},
+    {"_grpRR_grpRRCpp_logistic_nf", (DL_FUNC) &_grpRR_grpRRCpp_logistic_nf, 12},
+    {"_grpRR_grpRRCpp_logistic_ff", (DL_FUNC) &_grpRR_grpRRCpp_logistic_ff, 12},
     {NULL, NULL, 0}
 };
 
