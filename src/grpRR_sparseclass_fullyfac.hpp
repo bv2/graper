@@ -28,7 +28,7 @@ private:
   int freqELB;
 
   // changing values
-  vec mu_tildebeta_0, mu_tildebeta_1, sigma2_tildebeta_0, sigma2_tildebeta_1;       //parameters of the two mixture components in the posterior
+  vec mu_tildebeta_1, sigma2_tildebeta_0, sigma2_tildebeta_1;         //parameters of the two mixture components in the posterior, mu_tildebeta_0 is zero
   vec psi;                                                                         // probability of s=1
   double EW_tau, ELB;
   double alpha_tau, beta_tau;
@@ -40,7 +40,6 @@ private:
   vec mu_betasq;                                                                   // expected values of beta^2=tildebeta^2*s
   mat Sigma_beta;                                                                   // variance of beta=tildebeta*s
   vec EW_gamma;
-  vec EW_s;
   vec EW_betatilde;
   double diff;
   int n_iter;
@@ -51,9 +50,9 @@ private:
 public:
 
   //initaliser list
-  grpRR_sparse_ff(mat X, vec y, Row<int> annot, int g, vec NoPerGroup, double d_tau =0.001, double r_tau =0.001,
-       double d_gamma =0.001, double r_gamma =0.001, double r_pi=1, double d_pi=1, int max_iter=1000, double th=1e-7, bool calcELB=true, bool verbose=true,
-       int freqELB =10):
+  grpRR_sparse_ff(mat X, vec y, Row<int> annot, int g, vec NoPerGroup, double d_tau, double r_tau,
+       double d_gamma, double r_gamma, double r_pi, double d_pi, int max_iter, double th, bool calcELB,
+                  bool verbose, int freqELB, vec mu_init, vec psi_init):
   X(X)                                  // design matrix
   , y(y)                                // response vector
   , annot(annot)                        // assignement of each feautre to a group
@@ -61,8 +60,8 @@ public:
   , r_tau(r_tau)                        // hyperparameters of gamma distribution for tau
   , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
   , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
-  , d_pi(d_pi)                      // hyperparameters of Beta distribution for pi
-  , r_pi(r_pi)                       // hyperparameters of Beta distribution for pi
+  , d_pi(d_pi)                          // hyperparameters of Beta distribution for pi
+  , r_pi(r_pi)                          // hyperparameters of Beta distribution for pi
   , XtX(trans(X)*X)
   , diagXtX(XtX.diag())
   , Xty(trans(X)*y)
@@ -77,9 +76,8 @@ public:
   , calcELB(calcELB)                    //whether to calculate ELBO
   , verbose(verbose)                    //whether to print intermediate messages
   , EW_tau(r_tau/d_tau)                 //initialise by expected value of a gamma distribution
-  , EW_s(p)                              //initialise by 0.5
-  , psi(p)                              // is idnetcal to EW_S as Bernoulli
-  , mu_beta(p)                          //initialise by 0
+  , psi(psi_init)                              // is idnetcal to EW_S as Bernoulli
+  , mu_beta(mu_init)                    //initialised randomly
   , ELB(-std::numeric_limits<double>::infinity())                           //evidence lower bound
   , alpha_tau(r_tau+n/2)                //parameter of gamma distribution for tau (stays same in each iteration)
   , EW_gamma(g)                         //initialise by expected value of a gamma distribution, one value per group
@@ -88,7 +86,6 @@ public:
   , beta_gamma(g)
   , alpha_pi(g)
   , beta_pi(g)
-  , mu_tildebeta_0(p)
   , mu_tildebeta_1(p)
   , sigma2_tildebeta_0(p)
   , sigma2_tildebeta_1(p)
@@ -97,11 +94,16 @@ public:
   , freqELB(freqELB)                    // freuqency of ELB calculation: each freqELB-th iteration ELBO is calculated
   , ELB_trace(max_iter)
   {
-    EW_gamma.fill(r_gamma/d_gamma);
     alpha_gamma=r_gamma+NoPerGroup/2;
-    mu_tildebeta_0.fill(0);
-    EW_s.fill(0.5);
-    mu_beta.fill(0);
+    EW_gamma.fill(r_gamma/d_gamma);
+
+    //these should be replaced by random inits to avoid local optima
+    //psi.fill(0.5);
+    Rcout<<psi<<endl;
+    //mu_beta.fill(0);
+    Rcout<<mu_beta<<endl;
+
+
   }
 
 
@@ -119,7 +121,7 @@ public:
       Rcout << "Maximum numbers of iterations reached - no convergence or ELB not calculated" << endl;
     }
 
-    List results=List::create(Named("EW_beta")=mu_beta,Named("EW_s")=EW_s, Named("EW_gamma")=EW_gamma,Named("EW_tau")=EW_tau, Named("ELB")=ELB,
+    List results=List::create(Named("EW_beta")=mu_beta,Named("EW_s")=psi, Named("EW_gamma")=EW_gamma,Named("EW_tau")=EW_tau, Named("ELB")=ELB,
                                     Named("alpha_gamma")=alpha_gamma, Named("alpha_tau")=alpha_tau, Named("beta_tau")=beta_tau,
                                     Named("beta_gamma")=beta_gamma, Named("Sigma_beta")=Sigma_beta, Named("EW_pi")=EW_pi,
                                 Named("ELB_trace")=ELB_trace);
@@ -165,7 +167,6 @@ public:
 
     //parameter of normal distribution given s=0
     sigma2_tildebeta_0=1/gamma_annot;
-    //mu_tildebeta_0.fill(0); stays always the same
     //parameter of normal distribution given s=1 and probability of s=1
     sigma2_tildebeta_1=1/(EW_tau*diagXtX+gamma_annot);
     
@@ -189,7 +190,6 @@ public:
     vec1 = vec1 + (mu_beta(i) - old_mu_i)*X.col(i);
 
     }
-    EW_s=psi;
 
     auto time_beta = get_time::now() - start_beta;
     if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_beta).count()<<" ms "<<endl;
@@ -217,8 +217,8 @@ public:
 
     for(int i = 0; i< p; i++){
       int k = annot[i]-1;                          // minus one as annot stars counting at 1 instead of 0
-      alpha_pi[k]=alpha_pi[k]+EW_s[i];
-      beta_pi[k]=beta_pi[k]+(1-EW_s[i]);
+      alpha_pi[k]=alpha_pi[k]+psi[i];
+      beta_pi[k]=beta_pi[k]+(1-psi[i]);
     }
   }
 
@@ -226,8 +226,8 @@ public:
   void update_exp_beta(){
       if(verbose) Rcout << "Updating expected values containing beta.." << endl;
       auto start_beta=get_time::now();
-    EW_betatildesq=psi%(square(mu_tildebeta_1) +sigma2_tildebeta_1) + (1-psi)% (square(mu_tildebeta_0) +sigma2_tildebeta_0);
-      
+    EW_betatildesq=psi%(square(mu_tildebeta_1) +sigma2_tildebeta_1) + (1-psi)% (sigma2_tildebeta_0);
+
 
     //expected value of beta^2= tildebeta^2*s
     mu_betasq=psi%(square(mu_tildebeta_1)+sigma2_tildebeta_1);
@@ -237,9 +237,8 @@ public:
     Sigma_beta.diag()=(mu_betasq-square(mu_beta));
 
     //expected value of least squares expression
-      // outer product of mu not very efficient, faster way?
       //EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % (Sigma_beta+mu_beta*trans(mu_beta))));
-      EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(diagXtX % Sigma_beta.diag()) + trans(mu_beta)*XtX*mu_beta);
+      EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % Sigma_beta) + trans(mu_beta)*XtX*mu_beta);
       auto time_beta = get_time::now() - start_beta;
       if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_beta).count()<<" ms "<<endl;
   }
