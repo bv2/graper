@@ -31,7 +31,7 @@
 
 
 fit_grpRR <- function(X, y, annot, factoriseQ = T, spikeslab = F, d_tau = 0.001, r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001,
-    r_pi = 1, d_pi = 1, max_iter = 1000, th = 1e-07, intercept = T, calcELB = T, verbose = F, freqELB = 10, family = "gaussian") {
+    r_pi = 1, d_pi = 1, max_iter = 1000, th = 1e-05, intercept = T, calcELB = T, verbose = F, freqELB = 10, family = "gaussian") {
 
     stopifnot(ncol(X) == length(annot))
 
@@ -48,6 +48,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = T, spikeslab = F, d_tau = 0.001,
     names(NoPerGroup) <- unique(annot)
 
     if (family == "gaussian") {
+        # remove intercept effect by centering X and y
         if (intercept) {
             X <- scale(X, center = T, scale = F)
             y <- scale(y, center = T, scale = F)
@@ -57,12 +58,16 @@ fit_grpRR <- function(X, y, annot, factoriseQ = T, spikeslab = F, d_tau = 0.001,
         if (spikeslab) {
             if (!factoriseQ)
                 warning("Using fully factorized approach with a spike and slab prior")
+            mu_init <- rnorm(p)
+            psi_init <- runif(p)
             res <- grRRCpp_sparse_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB,
-                verbose, freqELB)
+                verbose, freqELB, mu_init, psi_init)
         } else {
-            if (factoriseQ)
+            if (factoriseQ) {
+                mu_init <- rnorm(p)
                 res <- grRRCpp_dense_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose,
-                  freqELB) else res <- grRRCpp_dense_nf(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose,
+                  freqELB, mu_init) 
+                } else res <- grRRCpp_dense_nf(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose,
                 freqELB)
         }
 
@@ -78,7 +83,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = T, spikeslab = F, d_tau = 0.001,
         if (spikeslab)
             stop("spikeslab not yet implemented")
         if (intercept) {
-            warning("inercept not yet implemented")
+            warning("intercept not yet implemented")
             intercept <- F
         }
 
