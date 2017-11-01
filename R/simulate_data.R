@@ -92,22 +92,32 @@ simulate_grpLM <- function(n = 100, p = 1000, beta_best = 3, G = 10, block_cor =
 #'
 #' @export
 
-simulateExplicit <- function(n, p, beta, sigma2, seed, block_cor = 0, equiCor = 0, blockSize = 0) {
+simulateExplicit <- function(n, p, beta, sigma2, seed, exp_decay_cor =0, block_cor = 0, equiCor = 0, blockSize = 0) {
     
     stopifnot(p == length(beta))  #number of features should be a multiple of the number of groups
     stopifnot(block_cor == 0 | p%%blockSize == 0)  #number of features should be a multiple of the blockSize
     
     set.seed(seed)
     
+    stopifnot(exp_decay_cor == 0 | ( block_cor == 0 & equiCor == 0))
     # construct design
-    if (block_cor != 0 | equiCor != 0) {
+    if(exp_decay_cor>0){
+      # option A: construct covariance matrix with exponential decay of covariance
+    pp <- expand.grid(1:p, 1:p)  
+    Sigma <- matrix(exp(-1/exp_decay_cor*abs(pp[,1]-pp[,2])), nrow=p)
+    X <- mvtnorm::rmvnorm(n, rep(0, p), Sigma)
+    } else if (block_cor != 0 | equiCor != 0) {
+        # option B: construct covariance matrix with block correlation
         block <- matrix(block_cor, nrow = blockSize, ncol = blockSize)
         diag(block) <- 1
         Sigma <- Matrix::bdiag(rep(list(block), p/blockSize))
         if (equiCor != 0) 
             Sigma[Sigma == 0] <- equiCor
         X <- mvtnorm::rmvnorm(n, rep(0, p), as.matrix(Sigma))
-    } else X <- matrix(rnorm(p * n, 0, 1), ncol = p, nrow = n)
+    } else {
+      #option C: indep.
+      X <- matrix(rnorm(p * n, 0, 1), ncol = p, nrow = n)
+    }
     
     # simulate response
     y <- X %*% beta + rnorm(n, 0, sqrt(sigma2))
