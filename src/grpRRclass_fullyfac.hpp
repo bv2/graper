@@ -70,7 +70,7 @@ public:
   , alpha_tau(r_tau+n/2)                //parameter of gamma distribution for tau (stays same in each iteration)
   , sigma2_beta(p)                      //variance parameter of normal distribution for beta
   , Sigma_beta(speye(p,p))              //diagonal covariance matrix
-  , mu_beta(mu_init)                    //initialised by randomly
+  , mu_beta(mu_init)                    //initialised randomly
   , EW_gamma(g)                         //initialise by expected value of a gamma distribution, one value per group
   , alpha_gamma(g)                      //parameter of gamma distribution for tau (stays same in each iteration)
   , beta_gamma(g)

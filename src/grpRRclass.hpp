@@ -105,8 +105,8 @@ public:
     n_iter=n_iter+1;                          //increasing counter by 1
     if(verbose) Rcout << "iteration " << n_iter << endl;
 
-    update_param_beta();
-    update_exp_beta();
+    update_param_beta();       // time-consuming for large p
+    update_exp_beta();         // time-consuming for large p
     update_param_tau();
     update_exp_tau();
     update_param_gamma();
@@ -164,18 +164,20 @@ public:
     }
   }
 
-  //function to update expected values of beta
+  //function to update expected values involving beta
   void update_exp_beta(){
     EW_betasq=square(mu_beta)+Sigma_beta.diag();
-    EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % (Sigma_beta+mu_beta*trans(mu_beta))));
+    //EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % (Sigma_beta+mu_beta*trans(mu_beta))));
+    EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % Sigma_beta) + trans(mu_beta)*XtX*mu_beta);
+  
   }
 
-  //function to update expected values of tau
+  //function to update expected values involving tau
   void update_exp_tau(){
     EW_tau=alpha_tau/beta_tau;
   }
 
-  //function to update expected values of gamma
+  //function to update expected values involving gamma
   void update_exp_gamma(){
     EW_gamma=alpha_gamma/beta_gamma;
   }
