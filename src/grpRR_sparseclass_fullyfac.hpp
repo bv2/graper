@@ -97,11 +97,9 @@ public:
     alpha_gamma=r_gamma+NoPerGroup/2;
     EW_gamma.fill(r_gamma/d_gamma);
 
-    //these should be replaced by random inits to avoid local optima
+    //these are replaced by random inits to avoid local optima
     //psi.fill(0.5);
-    Rcout<<psi<<endl;
     //mu_beta.fill(0);
-    Rcout<<mu_beta<<endl;
 
 
   }
