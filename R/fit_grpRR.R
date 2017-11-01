@@ -55,15 +55,18 @@ fit_grpRR <- function(X, y, annot, factoriseQ = T, spikeslab = F, d_tau = 0.001,
         }
 
         # call C function depending on FacType and spikeslap arguments
+        # eventually this should be repeated x-times and model with lowest ELBO chosen, for now keep it for robustness anaylsis
         if (spikeslab) {
             if (!factoriseQ)
                 warning("Using fully factorized approach with a spike and slab prior")
+            # initialize slab mean and spike prob. randomly
             mu_init <- rnorm(p)
             psi_init <- runif(p)
             res <- grRRCpp_sparse_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB,
                 verbose, freqELB, mu_init, psi_init)
         } else {
             if (factoriseQ) {
+                # initialize coefficients mean randomly
                 mu_init <- rnorm(p)
                 res <- grRRCpp_dense_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose,
                   freqELB, mu_init) 
@@ -80,16 +83,23 @@ fit_grpRR <- function(X, y, annot, factoriseQ = T, spikeslab = F, d_tau = 0.001,
         # return mean of approximate posterior (other quantities of interes: tau, lower bound on model evidence etc)
         return(append(res, list(intercept = intercept)))
     } else if (family == "binomial") {
-        if (spikeslab)
-            stop("spikeslab not yet implemented")
-        if (intercept) {
-            warning("intercept not yet implemented")
-            intercept <- F
+        # in case intercept =TRUE  this is removed iteratively during training in terms of the variational approximation
+
+        if (spikeslab){
+            if (!factoriseQ) 
+                warning("Using fully factorized approach with a spike and slab prior")
+            # initialize slab mean and spike prob. randomly
+            mu_init <- rnorm(p)
+            psi_init <- runif(p)
+            res <- grpRRCpp_sparse_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB,
+                verbose, freqELB, mu_init, psi_init)
+        } else {
+            if (factoriseQ){
+                # initialize coefficients mean randomly
+                mu_init <- rnorm(p)
+                res <- grpRRCpp_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init)
+                } else res <- grpRRCpp_logistic_nf(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB)
         }
-
-
-        if (factoriseQ)
-            res <- grpRRCpp_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB) else res <- grpRRCpp_logistic_nf(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB)
-
-    } else stop("Family not implemented")
+    }
+    else stop("Family not implemented. Needs to be either binomial or gaussian.")
 }
