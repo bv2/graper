@@ -6,14 +6,15 @@
 #include "grpRR_sparseclass_fullyfac.hpp"
 #include "grpRRclass_logistic.hpp"
 #include "grpRRclass_logistic_fullyfac.hpp"
+#include "grpRR_sparseclass_logistic_fullyfac.hpp"
 
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
 //Fitting a normal prior model with only partially factorized variational distribution
 // [[Rcpp::export]]
-Rcpp::List grRRCpp_dense_nf(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_tau =0.001, double r_tau =0.001,
-   double d_gamma =0.001, double r_gamma =0.001, int max_iter=1000, double th=1e-7, bool calcELB=true, bool verbose=true, int freqELB=10){
+Rcpp::List grRRCpp_dense_nf(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_tau, double r_tau,
+   double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose, int freqELB){
 
     grpRR MyModel(X,y,annot,g,NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB);
     List result =MyModel.fitModel();
@@ -49,8 +50,8 @@ Rcpp::List grRRCpp_sparse_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int
 //Fitting a normal prior logistic model with only partially factorized variational distribution
 // [[Rcpp::export]]
 Rcpp::List grpRRCpp_logistic_nf(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup,
-                            double d_gamma =0.001, double r_gamma =0.001, int max_iter=1000, double th=1e-7,
-                            bool calcELB=true, bool verbose=true, int freqELB=10){
+                            double d_gamma, double r_gamma, int max_iter, double th,
+                            bool calcELB, bool verbose, int freqELB){
 
   grpRR_logistic_nf MyModel(X,y,annot,g,NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB);
   List result =MyModel.fitModel();
@@ -62,12 +63,23 @@ Rcpp::List grpRRCpp_logistic_nf(arma::mat X, arma::vec y, arma::Row<int> annot, 
 //Fitting a normal prior logistic model with fully factorized variational distribution
 // [[Rcpp::export]]
 Rcpp::List grpRRCpp_logistic_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup,
-                            double d_gamma =0.001, double r_gamma =0.001, int max_iter=1000, double th=1e-7,
-                            bool calcELB=true, bool verbose=true, int freqELB=10){
+                            double d_gamma, double r_gamma, int max_iter, double th,
+                            bool calcELB, bool verbose, int freqELB, arma::vec mu_init ){
 
-  grpRR_logistic_ff MyModel(X,y,annot,g,NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB);
+  grpRR_logistic_ff MyModel(X,y,annot,g,NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init);
   List result =MyModel.fitModel();
 
   return(result);
 }
 
+//Fitting a spike and slab prior logistic model with fully factorized variational distribution
+// [[Rcpp::export]]
+Rcpp::List grpRRCpp_sparse_logistic_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup,
+                                double d_gamma, double r_gamma, int max_iter, double th,
+                                bool calcELB, bool verbose, int freqELB, arma::vec mu_init, arma::vec psi_init){
+    
+    grpRR_sparse_logistic_ff MyModel(X,y,annot,g,NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init);
+    List result =MyModel.fitModel();
+    
+    return(result);
+}
