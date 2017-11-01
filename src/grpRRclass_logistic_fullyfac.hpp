@@ -14,7 +14,7 @@ class  grpRR_logistic_ff {
 private:
   // values remaining constant
   mat  X;
-  vec y;
+  vec y, Xtyhat, yhat;
   Row<int> annot;
   double yty;
   int p,n,g;
@@ -24,9 +24,7 @@ private:
   double th;
   bool calcELB, verbose;
   int freqELB;
-  List ListOfOuterX;
   List ListXrowSquared;
-  vec term4betamu;
 
 
   // changing values
@@ -46,8 +44,8 @@ public:
 
   //initaliser list
   grpRR_logistic_ff(mat X, vec y, Row<int> annot, int g, vec NoPerGroup,
-       double d_gamma =0.001, double r_gamma =0.001, int max_iter=1000, double th=1e-7, bool calcELB=true, bool verbose=true,
-       int freqELB =10):
+       double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose,
+       int freqELB, vec mu_init):
   X(X)                                // design matrix
   , y(y)                                // response vector
   , annot(annot)                        // assignement of each feautre to a group
@@ -65,7 +63,7 @@ public:
   , ELB(-std::numeric_limits<double>::infinity())                           //evidence lower bound
   , sigma2_beta(p)                      //variance parameter of normal distribution for beta
   , Sigma_beta(speye(p,p))              //diagonal covariance matrix
-  , mu_beta(p)                          //initialise by 0
+  , mu_beta(mu_init)                          //initialise by 0
   , EW_gamma(g)                         //initialise by expected value of a gamma distribution, one value per group
   , alpha_gamma(g)                      //parameter of gamma distribution for tau (stays same in each iteration)
   , beta_gamma(g)
@@ -73,20 +71,17 @@ public:
   , n_iter(0)                           // counter of iterations
   , freqELB(freqELB)                    // freuqency of ELB calculation: each freqELB-th iteration ELBO is calculated
   , ELB_trace(max_iter)
-  , ListOfOuterX(n)
-  , term4betamu(p)
   , ListXrowSquared(n)
-  {
+  , yhat(y-0.5)
+  , Xtyhat(p)
+  { Rcout<<"init"<<endl;
+    Xtyhat=trans(X)*yhat;
     EW_gamma.fill(r_gamma/d_gamma);
     alpha_gamma=r_gamma+NoPerGroup/2;
-    mu_beta.fill(0);
-    term4betamu.fill(0);
     xi.fill(0);
     //calculate often used quantities -slow
     for(int i = 0; i< n; i++) {
-      ListOfOuterX(i) = X.row(i).t()*X.row(i);
-      term4betamu = term4betamu + (y(i)-0.5)*X.row(i).t();
-      ListXrowSquared(i)=X.row(i).t()%X.row(i).t();
+      ListXrowSquared(i)= X.row(i).t()%X.row(i).t();
       }
   }
 
@@ -126,11 +121,11 @@ public:
     n_iter=n_iter+1;                          //increasing counter by 1
     if(verbose) Rcout << "iteration " << n_iter << endl;
 
-    update_param_beta();
-    update_exp_beta();
-    update_param_gamma();
-    update_exp_gamma();
-    update_param_xi();
+      update_param_beta();
+      update_exp_beta();
+      update_param_gamma();
+      update_exp_gamma();
+      update_param_xi();
 
 
     //optional: calculate ELB every freqELB-th step
@@ -142,8 +137,8 @@ public:
 
   //function to calculate updated parameters for beta variational distirbution
   void update_param_beta(){
-    if(verbose) Rcout << "Updating beta.." << endl;
-    auto start_beta=get_time::now();
+    // if(verbose) Rcout << "Updating beta.." << endl;
+    // auto start_beta=get_time::now();
 
     vec gamma_annot(p);
     for(int i = 0; i< p; i++) {
@@ -161,24 +156,31 @@ public:
     sigma2_beta = 1/(gamma_annot+2*term1);
     Sigma_beta.diag() = sigma2_beta;
 
-
     sp_mat XiD = speye(n,n);
     XiD.diag() = lambda_xi;
-    mat XTxiX = X.t() * XiD * X;
+    mat XTxi = X.t() * XiD;
+    vec vec1 = X*mu_beta;
 
     for(int i = 0; i< p; i++){
-      mu_beta(i) = sigma2_beta(i) * as_scalar(0.5 * X.col(i).t() * (2*y-1) - 2* ((XTxiX.row(i)*mu_beta - XTxiX(i,i)*mu_beta(i)) ));
+      double old_mu_i = mu_beta(i);
+      mu_beta(i) = sigma2_beta(i) * as_scalar(Xtyhat(i) - 2*(accu(XTxi.row(i).t()%vec1) -
+        accu(XTxi.row(i).t()%X.col(i))*mu_beta(i)) );
+      vec1 = vec1 + (mu_beta(i) - old_mu_i)*X.col(i);
     }
 
-    auto time_beta = get_time::now() - start_beta;
-    if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_beta).count()<<" ms "<<endl;
+    // auto time_beta = get_time::now() - start_beta;
+    // if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_beta).count()<<" ms "<<endl;
   }
 
   //function to calculate updated parameters for tau variational distribution
   void update_param_xi(){
 
     for(int i = 0; i< n; i++) {
-      xi(i) = sqrt(as_scalar(X.row(i)*(Sigma_beta + mu_beta*mu_beta.t())*X.row(i).t()));
+    vec XrowSquared_i = ListXrowSquared(i);
+      //xi(i) = sqrt(as_scalar(X.row(i)*(Sigma_beta + mu_beta*mu_beta.t())*X.row(i).t()));
+        double term1 =accu(X.row(i).t()%mu_beta);
+      xi(i) = sqrt(as_scalar(accu(XrowSquared_i%sigma2_beta) + term1*term1));
+
     }
   }
 
