@@ -47,9 +47,6 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     if (!standardize)
         warning("Group Lasso and Grridge are standardized despite of standardized = F")
 
-    if (intercept & family == "binomial")
-        warning("Intercept not yet implemented for logistic regression")
-
     stopifnot(nrow(Xtrain) == length(ytrain))
 
     if (!is.null(beta0))
@@ -66,9 +63,6 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
         penaltyFac <- c(0, rep(1, ncol(Xtrain) - 1))
     } else penaltyFac <- rep(1, ncol(Xtrain))
 
-    # not yet implemented
-    if (family == "binomial" & intercept)
-        stop()
 
     # turn annot to facotr
     annot <- as.factor(annot)
@@ -127,7 +121,6 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
 
 
     # grpRR_SS: fully factorized, spike and slab This part is only implemented for gaussian so far
-    if (family == "gaussian") {
         includeSS <- T
 
         tmp <- Sys.time()
@@ -157,9 +150,6 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
         summaryList$grpRR_SScutoff <- grpRR_SScutoff_summary
 
         rm(grpRR_SS)
-
-    } else includeSS <- F
-
 
     # ridge regression
     tmp <- Sys.time()
@@ -440,7 +430,7 @@ evaluateFits <- function(allFits, Xtest, ytest) {
                 eval.out <- EvaluateModel(beta, intercept = intercept, Xtest, ytest, beta0 = beta0, family = "binomial")
                 summary$AUC <- eval.out$AUC
                 summary$ROC <- eval.out$ROC
-                summary$BS <- eval.out$BS
+                summary$BS <- eval.out$BrierScore
             }
             summary
         })
@@ -504,7 +494,7 @@ plotMethodComparison <- function(resultList, plotbeta = F, family = "gaussian") 
     eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR, RMSE = l$RMSE, l1error_beta = l$l1error_beta)),
         varnames = c("measure", "method"), level = "run")
     } else {
-      eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR, BS = l$BS,ROC = l$ROC, AUC = l$AUC, l1error_beta = l$l1error_beta)),
+      eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR, BS = l$BS, AUC = l$AUC, l1error_beta = l$l1error_beta)),
                            varnames = c("measure", "method"), level = "run")
     }
 
@@ -547,4 +537,20 @@ plotMethodComparison <- function(resultList, plotbeta = F, family = "gaussian") 
     gg_runtime <- ggplot(runtime_summary, aes(x = method, y = runtime, group = method, fill = method)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 60,
         hjust = 1)) + ggtitle("Runtime") + ylab("secs")
     print(gg_runtime)
+
+    if(family=="binomial"){
+        fprMat <- lapply(resultList, function(res) sapply(res$ROC, function(r) {
+            if(!is.na(r)) r["FPR",] else rep(NA, 101)}))
+        tprMat <- lapply(resultList, function(res) sapply(res$ROC, function(r) {
+            if(!is.na(r)) r["TPR",] else rep(NA, 101)}))
+
+        fprDF <- melt(fprMat, varnames=c("cut", "method"), value.name = "FPR")
+        tprDF <- melt(tprMat, varnames=c("cut", "method"), value.name = "TPR")
+        rocDF <- merge.data.frame(fprDF, tprDF, by=c("method", "cut", "L1"))
+
+        ggROC <- ggplot(rocDF, aes(x=FPR, y=TPR, col=method)) + geom_line() +facet_wrap(~L1)
+        print(ggROC)
+
+    }
+
 }
