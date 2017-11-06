@@ -64,9 +64,9 @@ Rcpp::List grpRRCpp_logistic_nf(arma::mat X, arma::vec y, arma::Row<int> annot, 
 // [[Rcpp::export]]
 Rcpp::List grpRRCpp_logistic_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup,
                             double d_gamma, double r_gamma, int max_iter, double th,
-                            bool calcELB, bool verbose, int freqELB, arma::vec mu_init ){
+                            bool calcELB, bool verbose, int freqELB, arma::vec mu_init, bool intercept ){
 
-  grpRR_logistic_ff MyModel(X,y,annot,g,NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init);
+  grpRR_logistic_ff MyModel(X,y,annot,g,NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, intercept);
   List result =MyModel.fitModel();
 
   return(result);
@@ -76,9 +76,9 @@ Rcpp::List grpRRCpp_logistic_ff(arma::mat X, arma::vec y, arma::Row<int> annot, 
 // [[Rcpp::export]]
 Rcpp::List grpRRCpp_sparse_logistic_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup,
                                 double d_gamma, double r_gamma, int max_iter, double th,
-                                bool calcELB, bool verbose, int freqELB, arma::vec mu_init, arma::vec psi_init){
+                                bool calcELB, bool verbose, int freqELB, arma::vec mu_init, arma::vec psi_init, bool intercept){
     
-    grpRR_sparse_logistic_ff MyModel(X,y,annot,g,NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init);
+    grpRR_sparse_logistic_ff MyModel(X,y,annot,g,NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init,intercept);
     List result =MyModel.fitModel();
     
     return(result);
