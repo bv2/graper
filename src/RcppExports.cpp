@@ -106,8 +106,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // grpRRCpp_logistic_ff
-Rcpp::List grpRRCpp_logistic_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose, int freqELB, arma::vec mu_init);
-RcppExport SEXP _grpRR_grpRRCpp_logistic_ff(SEXP XSEXP, SEXP ySEXP, SEXP annotSEXP, SEXP gSEXP, SEXP NoPerGroupSEXP, SEXP d_gammaSEXP, SEXP r_gammaSEXP, SEXP max_iterSEXP, SEXP thSEXP, SEXP calcELBSEXP, SEXP verboseSEXP, SEXP freqELBSEXP, SEXP mu_initSEXP) {
+Rcpp::List grpRRCpp_logistic_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose, int freqELB, arma::vec mu_init, bool intercept);
+RcppExport SEXP _grpRR_grpRRCpp_logistic_ff(SEXP XSEXP, SEXP ySEXP, SEXP annotSEXP, SEXP gSEXP, SEXP NoPerGroupSEXP, SEXP d_gammaSEXP, SEXP r_gammaSEXP, SEXP max_iterSEXP, SEXP thSEXP, SEXP calcELBSEXP, SEXP verboseSEXP, SEXP freqELBSEXP, SEXP mu_initSEXP, SEXP interceptSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -124,13 +124,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
     Rcpp::traits::input_parameter< int >::type freqELB(freqELBSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type mu_init(mu_initSEXP);
-    rcpp_result_gen = Rcpp::wrap(grpRRCpp_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init));
+    Rcpp::traits::input_parameter< bool >::type intercept(interceptSEXP);
+    rcpp_result_gen = Rcpp::wrap(grpRRCpp_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, intercept));
     return rcpp_result_gen;
 END_RCPP
 }
 // grpRRCpp_sparse_logistic_ff
-Rcpp::List grpRRCpp_sparse_logistic_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose, int freqELB, arma::vec mu_init, arma::vec psi_init);
-RcppExport SEXP _grpRR_grpRRCpp_sparse_logistic_ff(SEXP XSEXP, SEXP ySEXP, SEXP annotSEXP, SEXP gSEXP, SEXP NoPerGroupSEXP, SEXP d_gammaSEXP, SEXP r_gammaSEXP, SEXP max_iterSEXP, SEXP thSEXP, SEXP calcELBSEXP, SEXP verboseSEXP, SEXP freqELBSEXP, SEXP mu_initSEXP, SEXP psi_initSEXP) {
+Rcpp::List grpRRCpp_sparse_logistic_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose, int freqELB, arma::vec mu_init, arma::vec psi_init, bool intercept);
+RcppExport SEXP _grpRR_grpRRCpp_sparse_logistic_ff(SEXP XSEXP, SEXP ySEXP, SEXP annotSEXP, SEXP gSEXP, SEXP NoPerGroupSEXP, SEXP d_gammaSEXP, SEXP r_gammaSEXP, SEXP max_iterSEXP, SEXP thSEXP, SEXP calcELBSEXP, SEXP verboseSEXP, SEXP freqELBSEXP, SEXP mu_initSEXP, SEXP psi_initSEXP, SEXP interceptSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -148,7 +149,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type freqELB(freqELBSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type mu_init(mu_initSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type psi_init(psi_initSEXP);
-    rcpp_result_gen = Rcpp::wrap(grpRRCpp_sparse_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init));
+    Rcpp::traits::input_parameter< bool >::type intercept(interceptSEXP);
+    rcpp_result_gen = Rcpp::wrap(grpRRCpp_sparse_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init, intercept));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -158,8 +160,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_grpRR_grRRCpp_dense_ff", (DL_FUNC) &_grpRR_grRRCpp_dense_ff, 15},
     {"_grpRR_grRRCpp_sparse_ff", (DL_FUNC) &_grpRR_grRRCpp_sparse_ff, 18},
     {"_grpRR_grpRRCpp_logistic_nf", (DL_FUNC) &_grpRR_grpRRCpp_logistic_nf, 12},
-    {"_grpRR_grpRRCpp_logistic_ff", (DL_FUNC) &_grpRR_grpRRCpp_logistic_ff, 13},
-    {"_grpRR_grpRRCpp_sparse_logistic_ff", (DL_FUNC) &_grpRR_grpRRCpp_sparse_logistic_ff, 14},
+    {"_grpRR_grpRRCpp_logistic_ff", (DL_FUNC) &_grpRR_grpRRCpp_logistic_ff, 14},
+    {"_grpRR_grpRRCpp_sparse_logistic_ff", (DL_FUNC) &_grpRR_grpRRCpp_sparse_logistic_ff, 15},
     {NULL, NULL, 0}
 };
 
