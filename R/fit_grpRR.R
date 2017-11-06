@@ -30,8 +30,8 @@
 #' @export
 
 
-fit_grpRR <- function(X, y, annot, factoriseQ = T, spikeslab = F, d_tau = 0.001, r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001,
-    r_pi = 1, d_pi = 1, max_iter = 1000, th = 1e-05, intercept = T, calcELB = T, verbose = F, freqELB = 10, family = "gaussian") {
+fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 0.001, r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001,
+    r_pi = 1, d_pi = 1, max_iter = 1000, th = 1e-05, intercept = TRUE, calcELB = TRUE, verbose = TRUE, freqELB = 10, family = "gaussian") {
 
     stopifnot(ncol(X) == length(annot))
 
@@ -92,14 +92,20 @@ fit_grpRR <- function(X, y, annot, factoriseQ = T, spikeslab = F, d_tau = 0.001,
             mu_init <- rnorm(p)
             psi_init <- runif(p)
             res <- grpRRCpp_sparse_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB,
-                verbose, freqELB, mu_init, psi_init)
+                verbose, freqELB, mu_init, psi_init, intercept)
         } else {
             if (factoriseQ){
                 # initialize coefficients mean randomly
                 mu_init <- rnorm(p)
-                res <- grpRRCpp_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init)
-                } else res <- grpRRCpp_logistic_nf(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB)
+                res <- grpRRCpp_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, intercept)
+                } else {
+                	warning("factoriseQ=TRUE is not maintained currently for the logistic model. No intercept option and ELBO available.")
+                	res <- grpRRCpp_logistic_nf(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB)
+                }
         }
+        if(!intercept) res$intercept <- NULL
     }
     else stop("Family not implemented. Needs to be either binomial or gaussian.")
+
+    return(res)
 }
