@@ -17,11 +17,11 @@ grpRRCpp_logistic_nf <- function(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, m
     .Call('_grpRR_grpRRCpp_logistic_nf', PACKAGE = 'grpRR', X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB)
 }
 
-grpRRCpp_logistic_ff <- function(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init) {
-    .Call('_grpRR_grpRRCpp_logistic_ff', PACKAGE = 'grpRR', X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init)
+grpRRCpp_logistic_ff <- function(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, intercept) {
+    .Call('_grpRR_grpRRCpp_logistic_ff', PACKAGE = 'grpRR', X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, intercept)
 }
 
-grpRRCpp_sparse_logistic_ff <- function(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init) {
-    .Call('_grpRR_grpRRCpp_sparse_logistic_ff', PACKAGE = 'grpRR', X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init)
+grpRRCpp_sparse_logistic_ff <- function(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init, intercept) {
+    .Call('_grpRR_grpRRCpp_sparse_logistic_ff', PACKAGE = 'grpRR', X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init, intercept)
 }
 
