@@ -4,10 +4,10 @@
 \alias{fit_grpRR}
 \title{Fit grpRR model}
 \usage{
-fit_grpRR(X, y, annot, factoriseQ = T, spikeslab = F, d_tau = 0.001,
+fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 0.001,
   r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001, r_pi = 1, d_pi = 1,
-  max_iter = 1000, th = 1e-07, intercept = T, calcELB = T,
-  verbose = F, freqELB = 10, family = "gaussian")
+  max_iter = 1000, th = 1e-05, intercept = TRUE, calcELB = TRUE,
+  verbose = TRUE, freqELB = 10, family = "gaussian")
 }
 \arguments{
 \item{X}{Design matrix of size n x p}

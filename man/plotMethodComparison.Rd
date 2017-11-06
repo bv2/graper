@@ -3,16 +3,14 @@
 \name{plotMethodComparison}
 \alias{plotMethodComparison}
 \title{#'  plotMethodComparison
-#'
 Function to plot method comparison across several runs}
 \usage{
-plotMethodComparison(resultList, plotbeta = F)
+plotMethodComparison(resultList, plotbeta = F, family = "gaussian")
 }
 \arguments{
 \item{resultList}{List as in simulation_setting1.Rmd}
 }
 \description{
 #'  plotMethodComparison
-#'
 Function to plot method comparison across several runs
 }

@@ -5,7 +5,7 @@
 \title{RunMethods}
 \usage{
 RunMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
-  max_iter = 500, intercept = T, plotit = T, standardize = F,
+  max_iter = 500, intercept = T, plotit = T, standardize = T,
   verbose = F, compareGRridge = F, freqELB = 10, calcELB = T,
   include_nonfacQ = T, family = "gaussian", constantXcol = F,
   compareGroupLasso = T, includeRF = T, th = 1e-07, compareIPF = T,
@@ -37,6 +37,10 @@ RunMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
 \item{freqELB}{determines frequency at which ELB is to be calculated, i.e. each feqELB-th iteration}
 
 \item{calcELB}{boolean, indicating wether to calculate ELB}
+
+\item{compareIPF}{boolean, indicating wether to fit a IPFLasso (might cause errors, look for stable version!)}
+
+\item{compareAdaLasso}{boolean, indicating wether to fit an adpative lasso}
 }
 \value{
 List of fitted models and two data frames with coeffcients and penalty factors
