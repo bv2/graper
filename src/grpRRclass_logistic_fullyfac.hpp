@@ -14,7 +14,7 @@ class  grpRR_logistic_ff {
 private:
   // values remaining constant
   mat  X;
-  vec y, Xtyhat, yhat;
+  vec y;
   Row<int> annot;
   double yty;
   int p,n,g;
@@ -22,15 +22,20 @@ private:
   double d_gamma, r_gamma;
   int max_iter;
   double th;
-  bool calcELB, verbose;
+  bool calcELB, verbose, intercept;
   int freqELB;
   List ListXrowSquared;
 
 
   // changing values
-  double ELB;
+  double ELB, beta0, EW_beta0, cond_var_beta0, var_beta0;
+  sp_mat D_Lambda_xi;
+  mat D_Lambda_xi_hat;
+  vec cov_beta0;
   vec  alpha_gamma, beta_gamma;
-  vec xi;
+  vec xi, lambda_xi;
+  vec XTxi;
+  vec Xtyhat, yhat;
   sp_mat Sigma_beta;
   vec sigma2_beta;
   vec mu_beta;
@@ -45,7 +50,7 @@ public:
   //initaliser list
   grpRR_logistic_ff(mat X, vec y, Row<int> annot, int g, vec NoPerGroup,
        double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose,
-       int freqELB, vec mu_init):
+       int freqELB, vec mu_init, bool intercept):
   X(X)                                // design matrix
   , y(y)                                // response vector
   , annot(annot)                        // assignement of each feautre to a group
@@ -59,10 +64,13 @@ public:
   , th(th)                              //threshold for ELBO to stop iterations
   , calcELB(calcELB)                    //whether to calculate ELBO
   , verbose(verbose)                    //whether to print intermediate messages
+  , intercept(intercept)                    //whether to use an itercept term in the model
   , xi(n)                               // variational parameter, initialised to 0, should better be close to yX\beta
+  , lambda_xi(n)                       //lambda(xi)
   , ELB(-std::numeric_limits<double>::infinity())                           //evidence lower bound
   , sigma2_beta(p)                      //variance parameter of normal distribution for beta
   , Sigma_beta(speye(p,p))              //diagonal covariance matrix
+ , D_Lambda_xi(speye(n,n))
   , mu_beta(mu_init)                          //initialise by 0
   , EW_gamma(g)                         //initialise by expected value of a gamma distribution, one value per group
   , alpha_gamma(g)                      //parameter of gamma distribution for tau (stays same in each iteration)
@@ -74,15 +82,26 @@ public:
   , ListXrowSquared(n)
   , yhat(y-0.5)
   , Xtyhat(p)
-  { Rcout<<"init"<<endl;
+  , cov_beta0(p)
+  , beta0(0)
+   , EW_beta0(0)
+ , cond_var_beta0(0)
+   , var_beta0(0)
+  { 
     Xtyhat=trans(X)*yhat;
     EW_gamma.fill(r_gamma/d_gamma);
     alpha_gamma=r_gamma+NoPerGroup/2;
-    xi.fill(0);
-    //calculate often used quantities -slow
+    xi.fill(1);
+      cov_beta0.fill(0);
+    //calculate often used quantities
     for(int i = 0; i< n; i++) {
       ListXrowSquared(i)= X.row(i).t()%X.row(i).t();
+      lambda_xi(i) = lambda(xi(i));
       }
+    D_Lambda_xi.diag() = lambda_xi;
+    if(intercept) D_Lambda_xi_hat = D_Lambda_xi - lambda_xi*lambda_xi.t()/(accu(lambda_xi));
+      else D_Lambda_xi_hat = D_Lambda_xi;
+	XTxi = X.t()* lambda_xi;
   }
 
   //helper functions
@@ -107,10 +126,12 @@ public:
     else{
       Rcout << "Maximum numbers of iterations reached - no convergence or ELB not calculated" << endl;
     }
-
-    List results=List::create(Named("EW_beta")=mu_beta, Named("EW_gamma")=EW_gamma, Named("ELB")=ELB,
+        List results=List::create(Named("EW_beta")=mu_beta, Named("EW_gamma")=EW_gamma,
+                                            Named("ELB")=ELB,
                                     Named("alpha_gamma")=alpha_gamma,
-                                    Named("beta_gamma")=beta_gamma, Named("Sigma_beta")=Sigma_beta, Named("ELB_trace")=ELB_trace);
+                                    Named("beta_gamma")=beta_gamma, Named("Sigma_beta")=Sigma_beta, Named("ELB_trace")=ELB_trace,
+                                    Named("intercept")=EW_beta0);
+
 
 
     return(results);
@@ -125,6 +146,7 @@ public:
       update_exp_beta();
       update_param_gamma();
       update_exp_gamma();
+      if(intercept) update_beta0_and_yhat();
       update_param_xi();
 
 
@@ -141,32 +163,36 @@ public:
     // auto start_beta=get_time::now();
 
     vec gamma_annot(p);
+    mat XTxi_hat = X.t()* D_Lambda_xi_hat;
     for(int i = 0; i< p; i++) {
       gamma_annot(i)=EW_gamma(annot(i)-1);      // minus one as annot starts counting at 1 instead of 0
     }
 
-    vec term1(p);
-    term1.fill(0);
-    vec lambda_xi(n);
-    for(int k = 0; k< n; k++) {
-      lambda_xi(k) = lambda(xi(k));
-      vec XrowSquared = ListXrowSquared(k);
-      term1 = term1+lambda_xi(k) * XrowSquared;
-    }
-    sigma2_beta = 1/(gamma_annot+2*term1);
+    // vec term1(p);
+    // term1.fill(0);
+    // for(int k = 0; k< n; k++) {
+    //   vec XrowSquared = ListXrowSquared(k);
+    //   term1 = term1+lambda_xi(k) * XrowSquared;
+    // }
+    // sigma2_beta = 1/(gamma_annot+2*term1);
+    mat XTxi_hatX = XTxi_hat*X;
+    sigma2_beta = 1/(gamma_annot+2*XTxi_hatX.diag());
     Sigma_beta.diag() = sigma2_beta;
 
-    sp_mat XiD = speye(n,n);
-    XiD.diag() = lambda_xi;
-    mat XTxi = X.t() * XiD;
+    // mat XTxi = X.t() * D_Lambda_xi;
     vec vec1 = X*mu_beta;
-
-    for(int i = 0; i< p; i++){
+   for(int i = 0; i< p; i++){
       double old_mu_i = mu_beta(i);
-      mu_beta(i) = sigma2_beta(i) * as_scalar(Xtyhat(i) - 2*(accu(XTxi.row(i).t()%vec1) -
-        accu(XTxi.row(i).t()%X.col(i))*mu_beta(i)) );
+      mu_beta(i) = sigma2_beta(i) * as_scalar(Xtyhat(i) - 2*(accu(XTxi_hat.row(i).t()%vec1) -
+        accu(XTxi_hat.row(i).t()%X.col(i))*mu_beta(i)) );
       vec1 = vec1 + (mu_beta(i) - old_mu_i)*X.col(i);
     }
+    // for(int i = 0; i< p; i++){
+    //   double old_mu_i = mu_beta(i);
+    //   mu_beta(i) = sigma2_beta(i) * as_scalar(Xtyhat(i) - 2*(accu(XTxi.row(i).t()%vec1) -
+    //     accu(XTxi.row(i).t()%X.col(i))*mu_beta(i)) );
+    //   vec1 = vec1 + (mu_beta(i) - old_mu_i)*X.col(i);
+    // }
 
     // auto time_beta = get_time::now() - start_beta;
     // if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_beta).count()<<" ms "<<endl;
@@ -174,16 +200,37 @@ public:
 
   //function to calculate updated parameters for tau variational distribution
   void update_param_xi(){
-
     for(int i = 0; i< n; i++) {
     vec XrowSquared_i = ListXrowSquared(i);
       //xi(i) = sqrt(as_scalar(X.row(i)*(Sigma_beta + mu_beta*mu_beta.t())*X.row(i).t()));
         double term1 =accu(X.row(i).t()%mu_beta);
-      xi(i) = sqrt(as_scalar(accu(XrowSquared_i%sigma2_beta) + term1*term1));
-
+      xi(i) = sqrt(as_scalar(accu(XrowSquared_i%sigma2_beta) + (term1+EW_beta0)*(term1+EW_beta0) +var_beta0 + 2* accu(X.row(i).t()%cov_beta0)));
+      lambda_xi(i) = lambda(xi(i));
     }
+    D_Lambda_xi.diag() = lambda_xi;
+    XTxi = X.t()* lambda_xi;
+
   }
 
+    //function to calculate updated intercept and yhat
+    void update_beta0_and_yhat(){
+        D_Lambda_xi_hat = D_Lambda_xi - lambda_xi*lambda_xi.t()/(accu(lambda_xi));
+        yhat = y-0.5-beta0*2*lambda_xi;
+
+        Xtyhat=trans(X)*yhat;
+        double lambda_xi_bar = accu(lambda_xi);
+
+        double y_bar = accu(y-0.5);
+        beta0 = accu(y-0.5)/(2*lambda_xi_bar);
+
+        cond_var_beta0 = 1/(2*lambda_xi_bar);
+        EW_beta0 = cond_var_beta0*as_scalar(y_bar-2*lambda_xi.t()*X*mu_beta);
+
+        var_beta0 = cond_var_beta0*(1+cond_var_beta0*accu(XTxi%XTxi%mu_beta));
+        cov_beta0 = -cond_var_beta0 * XTxi%sigma2_beta;
+
+    }
+    
   //function to calculate updated parameters for gamma variational distribution
   void update_param_gamma(){
 
@@ -209,59 +256,55 @@ public:
 
   //function to calculate ELBO
   void calculate_ELBO(){
-    if(n_iter==1) Rcout<<"ELB not implemented"<<endl;
-  //   if(verbose) Rcout<<"Calculating ELB.."<<endl;
-  //   auto start_ELB=get_time::now();
-  //
-  //   double ELB_old = ELB;
-  //
-  //   vec lgamma_alpha_gamma(g);
-  //   vec digamma_alpha_gamma(g);
-  //   for(int i =0; i<g;i++){
-  //     lgamma_alpha_gamma(i)=lgamma((alpha_gamma(i)));                     // important to directly use log gamma to avoid numerical overflow
-  //     digamma_alpha_gamma(i)=boost::math::digamma(alpha_gamma(i));
-  //   }
-  //
-  //   //expected values required in addition (log of Gamma r.v.)
-  //   double EW_logtau = boost::math::digamma(alpha_tau)-log(beta_tau);
-  //   vec EW_loggamma = digamma_alpha_gamma-log(beta_gamma);
-  //
-  //   //to get EW_loggamma[annot] and EW_gamma[annot]
-  //   vec EW_loggamma_annot(p);
-  //   vec EW_gamma_annot(p);
-  //   for(int i = 0; i< p; i++){
-  //     int k = annot(i)-1;                          // minus one as annot stars counting at 1 instead of 0
-  //     EW_loggamma_annot(i) = EW_loggamma(k);
-  //     EW_gamma_annot(i) = EW_gamma(k);
-  //   }
-  //
-  //   //expectation under variational density of log joint distribution
-  //   double exp_logcondDy=n/2*EW_logtau -0.5*EW_tau*EW_leastSquares-n/2*log(2*M_PI);
-  //   double exp_logcondDbeta=accu(0.5*EW_loggamma_annot-0.5*EW_gamma_annot%EW_betasq)-p/2*log(2*M_PI);
-  //   double exp_logDgamma=accu((r_gamma-1)*EW_loggamma-d_gamma * EW_gamma)-g*lgamma(r_gamma)+g*r_gamma*log(d_gamma);
-  //   double exp_logDtau=(r_tau-1)*EW_logtau-d_tau* EW_tau-lgamma(r_tau)+r_tau*log(d_tau);
-  //   double exp_Djoint=exp_logcondDy+exp_logcondDbeta+exp_logDgamma+exp_logDtau;
-  //
-  //   //entropy of variational distribution
-  //   double logdet_Sigma = real(log_det(Sigma_beta));      //replace log(det) by log_det to avoid numeric issues of Inf
-  //                                                         // Are there faster ways? Better use inverse from above? Reuse Cholesky?
-  //   double entropy_beta=p/2*(log(2*M_PI)+1)+0.5*logdet_Sigma;
-  //   double entropy_gamma=accu(alpha_gamma-log(beta_gamma)+log(lgamma_alpha_gamma)+(1-alpha_gamma)%digamma_alpha_gamma); //replace log(tgamma) by lgamma to avoid numeric issues of Inf
-  //   double entropy_tau=alpha_tau-log(beta_tau)+lgamma(alpha_tau)+(1-alpha_tau)*boost::math::digamma(alpha_tau);
-  //
-  //   //evidence lower bound
-  //   ELB=exp_Djoint+entropy_beta +entropy_gamma+entropy_tau;
-  //   diff=ELB-ELB_old;
-  //
-  //   auto time_ELB = get_time::now() - start_ELB;
-  //   if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_ELB).count()<<" ms "<<endl;
-  //
-  //   if(verbose){
-  //     Rcout<<"ELB="<<ELB<<endl;
-  //     Rcout<<"ELB improved by "<<diff<<endl;
-  //     Rcout<<endl;
-  //   }
-  //
-   }
+//     if(verbose) Rcout<<"Calculating ELB.."<<endl;
+//     auto start_ELB=get_time::now();
+//  
+//      double ELB_old = ELB;
+//      
+//      vec lgamma_alpha_gamma(g);
+//      vec digamma_alpha_gamma(g);
+//      for(int i =0; i<g;i++){
+//          lgamma_alpha_gamma(i)=lgamma((alpha_gamma(i)));                     // important to directly use log gamma to avoid numerical overflow
+//          digamma_alpha_gamma(i)=boost::math::digamma(alpha_gamma(i));
+//      }
+//      
+//      //expected values required in addition (log of Gamma r.v.)
+//      vec EW_loggamma = digamma_alpha_gamma-log(beta_gamma);
+//      
+//      //to get EW_loggamma[annot] and EW_gamma[annot]
+//      vec EW_loggamma_annot(p);
+//      vec EW_gamma_annot(p);
+//      for(int i = 0; i< p; i++){
+//          int k = annot(i)-1;                          // minus one as annot stars counting at 1 instead of 0
+//          EW_loggamma_annot(i) = EW_loggamma(k);
+//          EW_gamma_annot(i) = EW_gamma(k);
+//      }
+//      
+//      //expectation under variational density of log joint distribution
+//      double exp_logcondDy=n/2*EW_logtau -0.5*EW_tau*EW_leastSquares-n/2*log(2*M_PI);
+//      double exp_logcondDbeta=accu(0.5*EW_loggamma_annot-0.5*EW_gamma_annot%EW_betasq)-p/2*log(2*M_PI);
+//      double exp_logDgamma=accu((r_gamma-1)*EW_loggamma-d_gamma * EW_gamma)-g*lgamma(r_gamma)+g*r_gamma*log(d_gamma);
+//      double exp_Djoint=exp_logcondDy+exp_logcondDbeta+exp_logDgamma;
+//      
+//      
+//      //entropy of variational distribution
+//      double logdet_Sigma = accu(log(sigma2_beta));     //need to calculate sum of log instead of log of product to avoid numerical overflow
+//      double entropy_beta=p/2*(log(2*M_PI)+1)+0.5*logdet_Sigma;
+//      double entropy_gamma=accu(alpha_gamma-log(beta_gamma)+log(lgamma_alpha_gamma)+(1-alpha_gamma)%digamma_alpha_gamma); //replace log(tgamma) by lgamma to avoid numeric issues of Inf
+//      
+//      //evidence lower bound
+//      ELB=exp_Djoint+entropy_beta +entropy_gamma;
+//      diff=ELB-ELB_old;
+//      
+//       auto time_ELB = get_time::now() - start_ELB;
+//       if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_ELB).count()<<" ms "<<endl;
+//      
+//      if(verbose){
+//          Rcout<<"ELB="<<ELB<<" diff="<<diff<<endl;
+//      }
+//      
+  }
+
 
 };
+//
