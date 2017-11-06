@@ -72,6 +72,40 @@ getRMSE <- function(AllFits) {
 
 #' @export
 
+getBS <- function(AllFits) {
+    sapply(AllFits$summaryList, function(l) {
+        BS <- l$BS
+        if (is.null(BS)) 
+            BS <- NA
+        BS
+    })
+}
+
+#' @export
+
+getROC <- function(AllFits) {
+    sapply(AllFits$summaryList, function(l) {
+        ROC <- l$ROC
+        if (is.null(ROC)) 
+            ROC <- NA
+        ROC
+    })
+}
+
+#' @export
+
+getAUC <- function(AllFits) {
+    sapply(AllFits$summaryList, function(l) {
+        AUC <- l$AUC
+        if (is.null(AUC)) 
+            AUC <- NA
+        AUC
+    })
+}
+
+
+#' @export
+
 getMSE <- function(AllFits) {
     sapply(AllFits$summaryList, function(l) {
         MSE <- l$RMSE^2
