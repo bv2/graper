@@ -125,7 +125,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
 
         tmp <- Sys.time()
         grpRR_SS <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = T, spikeslab = T, max_iter = max_iter, intercept = intercept,
-            verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th)
+            verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th, family = family)
         timeSS <- difftime(Sys.time(), tmp, units = "secs")
         if (plotit)
             plotVBFit(grpRR_SS, whichParam = c("ELB", "tau", "gamma"))
