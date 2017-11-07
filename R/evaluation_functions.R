@@ -208,7 +208,8 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     # Random Forest
     if (includeRF) {
         tmp <- Sys.time()
-        rf.out <- randomForest::randomForest(x = Xtrain, y = ytrain)
+        if(family=="gaussian") rf.out <- randomForest::randomForest(x = Xtrain, y = ytrain)
+        else if(family=="binomial") rf.out <- randomForest::randomForest(x = Xtrain, y = as.factor(ytrain))
         tmp <- difftime(Sys.time(), tmp, units = "secs")
 
         RandomForest_summary <- list()
