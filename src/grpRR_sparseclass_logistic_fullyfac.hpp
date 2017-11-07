@@ -156,13 +156,16 @@ public:
   void iterate(){
     n_iter=n_iter+1;                          //increasing counter by 1
     if(verbose) Rcout << "iteration " << n_iter << endl;
-
-        update_param_pi();
-        update_exp_pi();    
+      
+      update_param_pi();
+      update_exp_pi();
+      
       update_param_beta();
       update_exp_beta();
+      
       update_param_gamma();
       update_exp_gamma();
+      
       if(intercept) update_beta0_and_yhat();
       update_param_xi();
 
@@ -189,12 +192,16 @@ public:
       int k = annot[i]-1;           //group of feautre i
       EW_logfrac_pi_annot(i)=EW_logfrac_pi[k];
     }
-    mat XTxi_hatX = XTxi_hat*X;
+   // mat XTxi_hatX = XTxi_hat*X;
+      vec XTxi_hatX_diag(p);
+      for(int i = 0; i< p; i++) {
+          XTxi_hatX_diag(i) = accu(XTxi_hat.row(i).t()%X.col(i));
+      }
 
       //parameter of normal distribution given s=0
     sigma2_tildebeta_0=1/gamma_annot;
     //parameter of normal distribution given s=1 and probability of s=1
-    sigma2_tildebeta_1=1/(gamma_annot+2*XTxi_hatX.diag());
+    sigma2_tildebeta_1=1/(gamma_annot+2*XTxi_hatX_diag);
     
     vec vec1 = X*mu_beta;
    for(int i = 0; i< p; i++){
