@@ -87,8 +87,7 @@ public:
    , EW_beta0(0)
  , cond_var_beta0(0)
    , var_beta0(0)
-  { 
-    Xtyhat=trans(X)*yhat;
+  { Xtyhat=trans(X)*yhat;
     EW_gamma.fill(r_gamma/d_gamma);
     alpha_gamma=r_gamma+NoPerGroup/2;
     xi.fill(1);
@@ -141,14 +140,15 @@ public:
   void iterate(){
     n_iter=n_iter+1;                          //increasing counter by 1
     if(verbose) Rcout << "iteration " << n_iter << endl;
-
+      
       update_param_beta();
       update_exp_beta();
+      
       update_param_gamma();
       update_exp_gamma();
+      
       if(intercept) update_beta0_and_yhat();
       update_param_xi();
-
 
     //optional: calculate ELB every freqELB-th step
     if(calcELB & n_iter%freqELB==0) calculate_ELBO();
@@ -175,8 +175,13 @@ public:
     //   term1 = term1+lambda_xi(k) * XrowSquared;
     // }
     // sigma2_beta = 1/(gamma_annot+2*term1);
-    mat XTxi_hatX = XTxi_hat*X;
-    sigma2_beta = 1/(gamma_annot+2*XTxi_hatX.diag());
+      
+    //mat XTxi_hatX = XTxi_hat*X;
+    vec XTxi_hatX_diag(p);
+    for(int i = 0; i< p; i++) {
+        XTxi_hatX_diag(i) = accu(XTxi_hat.row(i).t()%X.col(i));
+      }
+    sigma2_beta = 1/(gamma_annot+2*XTxi_hatX_diag);
     Sigma_beta.diag() = sigma2_beta;
 
     // mat XTxi = X.t() * D_Lambda_xi;
