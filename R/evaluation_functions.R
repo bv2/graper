@@ -40,7 +40,7 @@
 #' @export
 
 # ToDo: Option to standardize the input and then re-adjust estimates coefficeints to not standardized
-RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL, max_iter = 500, intercept = T, plotit = T, standardize = T,
+RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL, max_iter = 2000, intercept = T, plotit = F, standardize = T,
     verbose = F, compareGRridge = F, freqELB = 10, calcELB = T, include_nonfacQ = T, family = "gaussian", constantXcol = F, compareGroupLasso = T,
     includeRF = T, th = 1e-07, compareIPF = T, compareAdaLasso = T) {
 
