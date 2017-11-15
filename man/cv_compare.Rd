@@ -4,7 +4,8 @@
 \alias{cv_compare}
 \title{cv_compare}
 \usage{
-cv_compare(X, y, annot, ncores = 1, nfolds = 10, plot_cv = TRUE, ...)
+cv_compare(X, y, annot, family, ncores = 1, nfolds = 10, plot_cv = TRUE,
+  seed = NULL, parallel = FALSE, ...)
 }
 \arguments{
 \item{X}{Design matrix of size n x p}
@@ -13,11 +14,15 @@ cv_compare(X, y, annot, ncores = 1, nfolds = 10, plot_cv = TRUE, ...)
 
 \item{annot}{Factor of length p indicating group membership of each feature}
 
+\item{family}{Liklihood model to use for response, either binomial or gaussian}
+
 \item{ncores}{Number of cores to use}
 
 \item{nfolds}{Number of fold for evaluation}
 
 \item{plot_cv}{boolean whether to plot summary from evaluation}
+
+\item{seed}{optional seed for the choice of folds}
 
 \item{...}{Other parameters that can be passed to RunMethods}
 }
