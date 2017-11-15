@@ -10,8 +10,8 @@
 
 
 // [[Rcpp::depends(RcppArmadillo)]]
-
 //Fitting a normal prior model with only partially factorized variational distribution
+//' @importClassesFrom Matrix dgTMatrix
 // [[Rcpp::export]]
 Rcpp::List grRRCpp_dense_nf(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_tau, double r_tau,
    double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose, int freqELB){
@@ -24,6 +24,7 @@ Rcpp::List grRRCpp_dense_nf(arma::mat X, arma::vec y, arma::Row<int> annot, int 
 
 
 //Fitting a normal prior model with fully factorized variational distribution
+//' @importClassesFrom Matrix dgTMatrix
 // [[Rcpp::export]]
 Rcpp::List grRRCpp_dense_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_tau, double r_tau,
                             double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose, int freqELB, arma::vec mu_init){
@@ -36,6 +37,7 @@ Rcpp::List grRRCpp_dense_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int 
 
 
 //Fitting a spike and slab prior model with fully factorized variational distribution
+//' @importClassesFrom Matrix dgTMatrix
 // [[Rcpp::export]]
 Rcpp::List grRRCpp_sparse_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_tau, double r_tau,
                           double d_gamma, double r_gamma, double r_pi, double d_pi, int max_iter, double th, bool calcELB, bool verbose,
@@ -48,6 +50,7 @@ Rcpp::List grRRCpp_sparse_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int
 }
 
 //Fitting a normal prior logistic model with only partially factorized variational distribution
+//' @importClassesFrom Matrix dgTMatrix
 // [[Rcpp::export]]
 Rcpp::List grpRRCpp_logistic_nf(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup,
                             double d_gamma, double r_gamma, int max_iter, double th,
@@ -73,6 +76,7 @@ Rcpp::List grpRRCpp_logistic_ff(arma::mat X, arma::vec y, arma::Row<int> annot, 
 }
 
 //Fitting a spike and slab prior logistic model with fully factorized variational distribution
+//' @importClassesFrom Matrix dgTMatrix
 // [[Rcpp::export]]
 Rcpp::List grpRRCpp_sparse_logistic_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup,
                                 double d_gamma, double r_gamma, double r_pi, double d_pi, int max_iter, double th,
