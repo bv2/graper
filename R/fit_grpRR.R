@@ -88,7 +88,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
             intercept <- attr(y, "scaled:center") - attr(X, "scaled:center") %*% res$EW_beta else intercept <- NULL
 
         # give proper names
-        rownames(res$EW_gamma) <- unique(annot)
+        if(!nogamma) rownames(res$EW_gamma) <- unique(annot)
         # return mean of approximate posterior (other quantities of interes: tau, lower bound on model evidence etc)
         return(append(res, list(intercept = intercept)))
     } else if (family == "binomial") {

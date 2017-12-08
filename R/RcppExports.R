@@ -17,6 +17,11 @@ grRRCpp_sparse_ff <- function(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma,
 }
 
 #' @importClassesFrom Matrix dgTMatrix
+grRRCpp_sparse_ff_nogamma <- function(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init) {
+    .Call('_grpRR_grRRCpp_sparse_ff_nogamma', PACKAGE = 'grpRR', X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init)
+}
+
+#' @importClassesFrom Matrix dgTMatrix
 grpRRCpp_logistic_nf <- function(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB) {
     .Call('_grpRR_grpRRCpp_logistic_nf', PACKAGE = 'grpRR', X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB)
 }
