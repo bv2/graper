@@ -10,6 +10,7 @@
 #' @param annot Factor of length p indicating group membership of each feature
 #' @param factoriseQ If true, the variational distribution is assumed to fully factorize across features (rougher approx., but faster). If spikeslab=F, this is always done.
 #' @param spikeslab If true, a spike and slab prior is used instead of a normal prior
+#' @param nogamma If true, the normal prior will have same variance for all groups (only relevant for SS)
 #' @param d_tau hyper-parameters for prior of tau (noise precision)
 #' @param r_tau hyper-parameters for prior of tau (noise precision)
 #' @param d_gamma hyper-parameters for prior of gamma (coeffient's prior precision)
@@ -31,9 +32,13 @@
 
 
 fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 0.001, r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001,
-    r_pi = 1, d_pi = 1, max_iter = 1000, th = 1e-05, intercept = TRUE, calcELB = TRUE, verbose = TRUE, freqELB = 10, family = "gaussian") {
+    r_pi = 1, d_pi = 1, max_iter = 1000, th = 1e-05, intercept = TRUE, calcELB = TRUE, verbose = TRUE, freqELB = 10, family = "gaussian",
+    nogamma=F) {
 
     stopifnot(ncol(X) == length(annot))
+
+    #nogamma only of use when spikeslab
+    if(!spikeslab & !nogamma) nogamma <- FALSE
 
     # check structure of annot: needs to be 1:g with 1 <-> frist group etc
     annot <- factor(annot, levels = unique(annot))
@@ -62,7 +67,11 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
             # initialize slab mean and spike prob. randomly
             mu_init <- rnorm(p)
             psi_init <- runif(p)
+            if(!nogamma)
             res <- grRRCpp_sparse_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB,
+                verbose, freqELB, mu_init, psi_init)
+            else
+            res <- grRRCpp_sparse_ff_nogamma(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB,
                 verbose, freqELB, mu_init, psi_init)
         } else {
             if (factoriseQ) {

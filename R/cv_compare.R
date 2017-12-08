@@ -16,7 +16,8 @@
 #' @import parallel
 #' @export
 
-cv_compare <- function(X, y, annot, family, ncores=1, nfolds=10, plot_cv=TRUE, seed=NULL, parallel=FALSE,...){
+cv_compare <- function(X, y, annot, family, ncores=1, nfolds=10, plot_cv=TRUE,
+ seed=NULL, parallel=FALSE, saveFits=FALSE,...){
   
   #make folds
   if(!is.null(seed)) set.seed(seed)
@@ -36,6 +37,8 @@ cv_compare <- function(X, y, annot, family, ncores=1, nfolds=10, plot_cv=TRUE, s
     #fit models
     AllFits <- RunMethods(Xtrain = as.matrix(Xtrain), ytrain =as.vector(ytrain),
                           annot = annot, ...)
+    if(saveFits) save(AllFits, file=paste0("AllFits",foldidx,".RData"))
+    
     pf_mat <- getPenaltyFactors(AllFits)
     sparsity_mat <- getSparsityLevel(AllFits)
     beta_mat <- getCoefficients(AllFits)

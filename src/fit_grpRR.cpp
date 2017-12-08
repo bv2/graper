@@ -4,6 +4,7 @@
 #include "grpRRclass.hpp"
 #include "grpRRclass_fullyfac.hpp"
 #include "grpRR_sparseclass_fullyfac.hpp"
+#include "grpRR_sparseclass_fullyfac_nogamma.hpp"
 #include "grpRRclass_logistic.hpp"
 #include "grpRRclass_logistic_fullyfac.hpp"
 #include "grpRR_sparseclass_logistic_fullyfac.hpp"
@@ -47,6 +48,19 @@ Rcpp::List grRRCpp_sparse_ff(arma::mat X, arma::vec y, arma::Row<int> annot, int
   List result =MyModel.fitModel();
 
   return(result);
+}
+
+//Fitting a spike and slab prior model with fully factorized variational distribution but no different gamma's per groups
+//' @importClassesFrom Matrix dgTMatrix
+// [[Rcpp::export]]
+Rcpp::List grRRCpp_sparse_ff_nogamma(arma::mat X, arma::vec y, arma::Row<int> annot, int g, arma::vec NoPerGroup, double d_tau, double r_tau,
+                             double d_gamma, double r_gamma, double r_pi, double d_pi, int max_iter, double th, bool calcELB, bool verbose,
+                             int freqELB, arma::vec mu_init, arma::vec psi_init){
+    
+    grpRR_sparse_ff_nogamma MyModel(X,y,annot,g,NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init);
+    List result =MyModel.fitModel();
+    
+    return(result);
 }
 
 //Fitting a normal prior logistic model with only partially factorized variational distribution
