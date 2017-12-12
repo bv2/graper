@@ -151,6 +151,23 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
 
         rm(grpRR_SS)
 
+    # grpRR_SS: fully factorized, spike and slab This part is only implemented for gaussian so far
+        tmp <- Sys.time()
+        grpRR_SS_nogamma <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = T, spikeslab = T, max_iter = max_iter, intercept = intercept,
+            verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th, family = family,  nogamma = TRUE)
+        timeSS_nogamma <- difftime(Sys.time(), tmp, units = "secs")
+        if (plotit)
+            plotVBFit(grpRR_SS, whichParam = c("ELB", "tau", "gamma"))
+
+        grpRR_SS_nogamma_summary <- list()
+        grpRR_SS_nogamma_summary$runtime <- as.numeric(timeSS_nogamma)
+        grpRR_SS_nogamma_summary$pf <- as.numeric(grpRR_SS_nogamma$EW_gamma)
+        grpRR_SS_nogamma_summary$beta <- grpRR_SS_nogamma$EW_beta
+        grpRR_SS_nogamma_summary$intercept <- grpRR_SS_nogamma$intercept
+        grpRR_SS_nogamma_summary$sparsity <- grpRR_SS_nogamma$EW_pi
+        grpRR_SS_nogamma_summary$out <- grpRR_SS_nogamma
+        summaryList$grpRR_SS_nogamma <- grpRR_SS_nogamma_summary
+
     # ridge regression
     tmp <- Sys.time()
     RidgeFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 0, intercept = intercept, standardize = standardize, family = family, penalty.factor = penaltyFac)
