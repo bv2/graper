@@ -66,7 +66,8 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
                 warning("Using fully factorized approach with a spike and slab prior")
             # initialize slab mean and spike prob. randomly
             mu_init <- rnorm(p)
-            psi_init <- runif(p)
+            # psi_init <- runif(p)
+            psi_init <- rep(0,p)
             if(!nogamma)
             res <- grRRCpp_sparse_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB,
                 verbose, freqELB, mu_init, psi_init)
