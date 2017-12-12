@@ -161,7 +161,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
 
         grpRR_SS_nogamma_summary <- list()
         grpRR_SS_nogamma_summary$runtime <- as.numeric(timeSS_nogamma)
-        grpRR_SS_nogamma_summary$pf <- as.numeric(grpRR_SS_nogamma$EW_gamma)
+        grpRR_SS_nogamma_summary$pf <- rep(as.numeric(grpRR_SS_nogamma$EW_gamma), G)
         grpRR_SS_nogamma_summary$beta <- grpRR_SS_nogamma$EW_beta
         grpRR_SS_nogamma_summary$intercept <- grpRR_SS_nogamma$intercept
         grpRR_SS_nogamma_summary$sparsity <- grpRR_SS_nogamma$EW_pi
