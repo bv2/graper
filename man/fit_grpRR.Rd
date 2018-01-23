@@ -7,7 +7,7 @@
 fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 0.001,
   r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001, r_pi = 1, d_pi = 1,
   max_iter = 1000, th = 1e-05, intercept = TRUE, calcELB = TRUE,
-  verbose = TRUE, freqELB = 10, family = "gaussian")
+  verbose = TRUE, freqELB = 10, family = "gaussian", nogamma = F)
 }
 \arguments{
 \item{X}{Design matrix of size n x p}
@@ -43,6 +43,8 @@ fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 0.001,
 \item{verbose}{boolean, indicating wether to print out intermediate messages during fitting}
 
 \item{freqELB}{determines frequency at which ELB is to be calculated, i.e. each feqELB-th iteration}
+
+\item{nogamma}{If true, the normal prior will have same variance for all groups (only relevant for SS)}
 }
 \value{
 List of fitted parameters .....
