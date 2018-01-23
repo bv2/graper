@@ -172,14 +172,14 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     tmp <- Sys.time()
     RidgeFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 0, intercept = intercept, standardize = standardize, family = family, penalty.factor = penaltyFac)
     tmp <- difftime(Sys.time(), tmp, units = "secs")
-    if (intercept)
-        beta_ridge <- as.vector(coef(RidgeFit, RidgeFit$lambda.min))[-1] else beta_ridge <- as.vector(coef(RidgeFit, RidgeFit$lambda.min))
+    #if (intercept)
+    beta_ridge <- as.vector(coef(RidgeFit, RidgeFit$lambda.min))[-1] #else beta_ridge <- as.vector(coef(RidgeFit, RidgeFit$lambda.min))
 
     Ridge_summary <- list()
     Ridge_summary$runtime <- as.numeric(tmp)
     Ridge_summary$pf <- rep(RidgeFit$lambda.min, G)
     Ridge_summary$beta <- beta_ridge
-    Ridge_summary$intercept <- ifelse(intercept, as.vector(coef(RidgeFit, RidgeFit$lambda.min))[1], NULL)
+    if(intercept) Ridge_summary$intercept <- as.vector(coef(RidgeFit, RidgeFit$lambda.min))[1]
     Ridge_summary$sparsity <- rep(1, G)  #dense - no sparsity per groups
     Ridge_summary$out <- RidgeFit
     rm(RidgeFit, beta_ridge)
@@ -191,14 +191,14 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     tmp <- Sys.time()
     LassoFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 1, intercept = intercept, standardize = standardize, family = family, penalty.factor = penaltyFac)
     tmp <- difftime(Sys.time(), tmp, units = "secs")
-    if (intercept)
-        beta_lasso <- as.vector(coef(LassoFit, LassoFit$lambda.min))[-1] else beta_lasso <- as.vector(coef(LassoFit, LassoFit$lambda.min))
+    #if (intercept)
+    beta_lasso <- as.vector(coef(LassoFit, LassoFit$lambda.min))[-1]# else beta_lasso <- as.vector(coef(LassoFit, LassoFit$lambda.min))
 
     Lasso_summary <- list()
     Lasso_summary$runtime <- as.numeric(tmp)
     Lasso_summary$pf <- rep(LassoFit$lambda.min, G)
     Lasso_summary$beta <- beta_lasso
-    Lasso_summary$intercept <- ifelse(intercept, as.vector(coef(LassoFit, LassoFit$lambda.min))[1], NULL)
+       if(intercept) Lasso_summary$intercept <- as.vector(coef(LassoFit, LassoFit$lambda.min))[1]
     Lasso_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta_lasso[annot == gr] != 0)/sum(annot == gr))
     Lasso_summary$out <- LassoFit
     rm(LassoFit, beta_lasso)
@@ -209,14 +209,14 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     tmp <- Sys.time()
     ENFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 0.2, intercept = intercept, standardize = standardize, family = family, penalty.factor = penaltyFac)
     tmp <- difftime(Sys.time(), tmp, units = "secs")
-    if (intercept)
-        beta_EN <- as.vector(coef(ENFit, ENFit$lambda.min))[-1] else beta_EN <- as.vector(coef(ENFit, ENFit$lambda.min))
+    #if (intercept)
+    beta_EN <- as.vector(coef(ENFit, ENFit$lambda.min))[-1] #else beta_EN <- as.vector(coef(ENFit, ENFit$lambda.min))
 
     ElasticNet_summary <- list()
     ElasticNet_summary$runtime <- as.numeric(tmp)
     ElasticNet_summary$pf <- rep(ENFit$lambda.min, G)
     ElasticNet_summary$beta <- beta_EN
-    ElasticNet_summary$intercept <- ifelse(intercept, as.vector(coef(ENFit, ENFit$lambda.min))[1], NULL)
+    if(intercept) ElasticNet_summary$intercept <- as.vector(coef(ENFit, ENFit$lambda.min))[1]
     ElasticNet_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta_EN[annot == gr] != 0)/sum(annot == gr))
     ElasticNet_summary$out <- ENFit
     rm(ENFit, beta_EN)
@@ -250,18 +250,42 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
         if (class(GrpLassoFit) == "try-error") {
             warning("Group Lasso encountered errors, not included in the comparison!")
         } else {
-            if (intercept)
-                beta_GrpLasso <- as.vector(coef(GrpLassoFit, GrpLassoFit$lambda.min))[-1] else beta_GrpLasso <- as.vector(coef(GrpLassoFit, GrpLassoFit$lambda.min))
+        #if (intercept)
+        beta_GrpLasso <- as.vector(coef(GrpLassoFit, GrpLassoFit$lambda.min))[-1] #else beta_GrpLasso <- as.vector(coef(GrpLassoFit, GrpLassoFit$lambda.min))
 
             GroupLasso_summary <- list()
             GroupLasso_summary$runtime <- as.numeric(tmp)
             GroupLasso_summary$pf <- rep(GrpLassoFit$lambda.min, G)
             GroupLasso_summary$beta <- beta_GrpLasso
-            GroupLasso_summary$intercept <- ifelse(intercept, as.vector(coef(GrpLassoFit, GrpLassoFit$lambda.min))[1], NULL)
+            if(intercept) GroupLasso_summary$intercept <- as.vector(coef(GrpLassoFit, GrpLassoFit$lambda.min))[1]
             GroupLasso_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta_GrpLasso[annot == gr] != 0)/sum(annot == gr))
             GroupLasso_summary$out <- GrpLassoFit
             rm(GrpLassoFit, beta_GrpLasso)
             summaryList$GroupLasso <- GroupLasso_summary
+
+        }
+    }
+
+    # sparse group lasso
+    if (compareGroupLasso) {
+        if(intercept) warning("Sparse group lasso does not fit an intercept, need to center beforehand")
+        tmp <- Sys.time()
+        SpGrpLassoFit <- try(cvSGL(list(x=Xtrain, y=ytrain), index = as.factor(annot), , standardize = standardize,
+            type = ifelse(family=="gaussian", "linear", "logit")))
+        tmp <- difftime(Sys.time(), tmp, units = "secs")
+        if (class(SpGrpLassoFit) == "try-error") {
+            warning("Sparse Group Lasso encountered errors, not included in the comparison!")
+        } else {
+            beta_SpGrpLasso <- SpGrpLassoFit$fit$beta[, which.min(SpGrpLassoFit$lldiff)]
+            SpGroupLasso_summary <- list()
+            SpGroupLasso_summary$runtime <- as.numeric(tmp)
+            SpGroupLasso_summary$pf <- rep(SpGrpLassoFit$lambdas[which.min(SpGrpLassoFit$lldiff)], G)
+            SpGroupLasso_summary$beta <- beta_SpGrpLasso
+            SpGroupLasso_summary$intercept <- NULL
+            SpGroupLasso_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta_SpGrpLasso[annot == gr] != 0)/sum(annot == gr))
+            SpGroupLasso_summary$out <- SpGrpLassoFit
+            rm(SpGrpLassoFit, beta_SpGrpLasso)
+            summaryList$SparseGroupLasso <- SpGroupLasso_summary
 
         }
     }
@@ -271,11 +295,11 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
         tmp <- Sys.time()
         partition <- GRridge::CreatePartition(as.factor(annot))
         if (intercept) {
-          if(family=="gaussian") MessagesGR <- capture.output(GRfit <- try(GRridge::grridgelin(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~1)))
-            else MessagesGR <- capture.output(GRfit <- try(GRridge::grridge(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~1)))
+            #notes itself which type of respone (new version!)
+            MessagesGR <- capture.output(GRfit <- try(GRridge::grridge(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~1)))
         } else {
-          if(family=="gaussian") MessagesGR <- capture.output(GRfit <- try(GRridge::grridgelin(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~0)))
-            else  MessagesGR <- capture.output(GRfit <- try(GRridge::grridge(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~0)))
+            #notes itself which type of respone (new version!)
+             MessagesGR <- capture.output(GRfit <- try(GRridge::grridge(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~0)))
         }
         tmp <- difftime(Sys.time(), tmp, units = "secs")
 
@@ -289,8 +313,10 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
             GRridge_summary$runtime <- as.numeric(tmp)
             GRridge_summary$pf <- as.numeric(GRfit$lambdamults[[1]])
             GRridge_summary$beta <- GRfit$betas
-            if(family=="gaussian") GRridge_summary$intercept <- ifelse(intercept, coef(GRfit$predobj$GroupRegul)[1], NULL)
-              else GRridge_summary$intercept <- ifelse(intercept, GRfit$predobj$GroupRegul@unpenalized, NULL) 
+            if(intercept) {
+            if(family=="gaussian") GRridge_summary$intercept <- coef(GRfit$predobj$GroupRegul)[1]
+              else GRridge_summary$intercept <- GRfit$predobj$GroupRegul@unpenalized
+          }
             GRridge_summary$sparsity <- rep(1, G)
             GRridge_summary$out <- GRfit
             rm(GRfit)
@@ -363,22 +389,22 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
         ## Ridge Regression to create the Adaptive Weights Vector
         RidgeFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 0, intercept = intercept, standardize = standardize, family = family, penalty.factor = penaltyFac)
         wRidge <- pmin(1/abs((coef(RidgeFit, s = RidgeFit$lambda.min))), 1e+300)
-        if (intercept)
-            wRidge <- wRidge[-1]
+        #if (intercept)
+        wRidge <- wRidge[-1]
 
         ## Adaptive Lasso
         adaLassoFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 1, intercept = intercept, standardize = standardize, family = family, penalty.factor = penaltyFac *
             wRidge)
         tmp <- difftime(Sys.time(), tmp, units = "secs")
 
-        if (intercept)
-            beta_adalasso <- as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))[-1] else beta_adalasso <- as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))
+        #if (intercept)
+        beta_adalasso <- as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))[-1] #else beta_adalasso <- as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))
 
         adaLasso_summary <- list()
         adaLasso_summary$runtime <- as.numeric(tmp)
         adaLasso_summary$pf <- sapply(unique(annot), function(gr) mean(adaLassoFit$lambda.min * penaltyFac * wRidge[annot == gr]))
         adaLasso_summary$beta <- beta_adalasso
-        adaLasso_summary$intercept <- ifelse(intercept, as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))[1], NULL)
+        if(intercept) adaLasso_summary$intercept <- as.vector(coef(adaLassoFit, adaLassoFit$lambda.min))[1]
         adaLasso_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta_adalasso[annot == gr] != 0)/sum(annot == gr))
         adaLasso_summary$out <- adaLassoFit
         rm(adaLassoFit, beta_adalasso)

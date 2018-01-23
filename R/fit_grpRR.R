@@ -109,7 +109,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
                 mu_init <- rnorm(p)
                 res <- grpRRCpp_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, intercept)
                 } else {
-                	warning("factoriseQ=TRUE is not maintained currently for the logistic model. No intercept option and ELBO available.")
+                	warning("factoriseQ=FALSE is not maintained currently for the logistic model. No intercept option and ELBO available.")
                 	res <- grpRRCpp_logistic_nf(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB)
                 }
         }

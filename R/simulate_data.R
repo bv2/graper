@@ -124,3 +124,21 @@ simulateExplicit <- function(n, p, beta, sigma2, seed, exp_decay_cor =0, block_c
     
     return(list(y = y, X = X))
 }
+
+#' Simulate Data According to a linear model with given coefficients and toeplitz design matrix
+#'
+#' @export
+simulateData_toeplitz <- function(n, p, beta, sigma2, seed, rho) {
+    
+    stopifnot(p == length(beta))  #number of features should be a multiple of the number of groups    
+    set.seed(seed)
+    
+    # construct design
+    Sigma = toeplitz(rho^(0:(p-1)))
+    X = matrix(rnorm(n*p),n) %*% chol(Sigma)
+
+    # simulate response
+    y <- X %*% beta + rnorm(n, 0, sqrt(sigma2))
+    
+    return(list(y = y, X = X))
+}
