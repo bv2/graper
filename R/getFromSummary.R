@@ -29,9 +29,9 @@ getSparsityLevel <- function(AllFits) {
 getCoefficients <- function(AllFits) {
     p <- AllFits$p
     coefmat <- sapply(AllFits$summaryList, function(l) {
-        coef <- as.numeric(l$beta)
+        coef <- l$beta
         if (!is.null(coef)) 
-            coef else rep(NA, p)
+            as.numeric(coef) else rep(NA, p)
     })
     rownames(coefmat) <- AllFits$varnames
     return(coefmat)
