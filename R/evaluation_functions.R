@@ -326,10 +326,9 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     }
 
     # zero model
-    if (intercept) {
-        tmp <- Sys.time()
-        intercept_zeromodel <- mean(ytrain)
-        tmp <- difftime(Sys.time(), tmp, units = "secs")
+    tmp <- Sys.time()
+    if (intercept) intercept_zeromodel <- mean(ytrain) else intercept_zeromodel <- 0
+    tmp <- difftime(Sys.time(), tmp, units = "secs")
 
         NullModel_summary <- list()
         NullModel_summary$runtime <- as.numeric(tmp)
