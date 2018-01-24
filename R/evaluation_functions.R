@@ -339,8 +339,6 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
         NullModel_summary$out <- NULL
         summaryList$NullModel <- NullModel_summary
 
-    }
-
     if (!is.null(beta0)) {
         TrueModel_summary <- list()
         TrueModel_summary$runtime <- 0
