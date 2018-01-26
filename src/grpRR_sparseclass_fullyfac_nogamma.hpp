@@ -55,11 +55,14 @@ public:
                   bool verbose, int freqELB, vec mu_init, vec psi_init):
   X(X)                                  // design matrix
   , y(y)                                // response vector
+    , p(X.n_cols)                         //number of samples
+    , n(X.n_rows)                         //number of samples
+    , g(g)
   , annot(annot)                        // assignement of each feautre to a group
   , d_tau(d_tau)                        // hyperparameters of gamma distribution for tau
   , r_tau(r_tau)                        // hyperparameters of gamma distribution for tau
   , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
-  , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
+  , r_gamma(r_gamma*p)                    // hyperparameters of gamma distribution for gamma
   , d_pi(d_pi)                          // hyperparameters of Beta distribution for pi
   , r_pi(r_pi)                          // hyperparameters of Beta distribution for pi
   , XtX(trans(X)*X)
@@ -67,9 +70,7 @@ public:
   , Xty(trans(X)*y)
   , ytX(trans(y)*X)
   , yty(as_scalar(trans(y)*y))
-  , p(X.n_cols)                         //number of samples
-  , n(X.n_rows)                         //number of samples
-  , g(g)                                // number of groups
+                            // number of groups
   , NoPerGroup(NoPerGroup)               //number of features per group
   , max_iter(max_iter)                  // maximal number of iterations
   , th(th)                              //threshold for ELBO to stop iterations

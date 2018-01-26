@@ -20,7 +20,8 @@ private:
   double yty;
   int p,n,g;
   vec NoPerGroup;
-  double d_tau, r_tau, d_gamma, r_gamma;
+  double d_tau, r_tau, d_gamma,r_gamma;
+  vec r_gamma_mult;
   int max_iter;
   double th;
   bool calcELB, verbose;
@@ -50,7 +51,7 @@ public:
   , d_tau(d_tau)                        // hyperparameters of gamma distribution for tau
   , r_tau(r_tau)                        // hyperparameters of gamma distribution for tau
   , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
-  , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
+  , r_gamma(g)                    // hyperparameters of gamma distribution for gamma
   , XtX(trans(X)*X)
   , Xty(trans(X)*y)
   , ytX(trans(y)*X)
@@ -74,8 +75,9 @@ public:
   , freqELB(freqELB)                    // freuqency of ELB calculation: each freqELB-th iteration ELBO is calculated
   , ELB_trace(max_iter)
   {
-    EW_gamma.fill(r_gamma/d_gamma);
-    alpha_gamma=r_gamma+NoPerGroup/2;
+    r_gamma_mult = r_gamma * NoPerGroup
+    EW_gamma.fill(r_gamma_mult/d_gamma);
+    alpha_gamma=r_gamma_mult+NoPerGroup/2;
   }
 
   //main function: fit  model
@@ -213,7 +215,7 @@ public:
     //expectation under variational density of log joint distribution
     double exp_logcondDy=n/2*EW_logtau -0.5*EW_tau*EW_leastSquares-n/2*log(2*M_PI);
     double exp_logcondDbeta=accu(0.5*EW_loggamma_annot-0.5*EW_gamma_annot%EW_betasq)-p/2*log(2*M_PI);
-    double exp_logDgamma=accu((r_gamma-1)*EW_loggamma-d_gamma * EW_gamma)-g*lgamma(r_gamma)+g*r_gamma*log(d_gamma);
+    double exp_logDgamma=accu((r_gamma_mult-1)*EW_loggamma-d_gamma * EW_gamma)-accu(lgamma(r_gamma_mult))+accu(r_gamma_mult*log(d_gamma));
     double exp_logDtau=(r_tau-1)*EW_logtau-d_tau* EW_tau-lgamma(r_tau)+r_tau*log(d_tau);
     double exp_Djoint=exp_logcondDy+exp_logcondDbeta+exp_logDgamma+exp_logDtau;
 
