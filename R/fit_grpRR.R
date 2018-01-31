@@ -33,7 +33,7 @@
 
 fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 0.001, r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001,
     r_pi = 1, d_pi = 1, max_iter = 1000, th = 1e-05, intercept = TRUE, calcELB = TRUE, verbose = TRUE, freqELB = 10, family = "gaussian",
-    nogamma=F) {
+    nogamma=F, standardize=TRUE) {
 
     stopifnot(ncol(X) == length(annot))
 
@@ -52,10 +52,13 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
     NoPerGroup <- sapply(unique(annot), function(x) sum(annot == x))
     names(NoPerGroup) <- unique(annot)
 
+    if(standardize){
+        X <- scale(X, center = T, scale=T)
+    }
     if (family == "gaussian") {
         # remove intercept effect by centering X and y
         if (intercept) {
-            X <- scale(X, center = T, scale = F)
+            if(!standardize) X <- scale(X, center = T, scale = F)
             y <- scale(y, center = T, scale = F)
         }
 
@@ -94,7 +97,6 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
         return(append(res, list(intercept = intercept)))
     } else if (family == "binomial") {
         # in case intercept =TRUE  this is removed iteratively during training in terms of the variational approximation
-
         if (spikeslab){
             if (!factoriseQ) 
                 warning("Using fully factorized approach with a spike and slab prior")
@@ -117,5 +119,10 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
     }
     else stop("Family not implemented. Needs to be either binomial or gaussian.")
 
+    # revert coefficients to original scale
+    if(standardize){
+        res$EW_beta <- res$EW_beta/attr(X, "scaled:center")
+        res$Sigma_beta <- diag(attr(X, "scaled:center")) %*% res$Sigma_beta %*% diag(attr(X, "scaled:center"))
+    }
     return(res)
 }
