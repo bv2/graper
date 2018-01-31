@@ -95,8 +95,10 @@ public:
   , freqELB(freqELB)                    // freuqency of ELB calculation: each freqELB-th iteration ELBO is calculated
   , ELB_trace(max_iter)
   {
-      r_gamma_mult = r_gamma * NoPerGroup
-      EW_gamma.fill(r_gamma_mult/d_gamma);
+      //r_gamma_mult.fill(r_gamma);
+      r_gamma_mult=r_gamma* NoPerGroup;
+      EW_gamma =r_gamma_mult/d_gamma;
+      //EW_gamma.fill(r_gamma_mult/d_gamma);
       alpha_gamma=r_gamma_mult+NoPerGroup/2;
 
     //these are replaced by random inits to avoid local optima
@@ -317,7 +319,7 @@ public:
     double exp_logcondDy = n/2*EW_logtau -0.5*EW_tau*EW_leastSquares-n/2*log(2*M_PI);
     double exp_logcondDbeta = accu(0.5*EW_loggamma_annot-0.5*EW_gamma_annot%EW_betatildesq)-p/2*log(2*M_PI);
     double exp_logcondDs = accu(psi%EW_logpi_annot+(1-psi)%EW_logOneMinusPi_annot);
-    double exp_logDgamma=accu((r_gamma_mult-1)*EW_loggamma-d_gamma * EW_gamma)-accu(lgamma(r_gamma_mult))+accu(r_gamma_mult*log(d_gamma));
+    double exp_logDgamma=accu((r_gamma_mult-1)%EW_loggamma-d_gamma * EW_gamma)-accu(lgamma(r_gamma_mult))+accu(r_gamma_mult*log(d_gamma));
     double exp_logDtau = (r_tau-1)*EW_logtau-d_tau* EW_tau-lgamma(r_tau)+r_tau*log(d_tau);
     //double exp_logDpi = accu((d_pi-1)*EW_logpi +(r_pi-1)*EW_logOneMinusPi)-g*log(boost::math::beta(d_pi,r_pi));
     double exp_logDpi = accu((d_pi-1)*EW_logpi +(r_pi-1)*EW_logOneMinusPi)-g*(lgamma(d_pi)+lgamma(r_pi)-lgamma(d_pi+r_pi));

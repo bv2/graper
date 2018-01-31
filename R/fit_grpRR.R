@@ -53,12 +53,14 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
     names(NoPerGroup) <- unique(annot)
 
     if(standardize){
-        X <- scale(X, center = T, scale=T)
-    }
+        X <- scale(X, center = F, scale=T)
+        sf <- attr(X, "scaled:scale")
+    } else sf <- rep(1,p)
+
     if (family == "gaussian") {
         # remove intercept effect by centering X and y
         if (intercept) {
-            if(!standardize) X <- scale(X, center = T, scale = F)
+            X <- scale(X, center = T, scale = F)
             y <- scale(y, center = T, scale = F)
         }
 
@@ -89,12 +91,12 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
 
         # calculate intercept
         if (intercept)
-            intercept <- attr(y, "scaled:center") - attr(X, "scaled:center") %*% res$EW_beta else intercept <- NULL
+            intercept <- attr(y, "scaled:center") - sum(attr(X, "scaled:center")*res$EW_beta) else intercept <- NULL
 
         # give proper names
         if(!nogamma) rownames(res$EW_gamma) <- unique(annot)
         # return mean of approximate posterior (other quantities of interes: tau, lower bound on model evidence etc)
-        return(append(res, list(intercept = intercept)))
+        res <- append(res, list(intercept = intercept))
     } else if (family == "binomial") {
         # in case intercept =TRUE  this is removed iteratively during training in terms of the variational approximation
         if (spikeslab){
@@ -118,11 +120,10 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
         if(!intercept) res$intercept <- NULL
     }
     else stop("Family not implemented. Needs to be either binomial or gaussian.")
-
+    
     # revert coefficients to original scale
-    if(standardize){
-        res$EW_beta <- res$EW_beta/attr(X, "scaled:center")
-        res$Sigma_beta <- diag(attr(X, "scaled:center")) %*% res$Sigma_beta %*% diag(attr(X, "scaled:center"))
-    }
+        res$EW_beta <- res$EW_beta/sf
+        res$Sigma_beta <- diag(sf) %*% res$Sigma_beta %*% diag(sf)
+    
     return(res)
 }

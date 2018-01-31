@@ -43,7 +43,7 @@ public:
 
   //initaliser list
   grpRR(mat X, vec y, Row<int> annot, int g, vec NoPerGroup, double d_tau =0.001, double r_tau =0.001,
-       double d_gamma =0.001, double r_gamma =0.001, int max_iter=1000, double th=1e-7, bool calcELB=true, bool verbose=true,
+       double d_gamma =0.001, double r_gamma =0.001, int max_iter=5000, double th=1e-7, bool calcELB=true, bool verbose=true,
        int freqELB =10):
   X(X)                                // design matrix
   , y(y)                                // response vector
@@ -51,7 +51,7 @@ public:
   , d_tau(d_tau)                        // hyperparameters of gamma distribution for tau
   , r_tau(r_tau)                        // hyperparameters of gamma distribution for tau
   , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
-  , r_gamma(g)                    // hyperparameters of gamma distribution for gamma
+  , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
   , XtX(trans(X)*X)
   , Xty(trans(X)*y)
   , ytX(trans(y)*X)
@@ -59,6 +59,7 @@ public:
   , p(X.n_cols)                         //number of samples
   , n(X.n_rows)                         //number of samples
   , g(g)                                // number of groups
+  , r_gamma_mult(g)                    // hyperparameters of gamma distribution for gamma
   , NoPerGroup(NoPerGroup)               //number of features per group
   , max_iter(max_iter)                  // maximal number of iterations
   , th(th)                              //threshold for ELBO to stop iterations
@@ -75,8 +76,10 @@ public:
   , freqELB(freqELB)                    // freuqency of ELB calculation: each freqELB-th iteration ELBO is calculated
   , ELB_trace(max_iter)
   {
-    r_gamma_mult = r_gamma * NoPerGroup
-    EW_gamma.fill(r_gamma_mult/d_gamma);
+      //r_gamma_mult.fill(r_gamma);
+      r_gamma_mult=r_gamma* NoPerGroup;
+      EW_gamma =r_gamma_mult/d_gamma;
+      //EW_gamma.fill(r_gamma_mult/d_gamma);
     alpha_gamma=r_gamma_mult+NoPerGroup/2;
   }
 
@@ -114,7 +117,7 @@ public:
     update_param_gamma();
     update_exp_gamma();
 
-    //optional: calculate ELB every freqELB-th step
+    //optional: calculate ELB every freqELB-th step to monitor convergence
     if(calcELB & n_iter%freqELB==0) calculate_ELBO();
     ELB_trace(n_iter-1)=ELB;
 
@@ -142,7 +145,7 @@ public:
     }
     else{
       A.diag() = 1/gamma_annot;
-      Sigma_beta = A - A*X.t()*inv_sympd((1/EW_tau)*Id_n+X*A*X.t())*X*A;     //WOODBURY-MATRIX-INVERSION OR RELATED FORMULA(ZUBER)
+      Sigma_beta = A - A*X.t()*inv_sympd((1/EW_tau)*Id_n+X*A*X.t())*X*A;     //WOODBURY-MATRIX-INVERSION
     }
 
     mu_beta = EW_tau*Sigma_beta*Xty;
@@ -215,7 +218,7 @@ public:
     //expectation under variational density of log joint distribution
     double exp_logcondDy=n/2*EW_logtau -0.5*EW_tau*EW_leastSquares-n/2*log(2*M_PI);
     double exp_logcondDbeta=accu(0.5*EW_loggamma_annot-0.5*EW_gamma_annot%EW_betasq)-p/2*log(2*M_PI);
-    double exp_logDgamma=accu((r_gamma_mult-1)*EW_loggamma-d_gamma * EW_gamma)-accu(lgamma(r_gamma_mult))+accu(r_gamma_mult*log(d_gamma));
+    double exp_logDgamma=accu((r_gamma_mult-1)%EW_loggamma-d_gamma * EW_gamma)-accu(lgamma(r_gamma_mult))+accu(r_gamma_mult*log(d_gamma));
     double exp_logDtau=(r_tau-1)*EW_logtau-d_tau* EW_tau-lgamma(r_tau)+r_tau*log(d_tau);
     double exp_Djoint=exp_logcondDy+exp_logcondDbeta+exp_logDgamma+exp_logDtau;
 

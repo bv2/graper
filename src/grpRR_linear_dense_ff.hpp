@@ -61,6 +61,7 @@ public:
   , p(X.n_cols)                         //number of samples
   , n(X.n_rows)                         //number of samples
   , g(g)                                // number of groups
+  , r_gamma_mult(g)                    // hyperparameters of gamma distribution for gamma
   , NoPerGroup(NoPerGroup)               //number of features per group
   , max_iter(max_iter)                  // maximal number of iterations
   , th(th)                              //threshold for ELBO to stop iterations
@@ -80,8 +81,10 @@ public:
   , freqELB(freqELB)                    // freuqency of ELB calculation: each freqELB-th iteration ELBO is calculated
   , ELB_trace(max_iter)
   {
-      r_gamma_mult = r_gamma * NoPerGroup
-      EW_gamma.fill(r_gamma_mult/d_gamma);
+      r_gamma_mult = r_gamma * NoPerGroup;
+      //r_gamma_mult.fill(r_gamma);
+      EW_gamma =r_gamma_mult/d_gamma;
+      //EW_gamma.fill(r_gamma_mult/d_gamma);
       alpha_gamma=r_gamma_mult+NoPerGroup/2;
   }
 
@@ -222,7 +225,7 @@ public:
     //expectation under variational density of log joint distribution
     double exp_logcondDy=n/2*EW_logtau -0.5*EW_tau*EW_leastSquares-n/2*log(2*M_PI);
     double exp_logcondDbeta=accu(0.5*EW_loggamma_annot-0.5*EW_gamma_annot%EW_betasq)-p/2*log(2*M_PI);
-    double exp_logDgamma=accu((r_gamma_mult-1)*EW_loggamma-d_gamma * EW_gamma)-accu(lgamma(r_gamma_mult))+accu(r_gamma_mult*log(d_gamma));
+    double exp_logDgamma=accu((r_gamma_mult-1)%EW_loggamma-d_gamma * EW_gamma)-accu(lgamma(r_gamma_mult))+accu(r_gamma_mult*log(d_gamma));
     double exp_logDtau=(r_tau-1)*EW_logtau-d_tau* EW_tau-lgamma(r_tau)+r_tau*log(d_tau);
     double exp_Djoint=exp_logcondDy+exp_logcondDbeta+exp_logDgamma+exp_logDtau;
 
