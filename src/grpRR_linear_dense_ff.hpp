@@ -81,7 +81,8 @@ public:
   , freqELB(freqELB)                    // freuqency of ELB calculation: each freqELB-th iteration ELBO is calculated
   , ELB_trace(max_iter)
   {
-      r_gamma_mult = r_gamma * NoPerGroup;
+      vec multgamma = ones<vec>(g); //NoPerGroup;
+      r_gamma_mult = r_gamma * multgamma;
       //r_gamma_mult.fill(r_gamma);
       EW_gamma =r_gamma_mult/d_gamma;
       //EW_gamma.fill(r_gamma_mult/d_gamma);

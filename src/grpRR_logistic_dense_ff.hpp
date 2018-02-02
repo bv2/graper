@@ -64,7 +64,7 @@ public:
   , th(th)                              //threshold for ELBO to stop iterations
   , calcELB(calcELB)                    //whether to calculate ELBO
   , verbose(verbose)                    //whether to print intermediate messages
-  , intercept(intercept)                    //whether to use an itercept term in the model
+  , intercept(intercept)                //whether to use an itercept term in the model
   , xi(n)                               // variational parameter, initialised to 0, should better be close to yX\beta
   , lambda_xi(n)                       //lambda(xi)
   , ELB(-std::numeric_limits<double>::infinity())                           //evidence lower bound

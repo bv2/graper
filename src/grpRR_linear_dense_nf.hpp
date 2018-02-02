@@ -77,7 +77,8 @@ public:
   , ELB_trace(max_iter)
   {
       //r_gamma_mult.fill(r_gamma);
-      r_gamma_mult=r_gamma* NoPerGroup;
+      vec multgamma = ones<vec>(g); //NoPerGroup;
+      r_gamma_mult = r_gamma * multgamma;
       EW_gamma =r_gamma_mult/d_gamma;
       //EW_gamma.fill(r_gamma_mult/d_gamma);
     alpha_gamma=r_gamma_mult+NoPerGroup/2;
