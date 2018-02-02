@@ -84,7 +84,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     if (include_nonfacQ) {
         tmp <- Sys.time()
         grpRR <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = F, spikeslab = F, max_iter = max_iter, intercept = intercept,
-            verbose = verbose, freqELB = freqELB, calcELB = calcELB, family = family, th = th)
+            verbose = verbose, freqELB = freqELB, calcELB = calcELB, family = family, th = th, standardize=standardize)
         timeNF <- difftime(Sys.time(), tmp, units = "secs")
         if (plotit)
             plotVBFit(grpRR, whichParam = c("ELB", "tau", "gamma"))
@@ -103,7 +103,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     # grpRR_FF : fully factorized, normal prior
     tmp <- Sys.time()
     grpRR_FF <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = T, spikeslab = F, max_iter = max_iter, intercept = intercept,
-        verbose = verbose, freqELB = freqELB, calcELB = calcELB, family = family, th = th)
+        verbose = verbose, freqELB = freqELB, calcELB = calcELB, family = family, th = th, standardize=standardize)
     timeFF <- difftime(Sys.time(), tmp, units = "secs")
     if (plotit)
         plotVBFit(grpRR_FF, whichParam = c("ELB", "tau", "gamma"))
@@ -125,7 +125,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
 
         tmp <- Sys.time()
         grpRR_SS <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = T, spikeslab = T, max_iter = max_iter, intercept = intercept,
-            verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th, family = family)
+            verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th, family = family, standardize=standardize)
         timeSS <- difftime(Sys.time(), tmp, units = "secs")
         if (plotit)
             plotVBFit(grpRR_SS, whichParam = c("ELB", "tau", "gamma"))
@@ -154,7 +154,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     # grpRR_SS: fully factorized, spike and slab This part is only implemented for gaussian so far
         tmp <- Sys.time()
         grpRR_SS_nogamma <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = T, spikeslab = T, max_iter = max_iter, intercept = intercept,
-            verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th, family = family,  nogamma = TRUE)
+            verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th, family = family,  nogamma = TRUE, standardize=standardize)
         timeSS_nogamma <- difftime(Sys.time(), tmp, units = "secs")
         if (plotit)
             plotVBFit(grpRR_SS, whichParam = c("ELB", "tau", "gamma"))
@@ -221,6 +221,26 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     ElasticNet_summary$out <- ENFit
     rm(ENFit, beta_EN)
     summaryList$ElasticNet <- ElasticNet_summary
+
+
+    # varbvs
+    if(!intercept) warning("varbvs always fits an intercept")
+    tmp <- Sys.time()
+    varbvsFit <- varbvs::varbvs(X=Xtrain, Z=NULL, y=ytrain, family = family)
+    tmp <- difftime(Sys.time(), tmp, units = "secs")
+    #if (intercept)
+    beta_varbvs <- varbvsFit$beta
+
+    varbvs_summary <- list()
+    varbvs_summary$runtime <- as.numeric(tmp)
+    varbvs_summary$pf <- rep(mean(varbvsFit$sa),G) # should probably be avaraged in a more informed way....
+    varbvs_summary$beta <- beta_varbvs
+    if(intercept) varbvs_summary$intercept <- mean(varbvsFit$mu.cov) # should probably be avaraged in a more informed way....
+    varbvs_summary$sparsity <- sapply(unique(annot), function(gr) mean(varbvsFit$pip[annot == gr])) 
+    varbvs_summary$out <- varbvsFit
+    rm(varbvsFit, beta_varbvs)
+    summaryList$varbvs <- varbvs_summary
+
 
     # Random Forest
     if (includeRF) {
