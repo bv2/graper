@@ -77,7 +77,7 @@ public:
   , calcELB(calcELB)                    //whether to calculate ELBO
   , verbose(verbose)                    //whether to print intermediate messages
   , EW_tau(r_tau/d_tau)                 //initialise by expected value of a gamma distribution
-  , psi(psi_init)                              // is idnetcal to EW_S as Bernoulli
+  , psi(psi_init)                       // is identical to EW_S as Bernoulli
   , mu_beta(mu_init)                    //initialised randomly
   , ELB(-std::numeric_limits<double>::infinity())                           //evidence lower bound
   , alpha_tau(r_tau+n/2)                //parameter of gamma distribution for tau (stays same in each iteration)
@@ -127,7 +127,7 @@ public:
     List results=List::create(Named("EW_beta")=mu_beta,Named("EW_s")=psi, Named("EW_gamma")=EW_gamma,Named("EW_tau")=EW_tau, Named("ELB")=ELB,
                                     Named("alpha_gamma")=alpha_gamma, Named("alpha_tau")=alpha_tau, Named("beta_tau")=beta_tau,
                                     Named("beta_gamma")=beta_gamma, Named("Sigma_beta")=Sigma_beta, Named("EW_pi")=EW_pi,
-                                Named("ELB_trace")=ELB_trace);
+                                Named("ELB_trace")=ELB_trace, Named("alpha_pi")=alpha_pi, Named("beta_pi")=beta_pi);
 
     return(results);
   }

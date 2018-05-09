@@ -51,6 +51,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
     g <- length(unique(annot))
     NoPerGroup <- sapply(unique(annot), function(x) sum(annot == x))
     names(NoPerGroup) <- unique(annot)
+    message(paste("Fitting a model with", g, "groups", n, "samples and", p , "features."))
 
     if(standardize){
         X <- scale(X, center = F, scale=T)
@@ -69,10 +70,10 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
         if (spikeslab) {
             if (!factoriseQ)
                 warning("Using fully factorized approach with a spike and slab prior")
-            # initialize slab mean and spike prob. randomly
+            # initialize slab mean and spike prob.
             mu_init <- rnorm(p)
             # psi_init <- runif(p)
-            psi_init <- rep(0,p)
+            psi_init <- rep(0.5,p)
             if(!nogamma)
             res <- grRRCpp_sparse_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB,
                 verbose, freqELB, mu_init, psi_init)
