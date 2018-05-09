@@ -1,4 +1,6 @@
-# simulate_grpLM This file contains function to simulate data according to a linear model with grouped features
+# This file contains function to simulate data according to a linear model with grouped features
+
+# simulate_grpLM 
 # -----------------------
 
 #' Simulate Data According to a linear model with grouped feautres
@@ -141,4 +143,39 @@ simulateData_toeplitz <- function(n, p, beta, sigma2, seed, rho) {
     y <- X %*% beta + rnorm(n, 0, sqrt(sigma2))
     
     return(list(y = y, X = X))
+}
+
+
+#' @title makeExampleData 
+#' @name makeExampleData
+#' @description Simulate data from the Bayesian model with specified parameters $\gamma$ and $\tau$. 
+#' @param n number of samples
+#' @param p number of features
+#' @param g number of groups
+#' @param gammas vector of length g, sepcifying the slab precision of the prior on beta per group
+#' @param pis vector of length g, sepcifying the probability of s to be 1 (slab)
+#' @param tau noise precision
+#' @param rho correlation of design matrix (Toeplitz structure)
+#' @export
+makeExampleData <- function(n=100, p=200, g=4, gammas=c(0.1,1,10,100), pis=c(0.5,0.5,0.5,0.5), tau=1, rho=0) {
+
+    #checks
+    stopifnot(p%%g==0)
+    stopifnot(length(gammas)==4)
+    stopifnot(length(pis)==4)
+
+    # construct design
+    Sigma <- toeplitz(rho^(0:(p-1)))
+    X <- matrix(rnorm(n*p),n,p) %*% chol(Sigma)
+    X <- scale(X)
+
+    # simulate coefficients
+    beta_tilde <- Reduce(c,lapply(gammas, function(gamma) rnorm(p/g,0,sqrt(1/gamma))))
+    s <- Reduce(c,lapply(pis, function(pi) rbinom(p/g,1,pi)))
+    beta <- s* beta_tilde
+
+    #simulate response
+    y <- rnorm(n, X%*%beta, 1/sqrt(tau))
+    annot <- rep(1:4, each=p/4)
+    list(X=X, y=y, annot=annot, gammas=gammas, pis=pis, tau=tau, rho=rho, g=g, p=p, n=n, beta=beta, s=s, beta_tilde=beta_tilde)
 }

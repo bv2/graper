@@ -124,7 +124,8 @@ public:
       Rcout << "Maximum numbers of iterations reached - no convergence or ELB not calculated" << endl;
     }
 
-    List results=List::create(Named("EW_beta")=mu_beta,Named("EW_s")=psi, Named("EW_gamma")=EW_gamma,Named("EW_tau")=EW_tau, Named("ELB")=ELB,
+    List results=List::create(Named("EW_beta")=mu_beta, Named("EW_s")=psi, Named("sigma2_tildebeta_s1")=sigma2_tildebeta_1,
+                              Named("EW_tildebeta_s1")=mu_tildebeta_1, Named("EW_gamma")=EW_gamma,Named("EW_tau")=EW_tau, Named("ELB")=ELB,
                                     Named("alpha_gamma")=alpha_gamma, Named("alpha_tau")=alpha_tau, Named("beta_tau")=beta_tau,
                                     Named("beta_gamma")=beta_gamma, Named("Sigma_beta")=Sigma_beta, Named("EW_pi")=EW_pi,
                                 Named("ELB_trace")=ELB_trace, Named("alpha_pi")=alpha_pi, Named("beta_pi")=beta_pi);

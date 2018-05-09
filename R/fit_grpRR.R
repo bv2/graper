@@ -32,7 +32,7 @@
 
 
 fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 0.001, r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001,
-    r_pi = 1, d_pi = 1, max_iter = 1000, th = 1e-05, intercept = TRUE, calcELB = TRUE, verbose = TRUE, freqELB = 10, family = "gaussian",
+    r_pi = 1, d_pi = 1, max_iter = 3000, th = 1e-05, intercept = TRUE, calcELB = TRUE, verbose = TRUE, freqELB = 1, family = "gaussian",
     nogamma=F, standardize=TRUE) {
 
     stopifnot(ncol(X) == length(annot))
@@ -125,6 +125,9 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
     # revert coefficients to original scale
         res$EW_beta <- res$EW_beta/sf
         res$Sigma_beta <- diag(sf) %*% res$Sigma_beta %*% diag(sf)
-    
+        res$annot <- annot
+        res$Options <- list(factoriseQ = factoriseQ, spikeslab = spikeslab, d_tau = d_tau, r_tau = r_tau, d_gamma = d_gamma, r_gamma =r_gamma,
+    r_pi = r_pi, d_pi = r_pi, max_iter = max_iter, th = th, intercept = intercept, calcELB = calcELB, verbose = verbose, freqELB = freqELB, family = family,
+    nogamma=nogamma, standardize=standardize)
     return(res)
 }
