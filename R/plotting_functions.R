@@ -10,7 +10,6 @@
 #' @param tau0 true tau (if known)
 #' @param s0 true s (if known)
 #' @param jmax maximal number of betas per group to plot
-#' @import 
 #' @export
 # ---------------------------
 plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL, tau0 = NULL, pi0=NULL, s0=NULL, jmax=2, range=NULL) {
