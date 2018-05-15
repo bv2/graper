@@ -1,6 +1,6 @@
 # plotting_functions
 
-#' @title plotPosterior 
+#' @title plotPosterior
 #' @name plotPosterior
 #' @description plot the posterior of the model parameters
 #' @param fit fit as produced by fit_grpRR
@@ -23,7 +23,7 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL, tau0 = N
             mean = fit$EW_beta[j]
             psi <- fit$EW_s[j]
             group <- fit$annot[j]
-            if(is.null(range)) x <- c(0,seq(min(0, mu_slab - 200*va_slab, beta0[j]), max(mu_slab + 200*va_slab, beta0[j]), length.out=1000))
+            if(is.null(range)) x <- c(0,seq(min(0, mu_slab - abs(mu_slab)/2, beta0[j]), max(mu_slab + abs(mu_slab)/2, beta0[j],0), length.out=1000))
             else x <- c(0,seq(range[1], range[2], length.out = 1000))
             data.frame(beta=x, j=j, va_slab=va_slab, mean=mean, mu_slab=mu_slab, psi=psi, group=group)
             }) %>% bind_rows()
@@ -31,8 +31,12 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL, tau0 = N
         if(!is.null(beta0)) gr %<>% mutate(true_beta = beta0[j])
         gg <- ggplot(gr, aes(x=beta, y=density)) + geom_line() + facet_wrap(~j, scales="free", ncol=jmax) +
          geom_vline(aes(xintercept=mean, col="mean"),alpha=0.5, linetype="dashed")
-        if(!is.null(beta0)) gg <- gg + geom_vline(aes(xintercept=true_beta, col="true_beta"), linetype="dashed",alpha=0.5) 
-        gg <- gg+ scale_color_manual(name = "statistics", values = c(true_beta = "blue", mean = "red"))
+        if(!is.null(beta0)) gg <- gg + geom_vline(aes(xintercept=true_beta, col="true_beta"), linetype="dashed",alpha=0.5)
+        gg <- gg+ scale_color_manual(name = "statistics", values = c(true_beta = "blue", mean = "red"))+
+theme(
+  strip.background = element_blank(),
+  strip.text.x = element_blank()
+)
         print(gg)
     }
 
@@ -47,11 +51,14 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL, tau0 = N
             data.frame(s=x, j=j, psi=psi,mean=mean, group=group)
             }) %>% bind_rows()
         gr %<>% mutate(density = psi^s *(1-psi)^(1-s))
-        if(!is.null(pi0)) gr %<>% mutate(true_s = pi0[j])
+        if(!is.null(s0)) gr %<>% mutate(true_s = s0[j])
         gg <- ggplot(gr, aes(xend=s, x=s, yend=0, y=density)) + geom_segment() +geom_point() + facet_wrap(~j, ncol=jmax) +
          geom_vline(aes(xintercept=mean, col="mean"),alpha=0.5, linetype="dashed")
-        if(!is.null(pi0)) gg <- gg + geom_vline(aes(xintercept=true_pi, col="true_pi"), linetype="dashed",alpha=0.5) 
-        gg <- gg+ scale_color_manual(name = "statistics", values = c(true_pi = "blue", mean = "red"))
+        if(!is.null(s0)) gg <- gg + geom_vline(aes(xintercept=true_s, col="true_s"), linetype="dashed",alpha=0.5)
+        gg <- gg+ scale_color_manual(name = "statistics", values = c(true_s = "blue", mean = "red"))+ theme_bw() +
+theme(
+  strip.background = element_blank(),
+  strip.text.x = element_blank())
         print(gg)
     }
 
@@ -66,7 +73,7 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL, tau0 = N
         if(!is.null(pi0)) gr %<>% mutate(true_pi = pi0[k])
         gg <- ggplot(gr, aes(x=pi, y=density)) + geom_line() + facet_wrap(~k, scales="free") +
          geom_vline(aes(xintercept=mean, col="mean"), linetype="dashed")
-        if(!is.null(pi0)) gg <- gg + geom_vline(aes(xintercept=true_pi, col="true_pi"), linetype="dashed") 
+        if(!is.null(pi0)) gg <- gg + geom_vline(aes(xintercept=true_pi, col="true_pi"), linetype="dashed")
         gg <- gg+ scale_color_manual(name = "statistics", values = c(true_pi = "blue", mean = "red"))
         print(gg)
     }
@@ -83,7 +90,7 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL, tau0 = N
         if(!is.null(gamma0)) gr %<>% mutate(true_gamma = gamma0[k])
         gg <- ggplot(gr, aes(x=gamma, y=density)) + geom_line() + facet_wrap(~k, scales="free") +
          geom_vline(aes(xintercept=mean, col="mean"), linetype="dashed")
-        if(!is.null(gamma0)) gg <- gg + geom_vline(aes(xintercept=true_gamma, col="true_gamma"), linetype="dashed") 
+        if(!is.null(gamma0)) gg <- gg + geom_vline(aes(xintercept=true_gamma, col="true_gamma"), linetype="dashed")
         gg <- gg+ scale_color_manual(name = "statistics", values = c(true_gamma = "blue", mean = "red"))
         print(gg)
     }
@@ -93,26 +100,112 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL, tau0 = N
         mea <- fit$EW_tau
         if(is.null(range))  x <- seq(0, max(tau0,5 * mea), , length.out=1000)
         else x <- seq(range[1], range[2], length.out = 1000)
-        df <- data.frame(tau = x, 
+        df <- data.frame(tau = x,
                          density = dgamma(x, shape = fit$alpha_tau, rate = fit$beta_tau),
                          mean = fit$EW_tau)
         if(!is.null(tau0)) df$true_tau <- tau0
         gg <- ggplot(df, aes(x=tau, y=density)) + geom_line() + geom_vline(aes(xintercept=mean, col="mean"), linetype="dashed")
-        if(!is.null(tau0)) gg <- gg + geom_vline(aes(xintercept=true_tau, col="true_tau"), linetype="dashed") 
+        if(!is.null(tau0)) gg <- gg + geom_vline(aes(xintercept=true_tau, col="true_tau"), linetype="dashed")
         gg <- gg+ scale_color_manual(name = "statistics", values = c(true_tau = "blue", mean = "red"))
         print(gg)
     }
 }
 
 
-#' @title plotELBO 
+#' @title plotELBO
 #' @name plotELBO
-#' @description plot the ELBO over iteration to monitor convergence of the algorithm 
+#' @description plot the ELBO over iteration to monitor convergence of the algorithm
 #' @param fit fit as produced by fit_grpRR
 #' @export
 plotELBO <- function(fit){
     df <- data.frame(iteration=1:length(fit$ELB_trace),
                      ELBO = fit$ELB_trace)
     ggplot(df, aes(x=iteration, y=ELBO)) +geom_line()
+}
+
+
+
+#' #'  plotMethodComparison
+#' Function to plot method comparison across several runs
+#' @param resultList List as in simulation_setting1.Rmd
+#' @import dplyr
+#' @import reshape2
+#' @import ggplot2
+#' @export
+
+plotMethodComparison <- function(resultList, plotbeta = F, family = "gaussian", methods2plot="all") {
+    # get results in dataframe format
+    if(family=="gaussian"){
+    eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR, F1score = l$F1score, RMSE = l$RMSE, l1error_beta = l$l1error_beta)),
+        varnames = c("measure", "method"), level = "run")
+    } else {
+      eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR, F1score = l$F1score, BS = l$BS, AUC = l$AUC, l1error_beta = l$l1error_beta)),
+                           varnames = c("measure", "method"), level = "run")
+    }
+
+    pf_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$pf_mat, varnames = c("group", "method"),
+        value.name = "penalty_factor"), Lrun = i)) %>% bind_rows()
+
+    sparsity_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$sparsity_mat, varnames = c("group",
+        "method"), value.name = "sparsity_level"), Lrun = i)) %>% bind_rows()
+
+    beta_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$beta_mat, varnames = c("feature", "method"),
+        value.name = "beta"), Lrun = i)) %>% bind_rows()
+    # the folowing only works if annot is names properly, needs to be fixes
+    beta_summary$group <- sapply(1:nrow(beta_summary), function(i) resultList[[beta_summary$Lrun[i]]]$annot[beta_summary$feature[i]])
+
+    intercepts_summary <- melt(lapply(resultList, function(l) t(l$intercepts)), varnames = c("const", "method"), value.name = "intercept",
+        level = "run")[, 2:4]
+
+    runtime_summary <- melt(lapply(resultList, function(l) t(l$runtime)), varnames = c("const", "method"), value.name = "runtime",
+        level = "run")[, 2:4]
+
+    if(!methods2plot=="all") {
+        eval_summary %<>% filter(method %in% methods2plot)
+        pf_summary %<>% filter(method %in% methods2plot)
+        sparsity_summary %<>% filter(method %in% methods2plot)
+        beta_summary %<>% filter(method %in% methods2plot)
+        intercepts_summary %<>% filter(method %in% methods2plot)
+        runtime_summary %<>% filter(method %in% methods2plot)
+    }
+
+    gg_pf <- ggplot(pf_summary, aes(x = as.factor(group), y = penalty_factor, fill = as.factor(group), group = as.factor(group))) + geom_boxplot() + facet_wrap(~method,
+        scales = "free_y") + ggtitle("Penalty Factors per group") + theme(axis.text.x = element_text(angle = 60, hjust = 1))
+    print(gg_pf)
+
+    gg_sparse <- ggplot(sparsity_summary, aes(x = as.factor(group), y = sparsity_level, fill = as.factor(group), group = as.factor(group))) + geom_boxplot() + facet_wrap(~method,
+        scales = "free_y") + ggtitle("Sparsity Level per group (1=dense)") + theme(axis.text.x = element_text(angle = 60, hjust = 1))
+    print(gg_sparse)
+
+    gg_perf <- ggplot(filter(eval_summary, method != "TrueModel"), aes(x = method, y = value, fill = method)) + geom_boxplot() +
+        ggtitle("Method comparison") + facet_wrap(~measure, scales = "free_y") + theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+        ggtitle("Performance measures")
+    print(gg_perf)
+
+    if (plotbeta) {
+        gg_beta <- ggplot(beta_summary, aes(x = beta, fill = group, group = group)) + geom_histogram(alpha = 0.6, position = "identity") +
+            facet_wrap(~method, scales = "free") + ggtitle("Distribution of estimated coefficients per group")
+        print(gg_beta)
+    }
+
+    gg_runtime <- ggplot(runtime_summary, aes(x = method, y = runtime, group = method, fill = method)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 60,
+        hjust = 1)) + ggtitle("Runtime") + ylab("secs")
+    print(gg_runtime)
+
+    if(family=="binomial"){
+        fprMat <- lapply(resultList, function(res) sapply(res$ROC, function(r) {
+            if(!is.na(r)) r["FPR",] else rep(NA, 101)}))
+        tprMat <- lapply(resultList, function(res) sapply(res$ROC, function(r) {
+            if(!is.na(r)) r["TPR",] else rep(NA, 101)}))
+
+        fprDF <- melt(fprMat, varnames=c("cut", "method"), value.name = "FPR")
+        tprDF <- melt(tprMat, varnames=c("cut", "method"), value.name = "TPR")
+        rocDF <- merge.data.frame(fprDF, tprDF, by=c("method", "cut", "L1"))
+
+        ggROC <- ggplot(rocDF, aes(x=FPR, y=TPR, col=method)) + geom_line() +facet_wrap(~L1)
+        print(ggROC)
+
+    }
+
 }
 

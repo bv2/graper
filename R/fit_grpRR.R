@@ -33,7 +33,7 @@
 
 fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 0.001, r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001,
     r_pi = 1, d_pi = 1, max_iter = 3000, th = 1e-05, intercept = TRUE, calcELB = TRUE, verbose = TRUE, freqELB = 1, family = "gaussian",
-    nogamma=F, standardize=TRUE) {
+    nogamma=F, standardize=TRUE, init_psi=1) {
 
     stopifnot(ncol(X) == length(annot))
 
@@ -73,7 +73,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
             # initialize slab mean and spike prob.
             mu_init <- rnorm(p)
             # psi_init <- runif(p)
-            psi_init <- rep(0.5,p)
+            psi_init <- rep(init_psi,p)
             if(!nogamma)
             res <- grRRCpp_sparse_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB,
                 verbose, freqELB, mu_init, psi_init)

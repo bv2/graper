@@ -34,7 +34,7 @@ EvaluateModel <- function(beta_est, intercept, X_test, y_test, beta0 = NULL, fam
     p <- ncol(X_test)
     n_test <- nrow(X_test)
     stopifnot(family %in% c("gaussian", "binomial"))
-    RMSE_test <- FNR <- sensitivity <- specificity <- FPR <- BrierScore <- ROC <- AUC <- predprob <- pred_gauss <- NULL
+    RMSE_test <- FNR <- sensitivity <- specificity <- FPR <- BrierScore <- ROC <- AUC <- predprob <- pred_gauss <- precision <- recall <- F1score <- NULL
     
     # if 'true features' known evaluate sensitivity and specificity
     if (!is.null(beta0)) {
@@ -44,6 +44,9 @@ EvaluateModel <- function(beta_est, intercept, X_test, y_test, beta0 = NULL, fam
         specificity <- 1 - FPR
         FNR <- sum(beta0 != 0 & beta_est == 0)/sum(beta0 != 0)
         sensitivity <- 1 - FNR
+        precision <- sum(beta0 != 0 & beta_est != 0)/sum(beta_est != 0)
+        recall <- sum(beta0 != 0 & beta_est != 0)/sum(beta0 != 0)
+        F1score <- 2*precision*recall/(precision + recall)
     } else NULL
     
     # Prediction performance on test set
@@ -67,6 +70,6 @@ EvaluateModel <- function(beta_est, intercept, X_test, y_test, beta0 = NULL, fam
     
     
     return(list(beta_est = beta_est, RMSE_test = RMSE_test, BrierScore = BrierScore, ROC = ROC, AUC = AUC, specificity = specificity, 
-        sensitivity = sensitivity, FNR = FNR, FPR = FPR, beta0 = beta0, y_test = y_test, predprob = predprob, pred_gauss = pred_gauss, 
+        sensitivity = sensitivity, FNR = FNR, FPR = FPR, precision=precision, recall=recall, F1score=F1score, beta0 = beta0, y_test = y_test, predprob = predprob, pred_gauss = pred_gauss, 
         intercept = intercept))
 }

@@ -236,7 +236,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     varbvs_summary$pf <- rep(mean(varbvsFit$sa),G) # should probably be avaraged in a more informed way....
     varbvs_summary$beta <- beta_varbvs
     if(intercept) varbvs_summary$intercept <- mean(varbvsFit$mu.cov) # should probably be avaraged in a more informed way....
-    varbvs_summary$sparsity <- sapply(unique(annot), function(gr) mean(varbvsFit$pip[annot == gr])) 
+    varbvs_summary$sparsity <- sapply(unique(annot), function(gr) mean(varbvsFit$pip[annot == gr]))
     varbvs_summary$out <- varbvsFit
     rm(varbvsFit, beta_varbvs)
     summaryList$varbvs <- varbvs_summary
@@ -334,7 +334,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
             GRridge_summary$pf <- as.numeric(GRfit$lambdamults[[1]])
             GRridge_summary$beta <- GRfit$betas
             if(intercept) {
-            if(family=="gaussian") GRridge_summary$intercept <- coef(GRfit$predobj$GroupRegul)[1]
+            if(family=="gaussian") GRridge_summary$intercept <- GRfit$predobj$GroupRegul@unpenalized
               else GRridge_summary$intercept <- GRfit$predobj$GroupRegul@unpenalized
           }
             GRridge_summary$sparsity <- rep(1, G)
@@ -507,6 +507,9 @@ evaluateFits <- function(allFits, Xtest, ytest) {
                 eval.out <- EvaluateModel(beta, intercept = intercept, Xtest, ytest, beta0 = beta0, family = family)
                 summary$FPR <- eval.out$FPR
                 summary$FNR <- eval.out$FNR
+                summary$precision <- eval.out$precision
+                summary$recall <- eval.out$recall
+                summary$F1score <- eval.out$F1score
             }
             summary
         })
@@ -539,7 +542,6 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 
     return(allFits)
 }
-
 
 #' #'  plotMethodComparison
 #' Function to plot method comparison across several runs

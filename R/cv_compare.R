@@ -16,7 +16,7 @@
 #' @import parallel
 #' @export
 
-cv_compare <- function(X, y, annot, family, ncores=1, nfolds=10, plot_cv=TRUE,
+cv_compare <- function(X, y, annot, family="gaussian", ncores=1, nfolds=10, plot_cv=TRUE,
  seed=NULL, parallel=FALSE, saveFits=FALSE,...){
   
   #make folds
@@ -81,7 +81,7 @@ cv_compare <- function(X, y, annot, family, ncores=1, nfolds=10, plot_cv=TRUE,
       
       #fit models
       AllFits <- RunMethods(Xtrain = as.matrix(Xtrain), ytrain =as.vector(ytrain),
-                            annot = annot, ...)
+                            annot = annot, family=family, ...)
       pf_mat <- getPenaltyFactors(AllFits)
       sparsity_mat <- getSparsityLevel(AllFits)
       beta_mat <- getCoefficients(AllFits)
