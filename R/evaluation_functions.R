@@ -42,7 +42,7 @@
 # ToDo: Option to standardize the input and then re-adjust estimates coefficeints to not standardized
 RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL, max_iter = 2000, intercept = T, plotit = F, standardize = T,
     verbose = F, compareGRridge = F, freqELB = 10, calcELB = T, include_nonfacQ = T, family = "gaussian", constantXcol = F, compareGroupLasso = T,
-    includeRF = T, th = 1e-07, compareIPF = T, compareAdaLasso = T) {
+    includeRF = T, th = 1e-07, compareIPF = T, compareAdaLasso = T, n_rep=10, include_varbvs=F) {
 
     if (!standardize)
         warning("Group Lasso and Grridge are standardized despite of standardized = F")
@@ -84,7 +84,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     if (include_nonfacQ) {
         tmp <- Sys.time()
         grpRR <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = F, spikeslab = F, max_iter = max_iter, intercept = intercept,
-            verbose = verbose, freqELB = freqELB, calcELB = calcELB, family = family, th = th, standardize=standardize)
+            verbose = verbose, freqELB = freqELB, calcELB = calcELB, family = family, th = th, standardize=standardize, n_rep=n_rep)
         timeNF <- difftime(Sys.time(), tmp, units = "secs")
         if (plotit)
             plotVBFit(grpRR, whichParam = c("ELB", "tau", "gamma"))
@@ -103,7 +103,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     # grpRR_FF : fully factorized, normal prior
     tmp <- Sys.time()
     grpRR_FF <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = T, spikeslab = F, max_iter = max_iter, intercept = intercept,
-        verbose = verbose, freqELB = freqELB, calcELB = calcELB, family = family, th = th, standardize=standardize)
+        verbose = verbose, freqELB = freqELB, calcELB = calcELB, family = family, th = th, standardize=standardize, n_rep=n_rep)
     timeFF <- difftime(Sys.time(), tmp, units = "secs")
     if (plotit)
         plotVBFit(grpRR_FF, whichParam = c("ELB", "tau", "gamma"))
@@ -125,7 +125,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
 
         tmp <- Sys.time()
         grpRR_SS <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = T, spikeslab = T, max_iter = max_iter, intercept = intercept,
-            verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th, family = family, standardize=standardize)
+            verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th, family = family, standardize=standardize, n_rep=n_rep)
         timeSS <- difftime(Sys.time(), tmp, units = "secs")
         if (plotit)
             plotVBFit(grpRR_SS, whichParam = c("ELB", "tau", "gamma"))
@@ -154,7 +154,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     # grpRR_SS: fully factorized, spike and slab This part is only implemented for gaussian so far
         tmp <- Sys.time()
         grpRR_SS_nogamma <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = T, spikeslab = T, max_iter = max_iter, intercept = intercept,
-            verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th, family = family,  nogamma = TRUE, standardize=standardize)
+            verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th, family = family,  nogamma = TRUE, standardize=standardize, n_rep=n_rep)
         timeSS_nogamma <- difftime(Sys.time(), tmp, units = "secs")
         if (plotit)
             plotVBFit(grpRR_SS, whichParam = c("ELB", "tau", "gamma"))
@@ -224,6 +224,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
 
 
     # varbvs
+    if(include_varbvs){
     if(!intercept) warning("varbvs always fits an intercept")
     tmp <- Sys.time()
     varbvsFit <- varbvs::varbvs(X=Xtrain, Z=NULL, y=ytrain, family = family)
@@ -240,7 +241,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     varbvs_summary$out <- varbvsFit
     rm(varbvsFit, beta_varbvs)
     summaryList$varbvs <- varbvs_summary
-
+    }
 
     # Random Forest
     if (includeRF) {
