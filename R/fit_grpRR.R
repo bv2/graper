@@ -23,6 +23,8 @@
 #' @param calcELB boolean, indicating wether to calculate ELB
 #' @param verbose boolean, indicating wether to print out intermediate messages during fitting
 #' @param freqELB determines frequency at which ELB is to be calculated, i.e. each feqELB-th iteration
+#' @param n_rep how many reptitions with random inits to be fit, model selection is based on ELBO
+
 #' @return List of fitted parameters .....
 
 
@@ -33,7 +35,7 @@
 
 fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 0.001, r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001,
     r_pi = 1, d_pi = 1, max_iter = 3000, th = 1e-05, intercept = TRUE, calcELB = TRUE, verbose = TRUE, freqELB = 1, family = "gaussian",
-    nogamma=F, standardize=TRUE, init_psi=1) {
+    nogamma=F, standardize=TRUE, init_psi=1, n_rep=1) {
 
     stopifnot(ncol(X) == length(annot))
 
@@ -58,76 +60,102 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
         sf <- attr(X, "scaled:scale")
     } else sf <- rep(1,p)
 
-    if (family == "gaussian") {
-        # remove intercept effect by centering X and y
-        if (intercept) {
-            X <- scale(X, center = T, scale = F)
-            y <- scale(y, center = T, scale = F)
-        }
+    if(!calcELB & n_rep >1) {
+            warning("For model selectio with multiple trials calcELB needs to be set to TRUE, only using a single fit now.")
+            n_rep <-1
+    }
 
-        # call C function depending on FacType and spikeslap arguments
-        # eventually this should be repeated x-times and model with lowest ELBO chosen, for now keep it for robustness anaylsis
-        if (spikeslab) {
-            if (!factoriseQ)
-                warning("Using fully factorized approach with a spike and slab prior")
-            # initialize slab mean and spike prob.
-            mu_init <- rnorm(p)
-            # psi_init <- runif(p)
-            psi_init <- rep(init_psi,p)
-            if(!nogamma)
-            res <- grRRCpp_sparse_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB,
-                verbose, freqELB, mu_init, psi_init)
-            else
-            res <- grRRCpp_sparse_ff_nogamma(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB,
-                verbose, freqELB, mu_init, psi_init)
-        } else {
-            if (factoriseQ) {
-                # initialize coefficients mean randomly
+    reslist <- lapply(1:n_rep, function(rep){
+        message("Fitting with random init ", rep)
+
+        if (family == "gaussian") {
+            # remove intercept effect by centering X and y
+            if (intercept) {
+                X <- scale(X, center = T, scale = F)
+                y <- scale(y, center = T, scale = F)
+            }
+
+            # call C function depending on FacType and spikeslap argument
+            if (spikeslab) {
+                if (!factoriseQ)
+                    warning("Using fully factorized approach with a spike and slab prior")
+                # initialize slab mean and spike prob.
                 mu_init <- rnorm(p)
-                res <- grRRCpp_dense_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose,
-                  freqELB, mu_init) 
-                } else res <- grRRCpp_dense_nf(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose,
-                freqELB)
-        }
+                # psi_init <- runif(p)
+                psi_init <- rep(init_psi,p)
+                if(!nogamma)
+                res <- grRRCpp_sparse_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB,
+                    verbose, freqELB, mu_init, psi_init)
+                else
+                res <- grRRCpp_sparse_ff_nogamma(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB,
+                    verbose, freqELB, mu_init, psi_init)
+            } else {
+                if (factoriseQ) {
+                    # initialize coefficients mean randomly
+                    mu_init <- rnorm(p)
+                    res <- grRRCpp_dense_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose,
+                      freqELB, mu_init)
+                    } else res <- grRRCpp_dense_nf(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose,
+                    freqELB)
+            }
 
         # calculate intercept
-        if (intercept)
-            intercept <- attr(y, "scaled:center") - sum(attr(X, "scaled:center")*res$EW_beta) else intercept <- NULL
+            if (intercept)
+                res$intercept <- attr(y, "scaled:center") - sum(attr(X, "scaled:center")*res$EW_beta) else res$intercept <- NULL
 
-        # give proper names
-        if(!nogamma) rownames(res$EW_gamma) <- unique(annot)
-        # return mean of approximate posterior (other quantities of interes: tau, lower bound on model evidence etc)
-        res <- append(res, list(intercept = intercept))
-    } else if (family == "binomial") {
-        # in case intercept =TRUE  this is removed iteratively during training in terms of the variational approximation
-        if (spikeslab){
-            if (!factoriseQ) 
-                warning("Using fully factorized approach with a spike and slab prior")
-            # initialize slab mean and spike prob. randomly
-            mu_init <- rnorm(p)
-            psi_init <- runif(p)
-            res <- grpRRCpp_sparse_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB,
-                verbose, freqELB, mu_init, psi_init, intercept)
-        } else {
-            if (factoriseQ){
-                # initialize coefficients mean randomly
+            # give proper names
+            if(!nogamma) rownames(res$EW_gamma) <- unique(annot)
+
+            res
+
+        } else if (family == "binomial") {
+            # in case intercept =TRUE  this is removed iteratively during training in terms of the variational approximation
+            if (spikeslab){
+                if (!factoriseQ)
+                    warning("Using fully factorized approach with a spike and slab prior")
+                # initialize slab mean and spike prob. randomly
                 mu_init <- rnorm(p)
-                res <- grpRRCpp_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, intercept)
-                } else {
-                	warning("factoriseQ=FALSE is not maintained currently for the logistic model. No intercept option and ELBO available.")
-                	res <- grpRRCpp_logistic_nf(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB)
-                }
+                # psi_init <- runif(p)
+                psi_init <- rep(init_psi,p)
+                res <- grpRRCpp_sparse_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB,
+                    verbose, freqELB, mu_init, psi_init, intercept)
+            } else {
+                if (factoriseQ){
+                    # initialize coefficients mean randomly
+                    mu_init <- rnorm(p)
+                    res <- grpRRCpp_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, intercept)
+                    } else {
+                    	warning("factoriseQ=FALSE is not maintained currently for the logistic model. No intercept option and ELBO available.")
+                    	res <- grpRRCpp_logistic_nf(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB)
+                    }
+            }
+            if(!intercept) res$intercept <- NULL
+            res
         }
-        if(!intercept) res$intercept <- NULL
+        else stop("Family not implemented. Needs to be either binomial or gaussian.")
+})
+
+    if(n_rep==1) {
+        res <- reslist[[1]]
+    }  else {
+            best_idx <- which.max(sapply(reslist, function(l) l$ELB))
+            if(is.na(best_idx) | is.null(best_idx)) {
+                warning("Model selection based on ELBO encountered errors. Returned model is picked arbitrarily!")
+                best_idx <- 1
+            }
+            res <- reslist[[best_idx]]
     }
-    else stop("Family not implemented. Needs to be either binomial or gaussian.")
-    
+
     # revert coefficients to original scale
+        if(standardize){
         res$EW_beta <- res$EW_beta/sf
-        res$Sigma_beta <- diag(sf) %*% res$Sigma_beta %*% diag(sf)
+        if(!factoriseQ) res$Sigma_beta <- diag(1/sf) %*% res$Sigma_beta %*% diag(1/sf)
+        else res$Sigma_beta <-diag(1/(sf^2) * diag(res$Sigma_beta))
+        }
         res$annot <- annot
         res$Options <- list(factoriseQ = factoriseQ, spikeslab = spikeslab, d_tau = d_tau, r_tau = r_tau, d_gamma = d_gamma, r_gamma =r_gamma,
     r_pi = r_pi, d_pi = r_pi, max_iter = max_iter, th = th, intercept = intercept, calcELB = calcELB, verbose = verbose, freqELB = freqELB, family = family,
     nogamma=nogamma, standardize=standardize)
+
     return(res)
 }
