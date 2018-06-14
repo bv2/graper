@@ -4,8 +4,8 @@
 \alias{cv_compare}
 \title{cv_compare}
 \usage{
-cv_compare(X, y, annot, family, ncores = 1, nfolds = 10, plot_cv = TRUE,
-  seed = NULL, parallel = FALSE, saveFits = FALSE, ...)
+cv_compare(X, y, annot, family = "gaussian", ncores = 1, nfolds = 10,
+  plot_cv = TRUE, seed = NULL, parallel = FALSE, saveFits = FALSE, ...)
 }
 \arguments{
 \item{X}{Design matrix of size n x p}

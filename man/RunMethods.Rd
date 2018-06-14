@@ -9,7 +9,7 @@ RunMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
   verbose = F, compareGRridge = F, freqELB = 10, calcELB = T,
   include_nonfacQ = T, family = "gaussian", constantXcol = F,
   compareGroupLasso = T, includeRF = T, th = 1e-07, compareIPF = T,
-  compareAdaLasso = T)
+  compareAdaLasso = T, n_rep = 10, include_varbvs = F)
 }
 \arguments{
 \item{Xtrain}{Design matrix of size n x p}
