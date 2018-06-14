@@ -16,15 +16,16 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL, tau0 = N
 
     if (param2plot=="beta") {
         message("Only plotting the first ", jmax, " coefficients per group.")
-        js <- sapply(unique(fit$annot), function(gr) which(fit$annot==gr)[1:min(jmax, sum(fit$annot==gr))])
+        js <- Reduce(c,lapply(unique(fit$annot), function(gr) which(fit$annot==gr)[1:min(jmax, sum(fit$annot==gr))]))
         gr <- lapply(js, function(j) {
             va_slab <- fit$sigma2_tildebeta_s1[j]
             mu_slab <- fit$EW_tildebeta_s1[j]
             mean = fit$EW_beta[j]
             psi <- fit$EW_s[j]
             group <- fit$annot[j]
-            if(is.null(range)) x <- c(0,seq(min(0, mu_slab - abs(mu_slab)/2, beta0[j]), max(mu_slab + abs(mu_slab)/2, beta0[j],0), length.out=1000))
-            else x <- c(0,seq(range[1], range[2], length.out = 1000))
+            if(is.null(range)){
+              x <- c(0,seq(min(0, mu_slab - abs(mu_slab)/2, beta0[j]), max(mu_slab + abs(mu_slab)/2, beta0[j],0), length.out=1000))
+            } else x <- c(0,seq(range[1], range[2], length.out = 1000))
             data.frame(beta=x, j=j, va_slab=va_slab, mean=mean, mu_slab=mu_slab, psi=psi, group=group)
             }) %>% bind_rows()
         gr %<>% mutate(density = psi* dnorm(beta, mu_slab, sqrt(va_slab)) + (1-psi)*(beta==0))
@@ -42,7 +43,7 @@ theme(
 
         if (param2plot=="s") {
         message("Only plotting the first ", jmax, " s per group.")
-        js <- sapply(unique(fit$annot), function(gr) which(fit$annot==gr)[1:min(jmax, sum(fit$annot==gr))])
+        js <- Reduce(c,lapply(unique(fit$annot), function(gr) which(fit$annot==gr)[1:min(jmax, sum(fit$annot==gr))]))
         gr <- lapply(js, function(j) {
             psi <- fit$EW_s[j]
             mean <- psi
