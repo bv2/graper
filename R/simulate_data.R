@@ -161,8 +161,8 @@ makeExampleData <- function(n=100, p=200, g=4, gammas=c(0.1,1,10,100), pis=c(0.5
 
     #checks
     stopifnot(p%%g==0)
-    stopifnot(length(gammas)==4)
-    stopifnot(length(pis)==4)
+    stopifnot(length(gammas)==g)
+    stopifnot(length(pis)==g)
 
     # construct design
     Sigma <- toeplitz(rho^(0:(p-1)))
@@ -176,6 +176,40 @@ makeExampleData <- function(n=100, p=200, g=4, gammas=c(0.1,1,10,100), pis=c(0.5
 
     #simulate response
     y <- rnorm(n, X%*%beta, 1/sqrt(tau))
-    annot <- rep(1:4, each=p/4)
+    annot <- rep(1:g, each=p/g)
+    list(X=X, y=y, annot=annot, gammas=gammas, pis=pis, tau=tau, rho=rho, g=g, p=p, n=n, beta=beta, s=s, beta_tilde=beta_tilde)
+}
+
+#' @title makeExampleDataWithUnequalGroups 
+#' @name makeExampleDataWithUnequalGroups
+#' @description Simulate data from the Bayesian model with specified parameters $\gamma$ and $\tau$. 
+#' @param n number of samples
+#' @param pg vector of length g (desired number of groups) with number of features per group
+#' @param gammas vector of length g, sepcifying the slab precision of the prior on beta per group
+#' @param pis vector of length g, sepcifying the probability of s to be 1 (slab)
+#' @param tau noise precision
+#' @param rho correlation of design matrix (Toeplitz structure)
+#' @export
+makeExampleDataWithUnequalGroups <- function(n=100, pg=c(100,100,10,10), gammas=c(0.1,10,0.1,10), pis=c(0.5,0.5,0.5,0.5), tau=1, rho=0) {
+
+    #checks
+    g <- length(pg)
+    p <- sum(pg)
+    stopifnot(length(gammas)==g)
+    stopifnot(length(pis)==g)
+
+    # construct design
+    Sigma <- toeplitz(rho^(0:(p-1)))
+    X <- matrix(rnorm(n*p),n,p) %*% chol(Sigma)
+    X <- scale(X)
+
+    # simulate coefficients
+    beta_tilde <- Reduce(c,lapply(1:g, function(k) rnorm(pg[k],0,sqrt(1/gammas[k]))))
+    s <- Reduce(c,lapply(1:g, function(k) rbinom(pg[k],1,pis[k])))
+    beta <- s* beta_tilde
+
+    #simulate response
+    y <- rnorm(n, X%*%beta, 1/sqrt(tau))
+    annot <- rep(1:length(pg), times=pg)
     list(X=X, y=y, annot=annot, gammas=gammas, pis=pis, tau=tau, rho=rho, g=g, p=p, n=n, beta=beta, s=s, beta_tilde=beta_tilde)
 }
