@@ -339,23 +339,7 @@ public:
     double entropy_tau = alpha_tau-log(beta_tau)+lgamma(alpha_tau)+(1-alpha_tau)*boost::math::digamma(alpha_tau);
     double entropy_pi = accu(logbeta_alpha_beta_pi - (alpha_pi-1)%digamma_alpha_pi -
                              (beta_pi-1)%digamma_beta_pi +(alpha_pi+beta_pi-2)%digamma_alphaplusbeta_pi);
-      Rcout<<"entropy_tildebeta_s="<<entropy_tildebeta_s<<endl;
-      Rcout<<"entropy_gamma="<<entropy_gamma<<endl;
-      Rcout<<"entropy_tau="<<entropy_tau<<endl;
-      Rcout<<"entropy_pi="<<entropy_pi<<endl;
-      Rcout<<"exp_logcondDy="<<exp_logcondDy<<endl;
-      Rcout<<"exp_logcondDbeta="<<exp_logcondDbeta<<endl;
-      Rcout<<"exp_logcondDs="<<exp_logcondDs<<endl;
-      Rcout<<"exp_logDgamma="<<exp_logDgamma<<endl;
-      Rcout<<"exp_logDtau="<<exp_logDtau<<endl;
-      Rcout<<"exp_logDpi="<<exp_logDpi<<endl;
-      Rcout<<"alpha_gamma="<<alpha_gamma<<endl;
-      Rcout<<"beta_gamma="<<beta_gamma<<endl;
-      Rcout<<"lgamma_alpha_gamma="<<lgamma_alpha_gamma<<endl;
-      Rcout<<"digamma_alpha_gamma="<<digamma_alpha_gamma<<endl;
-      Rcout<<"log(beta_gamma)="<<log(beta_gamma)<<endl;
-      Rcout<<"log(lgamma_alpha_gamma)="<<log(lgamma_alpha_gamma)<<endl;
-      Rcout<<"(1-alpha_gamma)%digamma_alpha_gamma"<<(1-alpha_gamma)%digamma_alpha_gamma<<endl;
+
     //evidence lower bound
     ELB=exp_Djoint + entropy_tildebeta_s + entropy_gamma + entropy_tau + entropy_pi;
     diff=ELB-ELB_old;
