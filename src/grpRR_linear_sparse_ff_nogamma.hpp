@@ -324,7 +324,7 @@ public:
     }
 
     double entropy_tildebeta_s = p/2*(log(2*M_PI)+1)+0.5*accu(psi%log(sigma2_tildebeta_1) +(1-psi)%log(sigma2_tildebeta_0))-accu(entropy_s_indiv);
-    double entropy_gamma = accu(alpha_gamma-log(beta_gamma)+log(lgamma_alpha_gamma)+(1-alpha_gamma)*digamma_alpha_gamma); //replace log(tgamma) by lgamma to avoid numeric issues of Inf
+    double entropy_gamma = accu(alpha_gamma-log(beta_gamma)+(lgamma_alpha_gamma)+(1-alpha_gamma)*digamma_alpha_gamma); //replace log(tgamma) by lgamma to avoid numeric issues of Inf
     double entropy_tau = alpha_tau-log(beta_tau)+lgamma(alpha_tau)+(1-alpha_tau)*boost::math::digamma(alpha_tau);
     double entropy_pi = accu(logbeta_alpha_beta_pi - (alpha_pi-1)%digamma_alpha_pi -
                              (beta_pi-1)%digamma_beta_pi +(alpha_pi+beta_pi-2)%digamma_alphaplusbeta_pi);

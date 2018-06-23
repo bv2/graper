@@ -295,7 +295,7 @@ public:
 //      //entropy of variational distribution
 //      double logdet_Sigma = accu(log(sigma2_beta));     //need to calculate sum of log instead of log of product to avoid numerical overflow
 //      double entropy_beta=p/2*(log(2*M_PI)+1)+0.5*logdet_Sigma;
-//      double entropy_gamma=accu(alpha_gamma-log(beta_gamma)+log(lgamma_alpha_gamma)+(1-alpha_gamma)%digamma_alpha_gamma); //replace log(tgamma) by lgamma to avoid numeric issues of Inf
+//      double entropy_gamma=accu(alpha_gamma-log(beta_gamma)+(lgamma_alpha_gamma)+(1-alpha_gamma)%digamma_alpha_gamma); //replace log(tgamma) by lgamma to avoid numeric issues of Inf
 //      
 //      //evidence lower bound
 //      ELB=exp_Djoint+entropy_beta +entropy_gamma;
