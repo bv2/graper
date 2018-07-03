@@ -376,13 +376,13 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     # sequences? Can happen if some cvsd are NA nas = is.na(cvsd)???
     if (compareIPF) {
         # penalty factors to consider for cross-validation (unclear how to choose)
-        lambda_1d <- seq(1, 10, 2)
+        lambda_1d <- seq(0.1, 0.5, 1, 10, 2)
         tmp <- Sys.time()
         pfgrid <- expand.grid(rep(list(lambda_1d), G))
         pflist <- lapply(seq_len(nrow(pfgrid)), function(i) pfgrid[i, ])
         type.measure <- ifelse(family == "gaussian", "mse", "class")
         ipf.out <- try(ipflasso::cvr2.ipflasso(Xtrain, ytrain, alpha = 1, standardize = standardize, family = family, type.measure = type.measure,
-            blocks = lapply(unique(annot), function(gr) which(annot == gr)), pflist = pflist, nfolds = 10, ncv = 1))  #using same cv parameter as standard glmnet
+            blocks = lapply(unique(annot), function(gr) which(annot == gr)), pflist = pflist, nfolds = 10, ncv = 3))  #using same cv parameter as standard glmnet leads to errors, needs to be >1
         tmp <- difftime(Sys.time(), tmp, units = "secs")
 
         if (class(ipf.out) == "try-error") {
