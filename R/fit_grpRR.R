@@ -150,7 +150,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
         if(standardize){
         res$EW_beta <- res$EW_beta/sf
         if(!factoriseQ) res$Sigma_beta <- diag(1/sf) %*% res$Sigma_beta %*% diag(1/sf)
-        else res$Sigma_beta <-diag(1/(sf^2) * diag(res$Sigma_beta))
+        else res$Sigma_beta <-diag(1/(sf^2) * diag(as.matrix(res$Sigma_beta)))
         }
         res$annot <- annot
         res$Options <- list(factoriseQ = factoriseQ, spikeslab = spikeslab, d_tau = d_tau, r_tau = r_tau, d_gamma = d_gamma, r_gamma =r_gamma,

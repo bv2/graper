@@ -376,7 +376,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     # sequences? Can happen if some cvsd are NA nas = is.na(cvsd)???
     if (compareIPF) {
         # penalty factors to consider for cross-validation (unclear how to choose)
-        lambda_1d <- seq(0.1, 0.5, 1, 10, 2)
+        lambda_1d <- c(0.1, 0.5, 1, 2, 10)
         tmp <- Sys.time()
         pfgrid <- expand.grid(rep(list(lambda_1d), G))
         pflist <- lapply(seq_len(nrow(pfgrid)), function(i) pfgrid[i, ])
