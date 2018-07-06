@@ -390,11 +390,11 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
         } else {
             IPFLasso_summary <- list()
             IPFLasso_summary$runtime <- as.numeric(tmp)
-            IPFLasso_summary$pf <- ind.bestpf
-            IPFLasso_summary$beta <- NULL
-            IPFLasso_summary$intercept <- NULL
-            IPFLasso_summary$sparsity <- NULL
-            IPFLasso_summary$out <- rf.out
+            IPFLasso_summary$pf <- pflist[[ipf.out$ind.bestpf]]
+            IPFLasso_summary$beta <- ipf.out$coeff[-1,ipf.out$ind.bestlambda]
+            IPFLasso_summary$intercept <- ipf.out$coeff[1,ipf.out$ind.bestlambda]
+            IPFLasso_summary$sparsity <-  sapply(unique(annot), function(gr) sum(IPFLasso_summary$beta[annot == gr] != 0)/sum(annot == gr))
+            IPFLasso_summary$out <- ipf.out
             rm(ipf.out)
             summaryList$IPFLasso <- IPFLasso_summary
         }
