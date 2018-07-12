@@ -6,8 +6,8 @@
 \usage{
 fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 0.001,
   r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001, r_pi = 1, d_pi = 1,
-  max_iter = 3000, th = 1e-05, intercept = TRUE, calcELB = TRUE,
-  verbose = TRUE, freqELB = 1, family = "gaussian", nogamma = F,
+  max_iter = 3000, th = 0.01, intercept = TRUE, calcELB = TRUE,
+  verbose = TRUE, freqELB = 1, family = "gaussian", nogamma = FALSE,
   standardize = TRUE, init_psi = 1, n_rep = 1)
 }
 \arguments{

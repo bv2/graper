@@ -60,10 +60,14 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
         sf <- attr(X, "scaled:scale")
     } else sf <- rep(1,p)
 
-    if(calcELB & family == "binomial"){
-      calcELB <- FALSE
-      warning("ELBO is not yet implemented for logistic regression")
+    if(family == "binomial"){
+      warning("Logistic regression is still being tested. You might encounter some bugs...")
+      if(calcELB){
+        calcELB <- FALSE
+        warning("ELBO is not yet implemented for logistic regression")
+      }
     }
+
     if(!calcELB & n_rep >1) {
             warning("For model selectio with multiple trials calcELB needs to be set to TRUE, only using a single fit now.")
             n_rep <-1

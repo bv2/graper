@@ -137,6 +137,7 @@ public:
   void iterate(){
     n_iter=n_iter+1;                          //increasing counter by 1
     if(verbose) Rcout << "iteration " << n_iter << endl;
+    if(verbose) Rcout << "Updating parameters of variational distributions..." << endl;
 
     update_param_pi();
     update_exp_pi();
@@ -155,7 +156,6 @@ public:
 
   //function to calculate updated parameters for beta variational distirbution
   void update_param_beta(){
-    if(verbose) Rcout << "Updating beta.." << endl;
     auto start_beta=get_time::now();
 
     vec gamma_annot(p);
@@ -196,7 +196,6 @@ public:
     }
 
     auto time_beta = get_time::now() - start_beta;
-    if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_beta).count()<<" ms "<<endl;
   }
 
   //function to calculate updated parameters for tau variational distribution
@@ -228,7 +227,6 @@ public:
 
   //function to update expected values of beta
   void update_exp_beta(){
-      if(verbose) Rcout << "Updating expected values containing beta.." << endl;
       auto start_beta=get_time::now();
     EW_betatildesq=psi%(square(mu_tildebeta_1) +sigma2_tildebeta_1) + (1-psi)% (sigma2_tildebeta_0);
 
@@ -244,7 +242,6 @@ public:
       //EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % (Sigma_beta+mu_beta*trans(mu_beta))));
       EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % Sigma_beta) + trans(mu_beta)*XtX*mu_beta);
       auto time_beta = get_time::now() - start_beta;
-      if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_beta).count()<<" ms "<<endl;
   }
 
   //function to update expected values of tau
@@ -344,8 +341,6 @@ public:
     diff=ELB-ELB_old;
     //
     auto time_ELB = get_time::now() - start_ELB;
-    if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_ELB).count()<<" ms "<<endl;
-
     if(verbose){
       Rcout<<"ELB="<<ELB<<endl;
       Rcout<<"ELB improved by "<<diff<<endl;

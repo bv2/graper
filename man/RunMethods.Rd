@@ -5,11 +5,12 @@
 \title{RunMethods}
 \usage{
 RunMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
-  max_iter = 2000, intercept = T, plotit = F, standardize = T,
-  verbose = F, compareGRridge = F, freqELB = 10, calcELB = T,
-  include_nonfacQ = T, family = "gaussian", constantXcol = F,
-  compareGroupLasso = T, includeRF = T, th = 1e-07, compareIPF = T,
-  compareAdaLasso = T, n_rep = 10, include_varbvs = F)
+  max_iter = 5000, family = "gaussian", intercept = TRUE,
+  standardize = TRUE, freqELB = 10, calcELB = TRUE, th = 0.01,
+  n_rep = 1, verbose = FALSE, compareGRridge = FALSE,
+  include_nonfacQ = FALSE, compareSparseGroupLasso = TRUE,
+  compareIPF = TRUE, compareGroupLasso = TRUE, includeRF = T,
+  compareAdaLasso = TRUE, include_varbvs = FALSE)
 }
 \arguments{
 \item{Xtrain}{Design matrix of size n x p}
@@ -24,26 +25,45 @@ RunMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
 
 \item{max_iter}{maximum number of iterations}
 
+\item{family}{liklihood model for the response, either "gaussian" for linear regression or "binomial" for logisitc regression}
+
 \item{intercept}{boolean, indicating wether to fit an intercept}
 
-\item{plotit}{boolean, indicating wether to produce diagnositc plots}
-
 \item{standardize}{boolean, indicating wether features for Ridge and Lasso fit should be standardized. Note this does not affect GRridge and grouplasso where standardization is default.}
-
-\item{verbose}{boolean, indicating wether to print out intermediate messages during fitting}
-
-\item{compareGRridge}{boolean, indicating wether to fit a GRridge model (might cause errors, look for stable version!)}
 
 \item{freqELB}{determines frequency at which ELB is to be calculated, i.e. each feqELB-th iteration}
 
 \item{calcELB}{boolean, indicating wether to calculate ELB}
 
-\item{compareIPF}{boolean, indicating wether to fit a IPFLasso (might cause errors, look for stable version!)}
+\item{th}{convergence threshold on the ELBO for the variational Bayes algorithm}
+
+\item{n_rep}{number of repeated fits with variational Bayes using different random intilizations}
+
+\item{verbose}{boolean, indicating wether to print out intermediate messages during fitting}
+
+\item{compareGRridge}{boolean, indicating wether to fit a GRridge model}
+
+\item{include_nonfacQ}{include a VB method with multivariate variational distributon (can be very timme consuming for large data sets)}
+
+\item{compareSparseGroupLasso}{boolean, indicating wether to fit a sparse group lasso}
+
+\item{compareIPF}{boolean, indicating wether to fit a IPFLasso}
+
+\item{compareGroupLasso}{boolean, indicating wether to fit a group lasso}
+
+\item{includeRF}{boolean, indicating wether to fit a random forest}
 
 \item{compareAdaLasso}{boolean, indicating wether to fit an adpative lasso}
+
+\item{include_varbvs}{boolean, indicating wether to fit varbvs}
 }
 \value{
 List of fitted models and two data frames with coeffcients and penalty factors
+
+a list with
+ - a summaryList containing the complete individual fits (out) as well as other
+statistics (coefficients, runtime, sparsity, intercept, penalty factors)
+- the details on the data (sample size n, predictor number p, covariate annotation annot, group number G, feature and annotation names)
 }
 \description{
 Function to run serveral different methods for high-dimensional regression

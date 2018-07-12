@@ -21,7 +21,14 @@ Imports:
 	randomForest, 
 	reshape2,
 	dplyr,
-	rstan	
+	rstan,
+	ggplot2,
+	SGL,
+	GRridge,
+	ipflasso,
+	varbvs, 
+	randomForest, 
+	grpreg	
 LinkingTo: Rcpp,
 	RcppArmadillo
 RoxygenNote: 6.0.1
