@@ -34,8 +34,8 @@
 
 
 fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 0.001, r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001,
-    r_pi = 1, d_pi = 1, max_iter = 3000, th = 1e-05, intercept = TRUE, calcELB = TRUE, verbose = TRUE, freqELB = 1, family = "gaussian",
-    nogamma=F, standardize=TRUE, init_psi=1, n_rep=1) {
+    r_pi = 1, d_pi = 1, max_iter = 3000, th = 0.01, intercept = TRUE, calcELB = TRUE, verbose = TRUE, freqELB = 1, family = "gaussian",
+    nogamma=FALSE, standardize=TRUE, init_psi=1, n_rep=1) {
 
     stopifnot(ncol(X) == length(annot))
 
@@ -60,6 +60,10 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
         sf <- attr(X, "scaled:scale")
     } else sf <- rep(1,p)
 
+    if(calcELB & family == "binomial"){
+      calcELB <- FALSE
+      warning("ELBO is not yet implemented for logistic regression")
+    }
     if(!calcELB & n_rep >1) {
             warning("For model selectio with multiple trials calcELB needs to be set to TRUE, only using a single fit now.")
             n_rep <-1

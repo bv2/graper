@@ -261,6 +261,9 @@ public:
 
   //function to calculate ELBO
   void calculate_ELBO(){
+    if(n_iter==1) Rcout<<"ELB not implemented"<<endl;
+
+
 //     if(verbose) Rcout<<"Calculating ELB.."<<endl;
 //     auto start_ELB=get_time::now();
 //  
