@@ -6,6 +6,22 @@
 \usage{
 simulateData_toeplitz(n, p, beta, sigma2, seed, rho)
 }
+\arguments{
+\item{n}{number of samples}
+
+\item{p}{number of features}
+
+\item{beta}{model coefficients}
+
+\item{sigma2}{noise variance}
+
+\item{seed}{random seed}
+
+\item{rho}{Toeplitz parameter}
+}
+\value{
+list with simulated response y and design matrix X
+}
 \description{
 Simulate Data According to a linear model with given coefficients and toeplitz design matrix
 }

@@ -1,10 +1,13 @@
+# Functions to extract specific statistics from the results list produced by RunMethods
+
+
 #' @export
 
 getPenaltyFactors <- function(AllFits) {
     G <- AllFits$G
     pfmat <- sapply(AllFits$summaryList, function(l) {
         pfs <- l$pf
-        if (!is.null(pfs)) 
+        if (!is.null(pfs))
             pfs else rep(NA, G)
     })
     rownames(pfmat) <- unique(AllFits$groupnames)
@@ -17,7 +20,7 @@ getSparsityLevel <- function(AllFits) {
     G <- AllFits$G
     sparsity_mat <- sapply(AllFits$summaryList, function(l) {
         sparsity <- l$sparsity
-        if (!is.null(sparsity)) 
+        if (!is.null(sparsity))
             sparsity else rep(NA, G)
     })
     rownames(sparsity_mat) <- unique(AllFits$groupnames)
@@ -30,7 +33,7 @@ getCoefficients <- function(AllFits) {
     p <- AllFits$p
     coefmat <- sapply(AllFits$summaryList, function(l) {
         coef <- l$beta
-        if (!is.null(coef)) 
+        if (!is.null(coef))
             as.numeric(coef) else rep(NA, p)
     })
     rownames(coefmat) <- AllFits$varnames
@@ -42,7 +45,7 @@ getCoefficients <- function(AllFits) {
 getIntercept <- function(AllFits) {
     sapply(AllFits$summaryList, function(l) {
         intercept <- l$intercept
-        if (is.null(intercept)) 
+        if (is.null(intercept))
             intercept <- NA
         intercept
     })
@@ -53,7 +56,7 @@ getIntercept <- function(AllFits) {
 getRunTime <- function(AllFits) {
     sapply(AllFits$summaryList, function(l) {
         runtime <- l$runtime
-        if (is.null(runtime)) 
+        if (is.null(runtime))
             runtime <- NA
         runtime
     })
@@ -64,7 +67,7 @@ getRunTime <- function(AllFits) {
 getRMSE <- function(AllFits) {
     sapply(AllFits$summaryList, function(l) {
         RMSE <- l$RMSE
-        if (is.null(RMSE)) 
+        if (is.null(RMSE))
             RMSE <- NA
         RMSE
     })
@@ -75,7 +78,7 @@ getRMSE <- function(AllFits) {
 getBS <- function(AllFits) {
     sapply(AllFits$summaryList, function(l) {
         BS <- l$BS
-        if (is.null(BS)) 
+        if (is.null(BS))
             BS <- NA
         BS
     })
@@ -86,7 +89,7 @@ getBS <- function(AllFits) {
 getROC <- function(AllFits) {
     sapply(AllFits$summaryList, function(l) {
         ROC <- l$ROC
-        if (is.null(ROC)) 
+        if (is.null(ROC))
             ROC <- NA
         ROC
     })
@@ -97,7 +100,7 @@ getROC <- function(AllFits) {
 getAUC <- function(AllFits) {
     sapply(AllFits$summaryList, function(l) {
         AUC <- l$AUC
-        if (is.null(AUC)) 
+        if (is.null(AUC))
             AUC <- NA
         AUC
     })
@@ -109,7 +112,7 @@ getAUC <- function(AllFits) {
 getMSE <- function(AllFits) {
     sapply(AllFits$summaryList, function(l) {
         MSE <- l$RMSE^2
-        if (is.null(MSE)) 
+        if (is.null(MSE))
             MSE <- NA
         MSE
     })
@@ -120,7 +123,7 @@ getMSE <- function(AllFits) {
 getFNR <- function(AllFits) {
     sapply(AllFits$summaryList, function(l) {
         FNR <- l$FNR
-        if (is.null(FNR)) 
+        if (is.null(FNR))
             FNR <- NA
         FNR
     })
@@ -131,7 +134,7 @@ getFNR <- function(AllFits) {
 getFPR <- function(AllFits) {
     sapply(AllFits$summaryList, function(l) {
         fpr <- l$FPR
-        if (is.null(fpr)) 
+        if (is.null(fpr))
             fpr <- NA
         fpr
     })
@@ -142,7 +145,7 @@ getFPR <- function(AllFits) {
 getl1error_beta <- function(AllFits) {
     sapply(AllFits$summaryList, function(l) {
         l1error_beta <- l$l1error_beta
-        if (is.null(l1error_beta)) 
+        if (is.null(l1error_beta))
             l1error_beta <- NA
         l1error_beta
     })
@@ -153,7 +156,7 @@ getl1error_beta <- function(AllFits) {
 getl1error_intercept <- function(AllFits) {
     sapply(AllFits$summaryList, function(l) {
         intercept <- l$intercept
-        if (is.null(intercept)) 
+        if (is.null(intercept))
             intercept <- NA
         intercept
     })

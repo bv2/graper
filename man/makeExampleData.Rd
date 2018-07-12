@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_data.R
 \name{makeExampleData}
 \alias{makeExampleData}
-\title{makeExampleData}
+\title{Simulate example data with groups of equal size}
 \usage{
 makeExampleData(n = 100, p = 200, g = 4, gammas = c(0.1, 1, 10, 100),
   pis = c(0.5, 0.5, 0.5, 0.5), tau = 1, rho = 0)
@@ -21,6 +21,10 @@ makeExampleData(n = 100, p = 200, g = 4, gammas = c(0.1, 1, 10, 100),
 \item{tau}{noise precision}
 
 \item{rho}{correlation of design matrix (Toeplitz structure)}
+}
+\value{
+list containin the design matrix X, the response y, the feautre annotation to
+ groups annot as well as the different parameters in the Bayesian model and the correlation strength rho
 }
 \description{
 Simulate data from the Bayesian model with specified parameters $\gamma$ and $\tau$.

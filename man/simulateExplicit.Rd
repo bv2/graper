@@ -7,6 +7,25 @@
 simulateExplicit(n, p, beta, sigma2, seed, exp_decay_cor = 0, block_cor = 0,
   equiCor = 0, blockSize = 0)
 }
-\description{
-Simulate Data According to a linear model with given coefficients
+\arguments{
+\item{n}{number of samples}
+
+\item{p}{number of features}
+
+\item{beta}{model coefficients}
+
+\item{sigma2}{noise variance}
+
+\item{seed}{random seed}
+
+\item{exp_decay_cor}{covariance matrix with exponential decay of covariance}
+
+\item{block_cor}{correlation within feature blocks}
+
+\item{equiCor}{coefficient amplitude in most-informative group}
+
+\item{blockSize}{size of correlated blocks (if block_cor>0)}
+}
+\value{
+list with simulated response y and design matrix X
 }

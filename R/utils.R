@@ -1,15 +1,15 @@
-# utils This file contains simple helper functions - MarginalCoefficient: Calculate Marginal coefficeints in a univariate GLM -
+# utils This file contains simple helper functions
+# - MarginalCoefficient: Calculate Marginal coefficeints in a univariate GLM -
 # ImputeByMean: Impute missing values of a vector by its mean
 
 #' MarginalCoefficient
 #'
 #' Function to compute marignal regression coefficients
-#' @export 
+#' @export
 MarginalCoefficient <- function(response, data, family = "gaussian") {
     apply(data, 2, function(c) {
         lm.fit <- glm(response ~ c, family = family)
         s <- summary(lm.fit)
-        # print(s)
         s$coefficients[2, ]
     })
 }
@@ -17,7 +17,7 @@ MarginalCoefficient <- function(response, data, family = "gaussian") {
 #' ImputeByMean
 #'
 #' Function to impute by mean
-#' @export 
+#' @export
 ImputeByMean <- function(x) {
     x[is.na(x)] <- mean(x, na.rm = TRUE)
     return(x)
@@ -26,16 +26,17 @@ ImputeByMean <- function(x) {
 #' EvaluateModel
 #'
 #' Function to evaluate model fits
-#' @export 
+#' @export
 EvaluateModel <- function(beta_est, intercept, X_test, y_test, beta0 = NULL, family) {
-    if (is.null(intercept)) 
+    if (is.null(intercept))
         intercept <- 0
     intercept <- as.numeric(intercept)
     p <- ncol(X_test)
     n_test <- nrow(X_test)
     stopifnot(family %in% c("gaussian", "binomial"))
-    RMSE_test <- FNR <- sensitivity <- specificity <- FPR <- BrierScore <- ROC <- AUC <- predprob <- pred_gauss <- precision <- recall <- F1score <- NULL
-    
+    RMSE_test <- FNR <- sensitivity <- specificity <- FPR <- BrierScore <- NULL
+    ROC <- AUC <- predprob <- pred_gauss <- precision <- recall <- F1score <- NULL
+
     # if 'true features' known evaluate sensitivity and specificity
     if (!is.null(beta0)) {
         stopifnot(length(beta0) == length(beta_est))
@@ -48,7 +49,7 @@ EvaluateModel <- function(beta_est, intercept, X_test, y_test, beta0 = NULL, fam
         recall <- sum(beta0 != 0 & beta_est != 0)/sum(beta0 != 0)
         F1score <- 2*precision*recall/(precision + recall)
     } else NULL
-    
+
     # Prediction performance on test set
     if (family == "gaussian") {
         # RMSE
@@ -59,17 +60,19 @@ EvaluateModel <- function(beta_est, intercept, X_test, y_test, beta0 = NULL, fam
         predexp <- pmin(intercept + X_test %*% beta_est, 500)  # to avoid NaN for too large numbers
         predprob <- exp(predexp)/(1 + exp(predexp))
         BrierScore <- sum((y_test - predprob)^2)/length(y_test)
-        
+
         # ROC (function from grridge used)
         cutoffs <- rev(seq(0, 1, by = 0.01))
         ROC <- GRridge::roc(predprob, y_test, cutoffs)
-        
+
         # AUC (function from grridge used)
         AUC <- GRridge::auc(ROC)
     }
-    
-    
-    return(list(beta_est = beta_est, RMSE_test = RMSE_test, BrierScore = BrierScore, ROC = ROC, AUC = AUC, specificity = specificity, 
-        sensitivity = sensitivity, FNR = FNR, FPR = FPR, precision=precision, recall=recall, F1score=F1score, beta0 = beta0, y_test = y_test, predprob = predprob, pred_gauss = pred_gauss, 
-        intercept = intercept))
+
+
+    return(list(beta_est = beta_est, RMSE_test = RMSE_test, BrierScore = BrierScore,
+                ROC = ROC, AUC = AUC, specificity = specificity,
+                sensitivity = sensitivity, FNR = FNR, FPR = FPR, precision=precision,
+                recall=recall, F1score=F1score, beta0 = beta0, y_test = y_test,
+                predprob = predprob, pred_gauss = pred_gauss, intercept = intercept))
 }
