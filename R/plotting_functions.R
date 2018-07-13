@@ -137,11 +137,19 @@ plotELBO <- function(fit){
 plotMethodComparison <- function(resultList, plotbeta = F, family = "gaussian", methods2plot="all") {
     # get results in dataframe format
     if(family=="gaussian"){
+      if(!all(is.na(resultList[[1]]$FPR)))
     eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR, F1score = l$F1score, RMSE = l$RMSE, l1error_beta = l$l1error_beta)),
         varnames = c("measure", "method"), level = "run")
+      else
+        eval_summary <- melt(lapply(resultList, function(l) rbind(RMSE = l$RMSE)),
+                             varnames = c("measure", "method"), level = "run")
     } else {
+      if(!all(is.na(resultList[[1]]$FPR)))
       eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR, F1score = l$F1score, BS = l$BS, AUC = l$AUC, l1error_beta = l$l1error_beta)),
                            varnames = c("measure", "method"), level = "run")
+      else
+        eval_summary <- melt(lapply(resultList, function(l) rbind(BS = l$BSS, AUC = l$AUC)),
+                             varnames = c("measure", "method"), level = "run")
     }
 
     pf_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$pf_mat, varnames = c("group", "method"),
@@ -172,16 +180,13 @@ plotMethodComparison <- function(resultList, plotbeta = F, family = "gaussian", 
 
     gg_pf <- ggplot(pf_summary, aes(x = as.factor(group), y = penalty_factor, fill = as.factor(group), group = as.factor(group))) + geom_boxplot() + facet_wrap(~method,
         scales = "free_y") + ggtitle("Penalty Factors per group") + theme(axis.text.x = element_text(angle = 60, hjust = 1))
-    print(gg_pf)
 
     gg_sparse <- ggplot(sparsity_summary, aes(x = as.factor(group), y = sparsity_level, fill = as.factor(group), group = as.factor(group))) + geom_boxplot() + facet_wrap(~method,
         scales = "free_y") + ggtitle("Sparsity Level per group (1=dense)") + theme(axis.text.x = element_text(angle = 60, hjust = 1))
-    print(gg_sparse)
 
     gg_perf <- ggplot(filter(eval_summary, method != "TrueModel"), aes(x = method, y = value, fill = method)) + geom_boxplot() +
         ggtitle("Method comparison") + facet_wrap(~measure, scales = "free_y") + theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
         ggtitle("Performance measures")
-    print(gg_perf)
 
     if (plotbeta) {
         gg_beta <- ggplot(beta_summary, aes(x = beta, fill = group, group = group)) + geom_histogram(alpha = 0.6, position = "identity") +
@@ -189,9 +194,12 @@ plotMethodComparison <- function(resultList, plotbeta = F, family = "gaussian", 
         print(gg_beta)
     }
 
-    gg_runtime <- ggplot(runtime_summary, aes(x = method, y = runtime, group = method, fill = method)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 60,
+    gg_runtime <- ggplot(runtime_summary,
+                         aes(x = method, y = runtime, group = method, fill = method)) +
+        geom_boxplot() + theme(axis.text.x = element_text(angle = 60,
         hjust = 1)) + ggtitle("Runtime") + ylab("secs")
-    print(gg_runtime)
+
+    print(cowplot::plot_grid(gg_perf,gg_runtime, gg_pf, gg_sparse))
 
     if(family=="binomial"){
         fprMat <- lapply(resultList, function(res) sapply(res$ROC, function(r) {
@@ -205,7 +213,6 @@ plotMethodComparison <- function(resultList, plotbeta = F, family = "gaussian", 
 
         ggROC <- ggplot(rocDF, aes(x=FPR, y=TPR, col=method)) + geom_line() +facet_wrap(~L1)
         print(ggROC)
-
     }
 
 }

@@ -1,0 +1,66 @@
+---
+title: "Vignette illustrating the use of grpRR in linear regression"
+author: "Britta Velten"
+date: "13/7/2018"
+output:
+  BiocStyle::html_document:
+    toc: true
+---
+
+```{r, message=FALSE, warning=FALSE}
+devtools::load_all("~/Documents/LassoVariants/grpRR_model/grpRR/")
+```
+
+# Make example data with four groups
+```{r}
+data <- makeExampleData(n = 400, p=800, g=4,
+                        pis=c(0.05,0.1,0.05,0.1), gammas=c(0.1,0.1,10,10))
+```
+
+# Fit the model
+`fit_grpRR` is the main function of this pacakge, which allows to fit the proposed Bayesian models with different settings on the prior (setting `spikeslab` to FALSE or TRUE) and the variational approximation (setting factoriseQ to FALSE or TRUE). By default, the model is fit with a sparsity promoting spike-and-slab parameter and a fully-factoried mean-field assumption. The parameter `n_rep` can be used to train multiple models with different random initilization and choose the best model in terms of ELBO. `th` defines the threshold on the ELBO for convergence in the VB algorithm.
+```{r}
+fit <- fit_grpRR(data$X, data$y, data$annot,
+                 n_rep=3, verbose = FALSE, th = 0.001)
+```
+
+# Training diagnostics
+ELBO monitors the convergence during training.
+```{r}
+plotELBO(fit)
+```
+
+# Posterior distribtions
+The VB approach directly yields posterior distributions for each parameter. Note, however, that using VB these are often too concentrated and can not be directly used for construciton of confidence intervals etc.
+```{r}
+plotPosterior(fit, "gamma", gamma0 = data$gammas, range=c(0,20))
+plotPosterior(fit, "pi", pi0 = data$pis)
+```
+
+# Model coefficients and intercept
+```{r}
+# get coefficients
+beta <- fit$EW_beta
+# plot estimated versus true beta
+qplot(beta, data$beta)
+
+# get intercept
+intercept <- fit$intercept
+```
+
+
+# Comparison to other methods
+Some standard methods like Lasso and Ridge are always included in the comparison, other methods can be added via the options of `cv_compare`. `cv_compare` uses a cross-validation scheme to train and evaluate the different methdods, `RunMethods` can be used to only train different methods on the full data. For time reasons we take a small number of folds in this illustration.
+```{r}
+comp <- cv_compare(data$X, data$y, data$annot,
+           compareIPF=FALSE, compareGroupLasso=FALSE,
+           compareSparseGroupLasso=FALSE, includeRF=FALSE, 
+           nfolds = 3, plot_cv = FALSE, verbose=FALSE)
+plotMethodComparison(comp, methods2plot = c("grpRR_SS", "Lasso"))
+```
+
+#SessionInfo
+```{r}
+sessionInfo()
+```
+
