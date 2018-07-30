@@ -246,7 +246,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     varbvsFit <- varbvs::varbvs(X=Xtrain, Z=NULL, y=ytrain, family = family)
     tmp <- difftime(Sys.time(), tmp, units = "secs")
     #if (intercept)
-    beta_varbvs <- varbvsFit$beta
+    beta_varbvs <- apply(varbvsFit$alpha * varbvsFit$mu,1, function(b) sum(b * varbvsFit$w))
     varbvs_summary <- list()
     varbvs_summary$runtime <- as.numeric(tmp)
     varbvs_summary$pf <- rep(sum(varbvsFit$sa * varbvsFit$w),G) # should probably be avaraged in a more informed way....
