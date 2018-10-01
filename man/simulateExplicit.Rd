@@ -4,8 +4,8 @@
 \alias{simulateExplicit}
 \title{Simulate Data According to a linear model with given coefficients}
 \usage{
-simulateExplicit(n, p, beta, sigma2, seed, exp_decay_cor = 0, block_cor = 0,
-  equiCor = 0, blockSize = 0)
+simulateExplicit(n, p, beta, sigma2, seed, exp_decay_cor = 0,
+  block_cor = 0, equiCor = 0, blockSize = 0)
 }
 \arguments{
 \item{n}{number of samples}
@@ -28,4 +28,7 @@ simulateExplicit(n, p, beta, sigma2, seed, exp_decay_cor = 0, block_cor = 0,
 }
 \value{
 list with simulated response y and design matrix X
+}
+\description{
+Simulate Data According to a linear model with given coefficients
 }

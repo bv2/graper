@@ -7,10 +7,12 @@
 RunMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
   max_iter = 5000, family = "gaussian", intercept = TRUE,
   standardize = TRUE, freqELB = 10, calcELB = TRUE, th = 0.01,
-  n_rep = 1, verbose = FALSE, compareGRridge = FALSE,
-  include_nonfacQ = FALSE, compareSparseGroupLasso = TRUE,
-  compareIPF = TRUE, compareGroupLasso = TRUE, includeRF = T,
-  compareAdaLasso = TRUE, include_varbvs = FALSE)
+  n_rep = 1, verbose = FALSE, verbose_progress = TRUE,
+  compareGRridge = FALSE, include_nonfacQ = FALSE,
+  compareSparseGroupLasso = TRUE, compareIPF = TRUE,
+  compareGroupLasso = TRUE, includeRF = T, compareAdaLasso = TRUE,
+  include_varbvs = FALSE, include_nogamma = FALSE,
+  include_grpRR_SS_ungrouped = TRUE)
 }
 \arguments{
 \item{Xtrain}{Design matrix of size n x p}

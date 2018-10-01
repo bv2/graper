@@ -4,8 +4,8 @@
 \alias{plotPosterior}
 \title{plotPosterior}
 \usage{
-plotPosterior(fit, param2plot, beta0 = NULL, gamma0 = NULL, tau0 = NULL,
-  pi0 = NULL, s0 = NULL, jmax = 2, range = NULL)
+plotPosterior(fit, param2plot, beta0 = NULL, gamma0 = NULL,
+  tau0 = NULL, pi0 = NULL, s0 = NULL, jmax = 2, range = NULL)
 }
 \arguments{
 \item{fit}{fit as produced by fit_grpRR}

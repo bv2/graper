@@ -8,17 +8,21 @@ output:
 ---
 
 ```{r, message=FALSE, warning=FALSE}
-devtools::load_all("~/Documents/LassoVariants/grpRR_model/grpRR/")
+library(grpRR)
+library(magrittr)
+library(ggplot2)
 ```
 
 # Make example data with four groups
+Create an example data set with 4 groups, 400 samples and 800 features.
 ```{r}
+set.seed(1234)
 data <- makeExampleData(n = 400, p=800, g=4,
                         pis=c(0.05,0.1,0.05,0.1), gammas=c(0.1,0.1,10,10))
 ```
 
 # Fit the model
-`fit_grpRR` is the main function of this pacakge, which allows to fit the proposed Bayesian models with different settings on the prior (setting `spikeslab` to FALSE or TRUE) and the variational approximation (setting factoriseQ to FALSE or TRUE). By default, the model is fit with a sparsity promoting spike-and-slab parameter and a fully-factoried mean-field assumption. The parameter `n_rep` can be used to train multiple models with different random initilization and choose the best model in terms of ELBO. `th` defines the threshold on the ELBO for convergence in the VB algorithm.
+`fit_grpRR` is the main function of this package, which allows to fit the proposed Bayesian models with different settings on the prior (setting `spikeslab` to FALSE or TRUE) and the variational approximation (setting factoriseQ to FALSE or TRUE). By default, the model is fit with a sparsity promoting spike-and-slab parameter and a fully-factoried mean-field assumption. The parameter `n_rep` can be used to train multiple models with different random initilization and choose the best model in terms of ELBO. `th` defines the threshold on the ELBO for convergence in the VB algorithm.
 ```{r}
 fit <- fit_grpRR(data$X, data$y, data$annot,
                  n_rep=3, verbose = FALSE, th = 0.001)
@@ -31,19 +35,22 @@ plotELBO(fit)
 ```
 
 # Posterior distribtions
-The VB approach directly yields posterior distributions for each parameter. Note, however, that using VB these are often too concentrated and can not be directly used for construciton of confidence intervals etc.
+The VB approach directly yields posterior distributions for each parameter. Note, however, that using VB these are often too concentrated and can not be directly used for construciton of confidence intervals etc. However, they do provide good point estimates.
 ```{r}
 plotPosterior(fit, "gamma", gamma0 = data$gammas, range=c(0,20))
 plotPosterior(fit, "pi", pi0 = data$pis)
 ```
 
 # Model coefficients and intercept
+The fitted coefficients and intercept are contained in the result list.
 ```{r}
 # get coefficients
 beta <- fit$EW_beta
 # plot estimated versus true beta
 qplot(beta, data$beta)
+```
 
+```{r}
 # get intercept
 intercept <- fit$intercept
 ```

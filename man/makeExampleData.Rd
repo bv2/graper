@@ -4,8 +4,8 @@
 \alias{makeExampleData}
 \title{Simulate example data with groups of equal size}
 \usage{
-makeExampleData(n = 100, p = 200, g = 4, gammas = c(0.1, 1, 10, 100),
-  pis = c(0.5, 0.5, 0.5, 0.5), tau = 1, rho = 0)
+makeExampleData(n = 100, p = 200, g = 4, gammas = c(0.1, 1, 10,
+  100), pis = c(0.5, 0.5, 0.5, 0.5), tau = 1, rho = 0)
 }
 \arguments{
 \item{n}{number of samples}

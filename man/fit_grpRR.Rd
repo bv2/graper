@@ -4,11 +4,12 @@
 \alias{fit_grpRR}
 \title{Fit grpRR model}
 \usage{
-fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 0.001,
-  r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001, r_pi = 1, d_pi = 1,
-  max_iter = 3000, th = 0.01, intercept = TRUE, calcELB = TRUE,
-  verbose = TRUE, freqELB = 1, family = "gaussian", nogamma = FALSE,
-  standardize = TRUE, init_psi = 1, n_rep = 1)
+fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
+  d_tau = 0.001, r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001,
+  r_pi = 1, d_pi = 1, max_iter = 3000, th = 0.01,
+  intercept = TRUE, calcELB = TRUE, verbose = TRUE, freqELB = 1,
+  family = "gaussian", nogamma = FALSE, standardize = TRUE,
+  init_psi = 1, n_rep = 1)
 }
 \arguments{
 \item{X}{Design matrix of size n x p}
@@ -50,8 +51,8 @@ fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 0.001,
 \item{n_rep}{how many reptitions with random inits to be fit, model selection is based on ELBO}
 }
 \value{
-List of fitted parameters .....
+List of fitted parameters
 }
 \description{
-Main function to fit a grpRR model.
+Main function to fit a grpRR model. This provides an R wrapper to the different C functions.
 }

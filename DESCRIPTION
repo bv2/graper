@@ -31,8 +31,9 @@ Imports:
 	grpreg	
 LinkingTo: Rcpp,
 	RcppArmadillo
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Suggests: testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    magrittr
 VignetteBuilder: knitr

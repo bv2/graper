@@ -1,10 +1,6 @@
-# R function to call the different C functions defined in fit_grpRR.cpp fit_grpRR This file contains the main function to fit a
-# grpRR model.
-
-# ---------------------------
 #'  Fit grpRR model
 #'
-#'  Main function to fit a grpRR model.
+#'  Main function to fit a grpRR model. This provides an R wrapper to the different C functions.
 #' @param X Design matrix of size n x p
 #' @param y Response vector of size n
 #' @param annot Factor of length p indicating group membership of each feature
@@ -25,7 +21,7 @@
 #' @param freqELB determines frequency at which ELB is to be calculated, i.e. each feqELB-th iteration
 #' @param n_rep how many reptitions with random inits to be fit, model selection is based on ELBO
 
-#' @return List of fitted parameters .....
+#' @return List of fitted parameters
 
 
 #' @useDynLib grpRR
@@ -69,7 +65,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
     }
 
     if(!calcELB & n_rep >1) {
-            warning("For model selectio with multiple trials calcELB needs to be set to TRUE, only using a single fit now.")
+            warning("For model selection with multiple trials calcELB needs to be set to TRUE, only using a single fit now.")
             n_rep <-1
     }
 
