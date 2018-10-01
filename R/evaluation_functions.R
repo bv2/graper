@@ -148,24 +148,24 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     grpRR_SS_nogamma_summary$out <- grpRR_SS_nogamma
     summaryList$grpRR_SS_nogamma <- grpRR_SS_nogamma_summary
   }
-#
-#   # grpRR_SS_nogamma: fully factorized variational distribution, spike and slab prior (sparse) without different slab precisions
-#   if(include_grpRR_SS_ungrouped){
-#     tmp <- Sys.time()
-#     if(verbose_progress) message(" ### Fitting grpRR_SS model without group annotations...")
-#     grpRR_SS_ungrouped <- fit_grpRR(Xtrain, ytrain, annot = rep(1,ncol(Xtrain)), factoriseQ = TRUE, spikeslab = TRUE, max_iter = max_iter, intercept = intercept,
-#                                     verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th, family = family,  nogamma = TRUE, standardize=standardize, n_rep=n_rep)
-#     timeSS_ungrouped <- difftime(Sys.time(), tmp, units = "secs")
-#
-#     grpRR_SS_ungrouped_summary <- list()
-#     grpRR_SS_ungrouped_summary$runtime <- as.numeric(timeSS_ungrouped)
-#     grpRR_SS_ungrouped_summary$pf <- rep(as.numeric(grpRR_SS_ungrouped$EW_gamma), G)
-#     grpRR_SS_ungrouped_summary$beta <- grpRR_SS_ungrouped$EW_beta
-#     grpRR_SS_ungrouped_summary$intercept <- grpRR_SS_ungrouped$intercept
-#     grpRR_SS_ungrouped_summary$sparsity <- rep(grpRR_SS_ungrouped$EW_pi, G)
-#     grpRR_SS_ungrouped_summary$out <- grpRR_SS_ungrouped
-#     summaryList$grpRR_SS_ungrouped <- grpRR_SS_ungrouped_summary
-#   }
+
+  # grpRR_SS_ungrouped: fully factorized variational distribution, spike and slab prior (sparse) without different slab precisions
+  if(include_grpRR_SS_ungrouped){
+    tmp <- Sys.time()
+    if(verbose_progress) message(" ### Fitting grpRR_SS model without group annotations...")
+    grpRR_SS_ungrouped <- fit_grpRR(Xtrain, ytrain, annot = rep(1,ncol(Xtrain)), factoriseQ = TRUE, spikeslab = TRUE, max_iter = max_iter, intercept = intercept,
+                                    verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th, family = family,  nogamma = TRUE, standardize=standardize, n_rep=n_rep)
+    timeSS_ungrouped <- difftime(Sys.time(), tmp, units = "secs")
+
+    grpRR_SS_ungrouped_summary <- list()
+    grpRR_SS_ungrouped_summary$runtime <- as.numeric(timeSS_ungrouped)
+    grpRR_SS_ungrouped_summary$pf <- rep(as.numeric(grpRR_SS_ungrouped$EW_gamma), G)
+    grpRR_SS_ungrouped_summary$beta <- grpRR_SS_ungrouped$EW_beta
+    grpRR_SS_ungrouped_summary$intercept <- grpRR_SS_ungrouped$intercept
+    grpRR_SS_ungrouped_summary$sparsity <- rep(grpRR_SS_ungrouped$EW_pi, G)
+    grpRR_SS_ungrouped_summary$out <- grpRR_SS_ungrouped
+    summaryList$grpRR_SS_ungrouped <- grpRR_SS_ungrouped_summary
+  }
 
   # ridge regression
   tmp <- Sys.time()
