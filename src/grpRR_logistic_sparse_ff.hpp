@@ -144,10 +144,19 @@ public:
       Rcout << "Maximum numbers of iterations reached - no convergence or ELB not calculated" << endl;
     }
 
-    List results=List::create(Named("EW_beta")=mu_beta,Named("EW_s")=psi, Named("EW_gamma")=EW_gamma, Named("ELB")=ELB,
-                                    Named("alpha_gamma")=alpha_gamma,
-                                    Named("beta_gamma")=beta_gamma, Named("Sigma_beta")=Sigma_beta, Named("EW_pi")=EW_pi,
-                                Named("ELB_trace")=ELB_trace,Named("intercept")=EW_beta0);
+    List results=List::create(Named("EW_beta")=mu_beta,Named("EW_s")=psi,
+                              Named("sigma2_tildebeta_s1")=sigma2_tildebeta_1,
+                              Named("EW_tildebeta_s1")=mu_tildebeta_1,
+                              Named("EW_gamma")=EW_gamma,
+                              Named("ELB")=ELB,
+                              Named("alpha_gamma")=alpha_gamma,
+                              Named("beta_gamma")=beta_gamma,
+                              Named("Sigma_beta")=Sigma_beta,
+                              Named("EW_pi")=EW_pi,
+                              Named("ELB_trace")=ELB_trace,
+                              Named("intercept")=EW_beta0,
+                              Named("alpha_pi")=alpha_pi,
+                              Named("beta_pi")=beta_pi);
 
     return(results);
   }

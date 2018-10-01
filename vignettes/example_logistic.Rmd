@@ -1,5 +1,5 @@
 ---
-title: "Vignette illustrating the use of grpRR in linear regression"
+title: "Vignette illustrating the use of grpRR in logisitic regression"
 author: "Britta Velten"
 date: "`r Sys.Date()`"
 output:
@@ -10,34 +10,29 @@ output:
 ```{r, message=FALSE, warning=FALSE}
 library(grpRR)
 library(magrittr)
-library(ggplot2)
+library(reshape2)
+library(tidyverse)
 ```
 
 # Make example data with four groups
 Create an example data set with 4 groups, 400 samples and 800 features.
 ```{r}
 set.seed(1234)
-data <- makeExampleData(n = 400, p=800, g=4,
-                        pis=c(0.05,0.1,0.05,0.1), gammas=c(0.1,0.1,10,10))
+data <- makeExampleData(n = 100, p=320, g=4, pis=c(0.05,0.1,0.05,0.1),
+                        gammas=c(0.1,0.1,10,10), response = "bernoulli")
 ```
 
 # Fit the model
-`fit_grpRR` is the main function of this package, which allows to fit the proposed Bayesian models with different settings on the prior (setting `spikeslab` to FALSE or TRUE) and the variational approximation (setting factoriseQ to FALSE or TRUE). By default, the model is fit with a sparsity promoting spike-and-slab parameter and a fully-factoried mean-field assumption. The parameter `n_rep` can be used to train multiple models with different random initilization and choose the best model in terms of ELBO. `th` defines the threshold on the ELBO for convergence in the VB algorithm.
+`fit_grpRR` is the main function of this package, which allows to fit the proposed Bayesian models with different settings on the prior (setting `spikeslab` to FALSE or TRUE) and the variational approximation (setting factoriseQ to FALSE or TRUE). By default, the model is fit with a sparsity promoting spike-and-slab parameter and a fully-factoried mean-field assumption. The ELBO is currently not calculated in the logisitc regession framework.
 ```{r}
-fit <- fit_grpRR(data$X, data$y, data$annot,
-                 n_rep=3, verbose = FALSE, th = 0.001)
-```
-
-# Training diagnostics
-ELBO monitors the convergence during training.
-```{r}
-plotELBO(fit)
+fit <- fit_grpRR(data$X, data$y, data$annot, verbose = FALSE,
+                 family = "binomial", calcELB=FALSE)
 ```
 
 # Posterior distribtions
 The VB approach directly yields posterior distributions for each parameter. Note, however, that using VB these are often too concentrated and can not be directly used for construciton of confidence intervals etc. However, they do provide good point estimates.
 ```{r}
-plotPosterior(fit, "gamma", gamma0 = data$gammas, range=c(0,20))
+plotPosterior(fit, "gamma", gamma0 = data$gammas)
 plotPosterior(fit, "pi", pi0 = data$pis)
 ```
 
@@ -47,8 +42,7 @@ The fitted coefficients and intercept are contained in the result list.
 # get coefficients
 beta <- fit$EW_beta
 # plot estimated versus true beta
-qplot(beta, data$beta) + coord_fixed()
-
+qplot(beta, data$beta)
 ```
 
 ```{r}
@@ -63,8 +57,9 @@ Some standard methods like Lasso and Ridge are always included in the comparison
 comp <- cv_compare(data$X, data$y, data$annot,
            compareIPF=FALSE, compareGroupLasso=FALSE,
            compareSparseGroupLasso=FALSE, includeRF=FALSE, 
-           nfolds = 3, plot_cv = FALSE, verbose=FALSE)
-plotMethodComparison(comp, methods2plot = c("grpRR_SS", "Lasso"))
+           nfolds = 3, plot_cv = FALSE, verbose=FALSE,
+           family = "binomial")
+plotMethodComparison(comp, methods2plot = c("grpRR_SS", "Lasso"), family = "binomial")
 ```
 
 #SessionInfo

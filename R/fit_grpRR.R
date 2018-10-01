@@ -49,7 +49,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
     g <- length(unique(annot))
     NoPerGroup <- sapply(unique(annot), function(x) sum(annot == x))
     names(NoPerGroup) <- unique(annot)
-    message(paste("Fitting a model with", g, "groups", n, "samples and", p , "features."))
+    message(paste("Fitting a model with", g, "groups,", n, "samples and", p , "features."))
 
     if(standardize){
         X <- scale(X, center = F, scale=T)
@@ -57,10 +57,9 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
     } else sf <- rep(1,p)
 
     if(family == "binomial"){
-      warning("Logistic regression is still being tested. You might encounter some bugs...")
       if(calcELB){
         calcELB <- FALSE
-        warning("ELBO is not yet implemented for logistic regression")
+        warning("ELBO calculations are not yet implemented for logistic regression.")
       }
     }
 
@@ -99,8 +98,13 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
                     mu_init <- rnorm(p)
                     res <- grRRCpp_dense_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose,
                       freqELB, mu_init)
-                    } else res <- grRRCpp_dense_nf(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose,
-                    freqELB)
+                    } else {
+                      message("You are using no factorization of the variational distribution. \n
+                              This might take some time to compute. \n
+                              Set factoriseQ = TRUE for fast solution.")
+                      res <- grRRCpp_dense_nf(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma,
+                                              r_gamma, max_iter, th, calcELB, verbose, freqELB)
+                    }
             }
 
         # calculate intercept
@@ -160,6 +164,9 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
         res$Options <- list(factoriseQ = factoriseQ, spikeslab = spikeslab, d_tau = d_tau, r_tau = r_tau, d_gamma = d_gamma, r_gamma =r_gamma,
     r_pi = r_pi, d_pi = r_pi, max_iter = max_iter, th = th, intercept = intercept, calcELB = calcELB, verbose = verbose, freqELB = freqELB, family = family,
     nogamma=nogamma, standardize=standardize)
+
+    #remove ELBO slot if not calculated
+    if(all(is.na(res$ELB_trace) | !is.finite(res$ELB_trace))) res$ELB_trace <- NULL
 
     return(res)
 }

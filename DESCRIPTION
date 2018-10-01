@@ -1,11 +1,14 @@
 Package: grpRR
 Type: Package
-Title: Fit a group-wise Regularised Regression using a Hierarchical Bayesian Model (grpRR)
+Title: Group-regularised Regression (grpRR) using a Hierarchical Bayesian Model 
 Version: 0.1.1
 Authors@R: person("Britta", "Velten", email = "britta.velten@embl.de", 
 	    role = c("aut", "cre"))
-Description: More about what it does (maybe more than one line) Note in Imports below the following packages are only for comparison, can be removed later: ipflasso, randomForest, rstan - Grudge s also used for ROC and AUC calculation
-License: What license is it under?
+Date: 2018-10-01
+License: GPL (>= 2)
+Description: Package to fit regularised regression with different feature groups.
+Depends: R (>= 3.4)
+Encoding: UTF-8
 LazyData: TRUE
 Imports:
 	mvtnorm,

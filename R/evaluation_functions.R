@@ -1,23 +1,3 @@
-#  evaluation_functions
-# This file contains functions used for comparison to other methods and evaluation of the produced fit
-#   - RunMethods: Run a number of different methods for estimation in the model including
-#        -  Bayes Model with groupwise normal prior
-#         - Bayes Model with groupwise normal prior and fully-factorized inference
-#         - Bayes Modeln with groupwise spike and slab prior and fully-factorized inference
-#         - Ridge
-#         - Lasso
-#         - (Sparse) Group Lasso
-#         - Random forest
-#         - Adaptive Lasso
-#         - Elastic Net
-#         - IPF-Lasso
-#         - GRridge
-#          - varvbs
-#   - evalResult: Compare prediction from the models trained in RunMethods in terms of MSE and estimation error
-#   - plotMethodComparison: Plot comparison results from evalResult
-#   - cv_compare: Train (RunMethods) and evaluate (evalResult) methods in a cross-validated fashion on a data set
-# ---------------------------
-
 #' RunMethods
 #'
 #' Function to run serveral different methods for high-dimensional regression
@@ -59,7 +39,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
                        compareSparseGroupLasso =TRUE, compareIPF = TRUE,
                        compareGroupLasso = TRUE, includeRF = T,
                        compareAdaLasso = TRUE, include_varbvs=FALSE,
-                       include_nogamma=FALSE, include_grpRR_SS_ungrouped=TRUE) {
+                       include_nogamma=FALSE) {
 
   if (!standardize)
     warning("Group Lasso and Grridge are standardized by default, despite of standardized = FALSE")
@@ -165,24 +145,24 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     grpRR_SS_nogamma_summary$out <- grpRR_SS_nogamma
     summaryList$grpRR_SS_nogamma <- grpRR_SS_nogamma_summary
   }
-
-  # grpRR_SS_nogamma: fully factorized variational distribution, spike and slab prior (sparse) without different slab precisions
-  if(include_grpRR_SS_ungrouped){
-    tmp <- Sys.time()
-    if(verbose_progress) message(" ### Fitting grpRR_SS model without group annotations...")
-    grpRR_SS_ungrouped <- fit_grpRR(Xtrain, ytrain, annot = rep(1,ncol(Xtrain)), factoriseQ = TRUE, spikeslab = TRUE, max_iter = max_iter, intercept = intercept,
-                                    verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th, family = family,  nogamma = TRUE, standardize=standardize, n_rep=n_rep)
-    timeSS_ungrouped <- difftime(Sys.time(), tmp, units = "secs")
-
-    grpRR_SS_ungrouped_summary <- list()
-    grpRR_SS_ungrouped_summary$runtime <- as.numeric(timeSS_ungrouped)
-    grpRR_SS_ungrouped_summary$pf <- rep(as.numeric(grpRR_SS_ungrouped$EW_gamma), G)
-    grpRR_SS_ungrouped_summary$beta <- grpRR_SS_ungrouped$EW_beta
-    grpRR_SS_ungrouped_summary$intercept <- grpRR_SS_ungrouped$intercept
-    grpRR_SS_ungrouped_summary$sparsity <- rep(grpRR_SS_ungrouped$EW_pi, G)
-    grpRR_SS_ungrouped_summary$out <- grpRR_SS_ungrouped
-    summaryList$grpRR_SS_ungrouped <- grpRR_SS_ungrouped_summary
-  }
+#
+#   # grpRR_SS_nogamma: fully factorized variational distribution, spike and slab prior (sparse) without different slab precisions
+#   if(include_grpRR_SS_ungrouped){
+#     tmp <- Sys.time()
+#     if(verbose_progress) message(" ### Fitting grpRR_SS model without group annotations...")
+#     grpRR_SS_ungrouped <- fit_grpRR(Xtrain, ytrain, annot = rep(1,ncol(Xtrain)), factoriseQ = TRUE, spikeslab = TRUE, max_iter = max_iter, intercept = intercept,
+#                                     verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th, family = family,  nogamma = TRUE, standardize=standardize, n_rep=n_rep)
+#     timeSS_ungrouped <- difftime(Sys.time(), tmp, units = "secs")
+#
+#     grpRR_SS_ungrouped_summary <- list()
+#     grpRR_SS_ungrouped_summary$runtime <- as.numeric(timeSS_ungrouped)
+#     grpRR_SS_ungrouped_summary$pf <- rep(as.numeric(grpRR_SS_ungrouped$EW_gamma), G)
+#     grpRR_SS_ungrouped_summary$beta <- grpRR_SS_ungrouped$EW_beta
+#     grpRR_SS_ungrouped_summary$intercept <- grpRR_SS_ungrouped$intercept
+#     grpRR_SS_ungrouped_summary$sparsity <- rep(grpRR_SS_ungrouped$EW_pi, G)
+#     grpRR_SS_ungrouped_summary$out <- grpRR_SS_ungrouped
+#     summaryList$grpRR_SS_ungrouped <- grpRR_SS_ungrouped_summary
+#   }
 
   # ridge regression
   tmp <- Sys.time()
@@ -573,7 +553,7 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 
 cv_compare <- function(X, y, annot, family="gaussian",
                        ncores=1, nfolds=10, plot_cv=TRUE,
-                       seed=NULL, parallel=FALSE, saveFits=FALSE,...){
+                       seed=NULL, parallel=FALSE, saveFits=FALSE, ...){
 
   # split observations into folds
   if(!is.null(seed)) set.seed(seed)
@@ -591,7 +571,8 @@ cv_compare <- function(X, y, annot, family="gaussian",
     #fit models
     AllFits <- RunMethods(Xtrain = as.matrix(Xtrain),
                           ytrain =as.vector(ytrain),
-                          annot = annot, ...)
+                          annot = annot, family = family,
+                          ...)
 
     # save the fit
     if(saveFits) save(AllFits, file=paste0("AllFits",foldidx,".RData"))

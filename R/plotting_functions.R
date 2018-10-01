@@ -119,6 +119,8 @@ theme(
 #' @param fit fit as produced by fit_grpRR
 #' @export
 plotELBO <- function(fit){
+    if(is.null(fit$ELB_trace)) stop("ELBO was not computed for this fit.")
+
     df <- data.frame(iteration=1:length(fit$ELB_trace),
                      ELBO = fit$ELB_trace)
     ggplot(df, aes(x=iteration, y=ELBO)) +geom_line()
@@ -128,27 +130,33 @@ plotELBO <- function(fit){
 
 #' #'  plotMethodComparison
 #' Function to plot method comparison across several runs
-#' @param resultList List as in simulation_setting1.Rmd
+#' @param resultList List as created by cv_compare
+#' @param family gaussian or binomial (same as used in cv_compare)
+#' @param methods2plot which method to be plotted
 #' @import dplyr
 #' @import reshape2
 #' @import ggplot2
 #' @export
 
-plotMethodComparison <- function(resultList, plotbeta = F, family = "gaussian", methods2plot="all") {
+plotMethodComparison <- function(resultList, family = "gaussian", methods2plot="all") {
     # get results in dataframe format
     if(family=="gaussian"){
       if(!all(is.na(resultList[[1]]$FPR)))
-    eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR, F1score = l$F1score, RMSE = l$RMSE, l1error_beta = l$l1error_beta)),
+      eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR,
+                                                              F1score = l$F1score, RMSE = l$RMSE,
+                                                              l1error_beta = l$l1error_beta)),
         varnames = c("measure", "method"), level = "run")
       else
         eval_summary <- melt(lapply(resultList, function(l) rbind(RMSE = l$RMSE)),
                              varnames = c("measure", "method"), level = "run")
     } else {
       if(!all(is.na(resultList[[1]]$FPR)))
-      eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR, F1score = l$F1score, BS = l$BS, AUC = l$AUC, l1error_beta = l$l1error_beta)),
+      eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR,
+                                                                F1score = l$F1score, BS = l$BS,
+                                                                AUC = l$AUC, l1error_beta = l$l1error_beta)),
                            varnames = c("measure", "method"), level = "run")
       else
-        eval_summary <- melt(lapply(resultList, function(l) rbind(BS = l$BSS, AUC = l$AUC)),
+        eval_summary <- melt(lapply(resultList, function(l) rbind(BS = l$BS, AUC = l$AUC)),
                              varnames = c("measure", "method"), level = "run")
     }
 
@@ -158,23 +166,13 @@ plotMethodComparison <- function(resultList, plotbeta = F, family = "gaussian", 
     sparsity_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$sparsity_mat, varnames = c("group",
         "method"), value.name = "sparsity_level"), Lrun = i)) %>% bind_rows()
 
-    beta_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$beta_mat, varnames = c("feature", "method"),
-        value.name = "beta"), Lrun = i)) %>% bind_rows()
-    # the folowing only works if annot is names properly, needs to be fixes
-    beta_summary$group <- sapply(1:nrow(beta_summary), function(i) resultList[[beta_summary$Lrun[i]]]$annot[beta_summary$feature[i]])
-
-    intercepts_summary <- melt(lapply(resultList, function(l) t(l$intercepts)), varnames = c("const", "method"), value.name = "intercept",
-        level = "run")[, 2:4]
-
     runtime_summary <- melt(lapply(resultList, function(l) t(l$runtime)), varnames = c("const", "method"), value.name = "runtime",
         level = "run")[, 2:4]
 
-    if(!methods2plot=="all") {
+    if(!any(methods2plot=="all")) {
         eval_summary %<>% filter(method %in% methods2plot)
         pf_summary %<>% filter(method %in% methods2plot)
         sparsity_summary %<>% filter(method %in% methods2plot)
-        beta_summary %<>% filter(method %in% methods2plot)
-        intercepts_summary %<>% filter(method %in% methods2plot)
         runtime_summary %<>% filter(method %in% methods2plot)
     }
 
@@ -188,12 +186,6 @@ plotMethodComparison <- function(resultList, plotbeta = F, family = "gaussian", 
         ggtitle("Method comparison") + facet_wrap(~measure, scales = "free_y") + theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
         ggtitle("Performance measures")
 
-    if (plotbeta) {
-        gg_beta <- ggplot(beta_summary, aes(x = beta, fill = group, group = group)) + geom_histogram(alpha = 0.6, position = "identity") +
-            facet_wrap(~method, scales = "free") + ggtitle("Distribution of estimated coefficients per group")
-        print(gg_beta)
-    }
-
     gg_runtime <- ggplot(runtime_summary,
                          aes(x = method, y = runtime, group = method, fill = method)) +
         geom_boxplot() + theme(axis.text.x = element_text(angle = 60,
@@ -201,19 +193,19 @@ plotMethodComparison <- function(resultList, plotbeta = F, family = "gaussian", 
 
     print(cowplot::plot_grid(gg_perf,gg_runtime, gg_pf, gg_sparse))
 
-    if(family=="binomial"){
-        fprMat <- lapply(resultList, function(res) sapply(res$ROC, function(r) {
-            if(!is.na(r)) r["FPR",] else rep(NA, 101)}))
-        tprMat <- lapply(resultList, function(res) sapply(res$ROC, function(r) {
-            if(!is.na(r)) r["TPR",] else rep(NA, 101)}))
-
-        fprDF <- melt(fprMat, varnames=c("cut", "method"), value.name = "FPR")
-        tprDF <- melt(tprMat, varnames=c("cut", "method"), value.name = "TPR")
-        rocDF <- merge.data.frame(fprDF, tprDF, by=c("method", "cut", "L1"))
-
-        ggROC <- ggplot(rocDF, aes(x=FPR, y=TPR, col=method)) + geom_line() +facet_wrap(~L1)
-        print(ggROC)
-    }
+    # if(family=="binomial"){
+    #     fprMat <- lapply(resultList, function(res) sapply(res$ROC, function(r) {
+    #         if(!is.na(r)) r["FPR",] else rep(NA, 101)}))
+    #     tprMat <- lapply(resultList, function(res) sapply(res$ROC, function(r) {
+    #         if(!is.na(r)) r["TPR",] else rep(NA, 101)}))
+    #
+    #     fprDF <- melt(fprMat, varnames=c("cut", "method"), value.name = "FPR")
+    #     tprDF <- melt(tprMat, varnames=c("cut", "method"), value.name = "TPR")
+    #     rocDF <- merge.data.frame(fprDF, tprDF, by=c("method", "cut", "L1"))
+    #
+    #     ggROC <- ggplot(rocDF, aes(x=FPR, y=TPR, col=method)) + geom_line() +facet_wrap(~L1)
+    #     print(ggROC)
+    # }
 
 }
 
