@@ -2,7 +2,7 @@
 % Please edit documentation in R/evaluation_functions.R
 \name{evaluateFits}
 \alias{evaluateFits}
-\title{evaluateFits}
+\title{Evaluate fits from various regression methods}
 \usage{
 evaluateFits(allFits, Xtest, ytest)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_data.R
 \name{simulateData_toeplitz}
 \alias{simulateData_toeplitz}
-\title{Simulate Data According to a linear model with given coefficients and toeplitz design matrix}
+\title{Simulate gaussian data with given coefficients and toeplitz design matrix}
 \usage{
 simulateData_toeplitz(n, p, beta, sigma2, seed, rho)
 }
@@ -23,5 +23,5 @@ simulateData_toeplitz(n, p, beta, sigma2, seed, rho)
 list with simulated response y and design matrix X
 }
 \description{
-Simulate Data According to a linear model with given coefficients and toeplitz design matrix
+Simulate data according to a linear model with given coefficients and toeplitz design matrix
 }

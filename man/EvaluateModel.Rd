@@ -2,10 +2,23 @@
 % Please edit documentation in R/utils.R
 \name{EvaluateModel}
 \alias{EvaluateModel}
-\title{EvaluateModel}
+\title{Evaluate regression model on test data}
 \usage{
 EvaluateModel(beta_est, intercept, X_test, y_test, beta0 = NULL, family)
 }
+\arguments{
+\item{beta_est}{Estimated model coefficients}
+
+\item{intercept}{Estiamted intercept}
+
+\item{X_test}{design matrix test data of size number of test samples times features (used for fitting)}
+
+\item{y_test}{response vectorof length number of  test samples}
+
+\item{beta0}{true model coefficients (if known)}
+
+\item{family}{liklihood model for the response, either "gaussian" for linear regression or "binomial" for logisitc regression}
+}
 \description{
-Function to evaluate model fits
+Function to evaluate model fits on test data
 }

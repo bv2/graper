@@ -2,7 +2,9 @@
 % Please edit documentation in R/fit_grpRR.R
 \name{fit_grpRR}
 \alias{fit_grpRR}
-\title{Fit grpRR model}
+\title{@title Fit grpRR model
+ @name fit_grpRR
+ @description Main function to fit a grpRR model. This provides an R wrapper to the different C functions.}
 \usage{
 fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
   d_tau = 0.001, r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001,
@@ -46,7 +48,13 @@ fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
 
 \item{freqELB}{determines frequency at which ELB is to be calculated, i.e. each feqELB-th iteration}
 
+\item{family}{liklihood model for the response, either "gaussian" for linear regression or "binomial" for logisitc regression}
+
 \item{nogamma}{If true, the normal prior will have same variance for all groups (only relevant for SS)}
+
+\item{standardize}{boolean whether to standardize the predictors or not (default TRUE)}
+
+\item{init_psi}{initial value for the spike variables}
 
 \item{n_rep}{how many reptitions with random inits to be fit, model selection is based on ELBO}
 }
@@ -54,5 +62,7 @@ fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
 List of fitted parameters
 }
 \description{
-Main function to fit a grpRR model. This provides an R wrapper to the different C functions.
+@title Fit grpRR model
+ @name fit_grpRR
+ @description Main function to fit a grpRR model. This provides an R wrapper to the different C functions.
 }

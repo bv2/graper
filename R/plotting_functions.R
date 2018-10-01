@@ -7,10 +7,13 @@
 #' @param param2plot which parametet to plot (gamma, beta, tau or s)
 #' @param beta0 true beta (if known)
 #' @param gamma0 true gamma (if known)
+#' @param pi0 true pi (if known)
 #' @param tau0 true tau (if known)
 #' @param s0 true s (if known)
 #' @param jmax maximal number of betas per group to plot
+#' @param range plotting range (x-axis)
 #' @export
+#' @import stats
 # ---------------------------
 plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL, tau0 = NULL, pi0=NULL, s0=NULL, jmax=2, range=NULL) {
 
@@ -127,53 +130,54 @@ plotELBO <- function(fit){
 }
 
 
-
-#' #'  plotMethodComparison
-#' Function to plot method comparison across several runs
+#'  @title plot comparison of methods
+#'  @name plotMethodComparison
+#'  @description Function to plot method comparison across several runs
 #' @param resultList List as created by cv_compare
 #' @param family gaussian or binomial (same as used in cv_compare)
 #' @param methods2plot which method to be plotted
 #' @import dplyr
 #' @import reshape2
 #' @import ggplot2
+#' @importFrom cowplot plot_grid
 #' @export
 
 plotMethodComparison <- function(resultList, family = "gaussian", methods2plot="all") {
     # get results in dataframe format
     if(family=="gaussian"){
       if(!all(is.na(resultList[[1]]$FPR)))
-      eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR,
+      eval_summary <- reshape2::melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR,
                                                               F1score = l$F1score, RMSE = l$RMSE,
                                                               l1error_beta = l$l1error_beta)),
         varnames = c("measure", "method"), level = "run")
       else
-        eval_summary <- melt(lapply(resultList, function(l) rbind(RMSE = l$RMSE)),
+        eval_summary <- reshape2::melt(lapply(resultList, function(l) rbind(RMSE = l$RMSE)),
                              varnames = c("measure", "method"), level = "run")
     } else {
       if(!all(is.na(resultList[[1]]$FPR)))
-      eval_summary <- melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR,
+      eval_summary <- reshape2::melt(lapply(resultList, function(l) rbind(FPR = l$FPR, FNR = l$FNR,
                                                                 F1score = l$F1score, BS = l$BS,
                                                                 AUC = l$AUC, l1error_beta = l$l1error_beta)),
                            varnames = c("measure", "method"), level = "run")
       else
-        eval_summary <- melt(lapply(resultList, function(l) rbind(BS = l$BS, AUC = l$AUC)),
+        eval_summary <- reshape2::melt(lapply(resultList, function(l) rbind(BS = l$BS, AUC = l$AUC)),
                              varnames = c("measure", "method"), level = "run")
     }
 
-    pf_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$pf_mat, varnames = c("group", "method"),
-        value.name = "penalty_factor"), Lrun = i)) %>% bind_rows()
+    pf_summary <- lapply(seq_along(resultList), function(i) cbind(reshape2::melt(resultList[[i]]$pf_mat, varnames = c("group", "method"),
+        value.name = "penalty_factor"), Lrun = i)) %>% dplyr::bind_rows()
 
-    sparsity_summary <- lapply(seq_along(resultList), function(i) cbind(melt(resultList[[i]]$sparsity_mat, varnames = c("group",
-        "method"), value.name = "sparsity_level"), Lrun = i)) %>% bind_rows()
+    sparsity_summary <- lapply(seq_along(resultList), function(i) cbind(reshape2::melt(resultList[[i]]$sparsity_mat, varnames = c("group",
+        "method"), value.name = "sparsity_level"), Lrun = i)) %>% dplyr::bind_rows()
 
-    runtime_summary <- melt(lapply(resultList, function(l) t(l$runtime)), varnames = c("const", "method"), value.name = "runtime",
+    runtime_summary <- reshape2::melt(lapply(resultList, function(l) t(l$runtime)), varnames = c("const", "method"), value.name = "runtime",
         level = "run")[, 2:4]
 
     if(!any(methods2plot=="all")) {
-        eval_summary %<>% filter(method %in% methods2plot)
-        pf_summary %<>% filter(method %in% methods2plot)
-        sparsity_summary %<>% filter(method %in% methods2plot)
-        runtime_summary %<>% filter(method %in% methods2plot)
+        eval_summary %<>% dplyr::filter(method %in% methods2plot)
+        pf_summary %<>% dplyr::filter(method %in% methods2plot)
+        sparsity_summary %<>% dplyr::filter(method %in% methods2plot)
+        runtime_summary %<>% dplyr::filter(method %in% methods2plot)
     }
 
     gg_pf <- ggplot(pf_summary, aes(x = as.factor(group), y = penalty_factor, fill = as.factor(group), group = as.factor(group))) + geom_boxplot() + facet_wrap(~method,
@@ -182,7 +186,7 @@ plotMethodComparison <- function(resultList, family = "gaussian", methods2plot="
     gg_sparse <- ggplot(sparsity_summary, aes(x = as.factor(group), y = sparsity_level, fill = as.factor(group), group = as.factor(group))) + geom_boxplot() + facet_wrap(~method,
         scales = "free_y") + ggtitle("Sparsity Level per group (1=dense)") + theme(axis.text.x = element_text(angle = 60, hjust = 1))
 
-    gg_perf <- ggplot(filter(eval_summary, method != "TrueModel"), aes(x = method, y = value, fill = method)) + geom_boxplot() +
+    gg_perf <- ggplot(dplyr::filter(eval_summary, method != "TrueModel"), aes(x = method, y = value, fill = method)) + geom_boxplot() +
         ggtitle("Method comparison") + facet_wrap(~measure, scales = "free_y") + theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
         ggtitle("Performance measures")
 

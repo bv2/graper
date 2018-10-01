@@ -49,7 +49,9 @@ simulateExplicit <- function(n, p, beta, sigma2, seed, exp_decay_cor =0, block_c
     return(list(y = y, X = X))
 }
 
-#' Simulate Data According to a linear model with given coefficients and toeplitz design matrix
+#' @title Simulate gaussian data with given coefficients and toeplitz design matrix
+#' @name simulateData_toeplitz
+#' @description Simulate data according to a linear model with given coefficients and toeplitz design matrix
 #' @param n number of samples
 #' @param p number of features
 #' @param beta model coefficients
@@ -76,7 +78,7 @@ simulateData_toeplitz <- function(n, p, beta, sigma2, seed, rho) {
 
 #' @title Simulate example data with groups of equal size
 #' @name makeExampleData
-#' @description Simulate data from the Bayesian model with specified parameters $\gamma$ and $\tau$.
+#' @description Simulate data from the Bayesian model with specified parameters gamma and tau
 #' @param n number of samples
 #' @param p number of features
 #' @param g number of groups
@@ -85,6 +87,7 @@ simulateData_toeplitz <- function(n, p, beta, sigma2, seed, rho) {
 #' @param tau noise precision
 #' @param rho correlation of design matrix (Toeplitz structure)
 #' @param response gaussion or bernoulli for linear or logistic regression, respectively
+#' @param intercept model intercept (default: 0)
 #' @return list containin the design matrix X, the response y, the feautre annotation to
 #'  groups annot as well as the different parameters in the Bayesian model and the correlation strength rho
 #' @export
@@ -102,7 +105,7 @@ makeExampleData <- function(n=100, p=200, g=4, gammas=c(0.1,1,10,100), pis=c(0.5
 
 #' @title Simulate example data with groups of unequal size
 #' @name makeExampleDataWithUnequalGroups
-#' @description Simulate data from the Bayesian model with specified parameters $\gamma$ and $\tau$.
+#' @description Simulate data from the Bayesian model with specified parameters gamma and tau.
 #' @param n number of samples
 #' @param pg vector of length g (desired number of groups) with number of features per group
 #' @param gammas vector of length g, sepcifying the slab precision of the prior on beta per group
@@ -110,9 +113,11 @@ makeExampleData <- function(n=100, p=200, g=4, gammas=c(0.1,1,10,100), pis=c(0.5
 #' @param tau noise precision (only relevant for gaussian response)
 #' @param rho correlation of design matrix (Toeplitz structure)
 #' @param response gaussion or bernoulli for linear or logistic regression, respectively
+#' @param intercept model intercept (default: 0)
 #' @return list containin the design matrix X, the response y, the feautre annotation to
 #'  groups annot as well as the different parameters in the Bayesian model and the correlation strength rho
 #' @export
+#' @import stats
 makeExampleDataWithUnequalGroups <- function(n=100, pg=c(100,100,10,10), gammas=c(0.1,10,0.1,10),
                                              pis=c(0.5,0.5,0.5,0.5), tau=1, rho=0, response = "gaussian",
                                              intercept = 0) {

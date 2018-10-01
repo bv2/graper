@@ -2,7 +2,7 @@
 % Please edit documentation in R/evaluation_functions.R
 \name{cv_compare}
 \alias{cv_compare}
-\title{cv_compare}
+\title{Compare various regression method via cross-validation}
 \usage{
 cv_compare(X, y, annot, family = "gaussian", ncores = 1, nfolds = 10,
   plot_cv = TRUE, seed = NULL, parallel = FALSE, saveFits = FALSE,
@@ -24,6 +24,10 @@ cv_compare(X, y, annot, family = "gaussian", ncores = 1, nfolds = 10,
 \item{plot_cv}{boolean whether to plot summary from evaluation}
 
 \item{seed}{optional seed for the choice of folds}
+
+\item{parallel}{boolean: Run cross-validation in parallel?}
+
+\item{saveFits}{boolean: Save the fit of each fold?}
 
 \item{...}{Other parameters that can be passed to RunMethods}
 }

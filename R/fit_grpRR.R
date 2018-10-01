@@ -1,12 +1,12 @@
-#'  Fit grpRR model
-#'
-#'  Main function to fit a grpRR model. This provides an R wrapper to the different C functions.
+#'  @title Fit grpRR model
+#'  @name fit_grpRR
+#'  @description Main function to fit a grpRR model. This provides an R wrapper to the different C functions.
 #' @param X Design matrix of size n x p
 #' @param y Response vector of size n
 #' @param annot Factor of length p indicating group membership of each feature
+#' @param family liklihood model for the response, either "gaussian" for linear regression or "binomial" for logisitc regression
 #' @param factoriseQ If true, the variational distribution is assumed to fully factorize across features (rougher approx., but faster). If spikeslab=F, this is always done.
 #' @param spikeslab If true, a spike and slab prior is used instead of a normal prior
-#' @param nogamma If true, the normal prior will have same variance for all groups (only relevant for SS)
 #' @param d_tau hyper-parameters for prior of tau (noise precision)
 #' @param r_tau hyper-parameters for prior of tau (noise precision)
 #' @param d_gamma hyper-parameters for prior of gamma (coeffient's prior precision)
@@ -20,6 +20,9 @@
 #' @param verbose boolean, indicating wether to print out intermediate messages during fitting
 #' @param freqELB determines frequency at which ELB is to be calculated, i.e. each feqELB-th iteration
 #' @param n_rep how many reptitions with random inits to be fit, model selection is based on ELBO
+#' @param standardize boolean whether to standardize the predictors or not (default TRUE)
+#' @param init_psi initial value for the spike variables
+#' @param nogamma If true, the normal prior will have same variance for all groups (only relevant for SS)
 
 #' @return List of fitted parameters
 
@@ -59,7 +62,8 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
     if(family == "binomial"){
       if(calcELB){
         calcELB <- FALSE
-        warning("ELBO calculations are not yet implemented for logistic regression.")
+        warning("The implemntation of logistic regression is in beta-version.\n
+                ELBO calculations are not yet implemented for logistic regression.")
       }
     }
 

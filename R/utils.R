@@ -2,10 +2,14 @@
 # - MarginalCoefficient: Calculate Marginal coefficeints in a univariate GLM -
 # ImputeByMean: Impute missing values of a vector by its mean
 
-#' MarginalCoefficient
-#'
-#' Function to compute marignal regression coefficients
+#' @title Get marginal coefficient from a (generalized) linear model
+#' @name MarginalCoefficient
+#' @description Function to compute marignal regression coefficients
+#' @param response response vector
+#' @param data design matrix
+#' @param family liklihood model for the response
 #' @export
+#' @import stats
 MarginalCoefficient <- function(response, data, family = "gaussian") {
     apply(data, 2, function(c) {
         lm.fit <- glm(response ~ c, family = family)
@@ -14,18 +18,26 @@ MarginalCoefficient <- function(response, data, family = "gaussian") {
     })
 }
 
-#' ImputeByMean
-#'
-#' Function to impute by mean
+#' @title Impute by mean
+#' @name ImputeByMean
+#' @description Function to impute by mean
+#' @param x vector to with value to impute
 #' @export
 ImputeByMean <- function(x) {
     x[is.na(x)] <- mean(x, na.rm = TRUE)
     return(x)
 }
 
-#' EvaluateModel
+#' @title Evaluate regression model on test data
+#' @name EvaluateModel
+#' @description Function to evaluate model fits on test data
+#' @param beta_est Estimated model coefficients
+#' @param intercept Estiamted intercept
+#' @param X_test design matrix test data of size number of test samples times features (used for fitting)
+#' @param y_test response vectorof length number of  test samples
+#' @param beta0 true model coefficients (if known)
+#' @param family liklihood model for the response, either "gaussian" for linear regression or "binomial" for logisitc regression
 #'
-#' Function to evaluate model fits
 #' @export
 EvaluateModel <- function(beta_est, intercept, X_test, y_test, beta0 = NULL, family) {
     if (is.null(intercept))

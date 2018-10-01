@@ -18,9 +18,13 @@ plotPosterior(fit, param2plot, beta0 = NULL, gamma0 = NULL,
 
 \item{tau0}{true tau (if known)}
 
+\item{pi0}{true pi (if known)}
+
 \item{s0}{true s (if known)}
 
 \item{jmax}{maximal number of betas per group to plot}
+
+\item{range}{plotting range (x-axis)}
 }
 \description{
 plot the posterior of the model parameters

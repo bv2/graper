@@ -2,9 +2,16 @@
 % Please edit documentation in R/utils.R
 \name{MarginalCoefficient}
 \alias{MarginalCoefficient}
-\title{MarginalCoefficient}
+\title{Get marginal coefficient from a (generalized) linear model}
 \usage{
 MarginalCoefficient(response, data, family = "gaussian")
+}
+\arguments{
+\item{response}{response vector}
+
+\item{data}{design matrix}
+
+\item{family}{liklihood model for the response}
 }
 \description{
 Function to compute marignal regression coefficients

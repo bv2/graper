@@ -2,7 +2,7 @@
 % Please edit documentation in R/evaluation_functions.R
 \name{RunMethods}
 \alias{RunMethods}
-\title{RunMethods}
+\title{Run various regression methods}
 \usage{
 RunMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
   max_iter = 5000, family = "gaussian", intercept = TRUE,
@@ -11,8 +11,7 @@ RunMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
   compareGRridge = FALSE, include_nonfacQ = FALSE,
   compareSparseGroupLasso = TRUE, compareIPF = TRUE,
   compareGroupLasso = TRUE, includeRF = T, compareAdaLasso = TRUE,
-  include_varbvs = FALSE, include_nogamma = FALSE,
-  include_grpRR_SS_ungrouped = TRUE)
+  include_varbvs = FALSE, include_nogamma = FALSE)
 }
 \arguments{
 \item{Xtrain}{Design matrix of size n x p}
@@ -43,21 +42,25 @@ RunMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
 
 \item{verbose}{boolean, indicating wether to print out intermediate messages during fitting}
 
+\item{verbose_progress}{boolean, indicating whether to print details on the progress}
+
 \item{compareGRridge}{boolean, indicating wether to fit a GRridge model}
 
 \item{include_nonfacQ}{include a VB method with multivariate variational distributon (can be very timme consuming for large data sets)}
 
-\item{compareSparseGroupLasso}{boolean, indicating wether to fit a sparse group lasso}
+\item{compareSparseGroupLasso}{boolean, indicating whether to fit a sparse group lasso}
 
-\item{compareIPF}{boolean, indicating wether to fit a IPFLasso}
+\item{compareIPF}{boolean, indicating whether to fit a IPFLasso}
 
-\item{compareGroupLasso}{boolean, indicating wether to fit a group lasso}
+\item{compareGroupLasso}{boolean, indicating whether to fit a group lasso}
 
-\item{includeRF}{boolean, indicating wether to fit a random forest}
+\item{includeRF}{boolean, indicating whether to fit a random forest}
 
-\item{compareAdaLasso}{boolean, indicating wether to fit an adpative lasso}
+\item{compareAdaLasso}{boolean, indicating whether to fit an adpative lasso}
 
-\item{include_varbvs}{boolean, indicating wether to fit varbvs}
+\item{include_varbvs}{boolean, indicating whether to fit varbvs}
+
+\item{include_nogamma}{boolean, indicating whether to fit a grpRR model withou different slab parameters}
 }
 \value{
 List of fitted models and two data frames with coeffcients and penalty factors

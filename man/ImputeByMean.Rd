@@ -2,9 +2,12 @@
 % Please edit documentation in R/utils.R
 \name{ImputeByMean}
 \alias{ImputeByMean}
-\title{ImputeByMean}
+\title{Impute by mean}
 \usage{
 ImputeByMean(x)
+}
+\arguments{
+\item{x}{vector to with value to impute}
 }
 \description{
 Function to impute by mean

@@ -2,16 +2,22 @@
 % Please edit documentation in R/plotting_functions.R
 \name{plotMethodComparison}
 \alias{plotMethodComparison}
-\title{#'  plotMethodComparison
-Function to plot method comparison across several runs}
+\title{@title plot comparison of methods
+ @name plotMethodComparison
+ @description Function to plot method comparison across several runs}
 \usage{
-plotMethodComparison(resultList, plotbeta = F, family = "gaussian",
+plotMethodComparison(resultList, family = "gaussian",
   methods2plot = "all")
 }
 \arguments{
-\item{resultList}{List as in simulation_setting1.Rmd}
+\item{resultList}{List as created by cv_compare}
+
+\item{family}{gaussian or binomial (same as used in cv_compare)}
+
+\item{methods2plot}{which method to be plotted}
 }
 \description{
-#'  plotMethodComparison
-Function to plot method comparison across several runs
+@title plot comparison of methods
+ @name plotMethodComparison
+ @description Function to plot method comparison across several runs
 }

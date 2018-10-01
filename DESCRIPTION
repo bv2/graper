@@ -15,7 +15,6 @@ Imports:
 	Matrix,
 	ggplot2,
 	glmnet,
-	gridExtra,
 	grpreg,
 	reshape2,
 	Rcpp,
@@ -24,19 +23,20 @@ Imports:
 	randomForest, 
 	reshape2,
 	dplyr,
-	rstan,
 	ggplot2,
 	SGL,
 	GRridge,
 	ipflasso,
 	varbvs, 
 	randomForest, 
-	grpreg	
+	grpreg,
+	cowplot,
+	magrittr
 LinkingTo: Rcpp,
 	RcppArmadillo
 RoxygenNote: 6.1.0
 Suggests: testthat,
     knitr,
     rmarkdown,
-    magrittr
+   tidyverse
 VignetteBuilder: knitr

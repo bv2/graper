@@ -6,7 +6,7 @@
 \usage{
 makeExampleDataWithUnequalGroups(n = 100, pg = c(100, 100, 10, 10),
   gammas = c(0.1, 10, 0.1, 10), pis = c(0.5, 0.5, 0.5, 0.5), tau = 1,
-  rho = 0)
+  rho = 0, response = "gaussian", intercept = 0)
 }
 \arguments{
 \item{n}{number of samples}
@@ -17,14 +17,18 @@ makeExampleDataWithUnequalGroups(n = 100, pg = c(100, 100, 10, 10),
 
 \item{pis}{vector of length g, sepcifying the probability of s to be 1 (slab)}
 
-\item{tau}{noise precision}
+\item{tau}{noise precision (only relevant for gaussian response)}
 
 \item{rho}{correlation of design matrix (Toeplitz structure)}
+
+\item{response}{gaussion or bernoulli for linear or logistic regression, respectively}
+
+\item{intercept}{model intercept (default: 0)}
 }
 \value{
 list containin the design matrix X, the response y, the feautre annotation to
  groups annot as well as the different parameters in the Bayesian model and the correlation strength rho
 }
 \description{
-Simulate data from the Bayesian model with specified parameters $\gamma$ and $\tau$.
+Simulate data from the Bayesian model with specified parameters gamma and tau.
 }

@@ -1,6 +1,6 @@
-#' RunMethods
-#'
-#' Function to run serveral different methods for high-dimensional regression
+#' @title Run various regression methods
+#' @name RunMethods
+#' @description Function to run serveral different methods for high-dimensional regression
 #' @param Xtrain Design matrix of size n x p
 #' @param ytrain Response vector of size n
 #' @param annot Factor of length p indicating group membership of each feature
@@ -17,12 +17,14 @@
 #' @param verbose boolean, indicating wether to print out intermediate messages during fitting
 #' @param compareGRridge boolean, indicating wether to fit a GRridge model
 #' @param include_nonfacQ include a VB method with multivariate variational distributon (can be very timme consuming for large data sets)
-#' @param compareIPF boolean, indicating wether to fit a IPFLasso
-#' @param compareSparseGroupLasso boolean, indicating wether to fit a sparse group lasso
-#' @param compareGroupLasso boolean, indicating wether to fit a group lasso
-#' @param compareAdaLasso boolean, indicating wether to fit an adpative lasso
-#' @param includeRF boolean, indicating wether to fit a random forest
-#' @param include_varbvs boolean, indicating wether to fit varbvs
+#' @param compareIPF boolean, indicating whether to fit a IPFLasso
+#' @param compareSparseGroupLasso boolean, indicating whether to fit a sparse group lasso
+#' @param compareGroupLasso boolean, indicating whether to fit a group lasso
+#' @param compareAdaLasso boolean, indicating whether to fit an adpative lasso
+#' @param includeRF boolean, indicating whether to fit a random forest
+#' @param include_varbvs boolean, indicating whether to fit varbvs
+#' @param include_nogamma boolean, indicating whether to fit a grpRR model withou different slab parameters
+#' @param verbose_progress boolean, indicating whether to print details on the progress
 #' @return List of fitted models and two data frames with coeffcients and penalty factors
 #' @import ggplot2 SGL GRridge ipflasso glmnet varbvs randomForest grpreg
 #' @return a list with
@@ -30,6 +32,7 @@
 #' statistics (coefficients, runtime, sparsity, intercept, penalty factors)
 #' - the details on the data (sample size n, predictor number p, covariate annotation annot, group number G, feature and annotation names)
 #' @export
+#' @import glmnet randomForest SGL ipflasso varbvs
 
 RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL, max_iter = 5000,
                        family = "gaussian", intercept = TRUE, standardize = TRUE,
@@ -426,15 +429,15 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
 
 # ---------------------------
 
-
-#'  evaluateFits
-#'
-#' Function to evaluate results on test data
+#' @title Evaluate fits from various regression methods
+#' @name evaluateFits
+#' @description Function to evaluate results on test data
 #' @param allFits List as produced by \code{\link{runMethods}}
 #' @param Xtest Design matrix of size n' x p (same feature structure as used in runMethods)
 #' @param ytest Response vector of size n'
 #' @return List as prodcused by \code{\link{runMethods}} with additional predicition performance slots
 #' @export
+#' @import stats
 
 
 evaluateFits <- function(allFits, Xtest, ytest) {
@@ -469,7 +472,7 @@ evaluateFits <- function(allFits, Xtest, ytest) {
       summaryList$varbvs$RMSE <- sqrt(1/length(ytest) * sum((predict(summaryList$varbvs$out, Xtest) - ytest)^2))
   }
 
-  # For binomial family calculate ROC, AUC and Brier Score
+  # For binomial family calculate AUC and Brier Score
   if (family == "binomial") {
     summaryList <- lapply(summaryList, function(summary) {
       beta <- summary$beta
@@ -478,7 +481,6 @@ evaluateFits <- function(allFits, Xtest, ytest) {
         # for cases with linear coeeficients
         eval.out <- EvaluateModel(beta, intercept = intercept, Xtest, ytest, beta0 = beta0, family = "binomial")
         summary$AUC <- eval.out$AUC
-        summary$ROC <- eval.out$ROC
         summary$BS <- eval.out$BrierScore
       }
       # TODO add varbvs and RandomForest
@@ -532,10 +534,9 @@ evaluateFits <- function(allFits, Xtest, ytest) {
   return(allFits)
 }
 
-
-#' cv_compare
-#'
-#' Function to run serveral different methods for high-dimensional regression and evaluate them in a cross-validated fashion
+#' @title Compare various regression method via cross-validation
+#' @name cv_compare
+#' @description  Function to run serveral different methods for high-dimensional regression and evaluate them in a cross-validated fashion
 #' @param X Design matrix of size n x p
 #' @param y Response vector of size n
 #' @param annot Factor of length p indicating group membership of each feature
@@ -544,6 +545,8 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 #' @param ncores Number of cores to use
 #' @param plot_cv boolean whether to plot summary from evaluation
 #' @param seed optional seed for the choice of folds
+#' @param parallel boolean: Run cross-validation in parallel?
+#' @param saveFits boolean: Save the fit of each fold?
 #' @param ... Other parameters that can be passed to RunMethods
 #'
 #' @return List of fitted models and two data frames with coeffcients and penalty factors
@@ -599,8 +602,7 @@ cv_compare <- function(X, y, annot, family="gaussian",
     } else if(family=="binomial"){
       BS <- getBS(AllFits)
       AUC <- getAUC(AllFits)
-      ROC <- getROC(AllFits)
-      l <- list(FPR=FPR, FNR=FNR, BS=BS, AUC=AUC, ROC=ROC, pf_mat=pf_mat, beta_mat=beta_mat,
+      l <- list(FPR=FPR, FNR=FNR, BS=BS, AUC=AUC, pf_mat=pf_mat, beta_mat=beta_mat,
                 intercepts=intercepts, sparsity_mat=sparsity_mat, annot=AllFits$annot, runtime=runtime,
                 l1error_intercept, l1error_beta)
     }
