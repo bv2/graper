@@ -1,5 +1,5 @@
 #' @title Run various regression methods
-#' @name RunMethods
+#' @name runMethods
 #' @description Function to run serveral different methods for high-dimensional regression
 #' @param Xtrain Design matrix of size n x p
 #' @param ytrain Response vector of size n
@@ -35,7 +35,7 @@
 #' @export
 #' @import glmnet randomForest SGL ipflasso varbvs
 
-RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL, max_iter = 5000,
+runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL, max_iter = 5000,
                        family = "gaussian", intercept = TRUE, standardize = TRUE,
                        freqELB = 10, calcELB = TRUE, th = 0.01,
                        n_rep=1, verbose = FALSE, verbose_progress = TRUE,
@@ -434,7 +434,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
 #' @name evaluateFits
 #' @description Function to evaluate results on test data
 #' @param allFits List as produced by \code{\link{runMethods}}
-#' @param Xtest Design matrix of size n' x p (same feature structure as used in runMethods)
+#' @param Xtest Design matrix of size n' x p (same feature structure as used in \code{\link{runMethods}})
 #' @param ytest Response vector of size n'
 #' @return List as prodcused by \code{\link{runMethods}} with additional predicition performance slots
 #' @export
@@ -548,7 +548,7 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 #' @param seed optional seed for the choice of folds
 #' @param parallel boolean: Run cross-validation in parallel?
 #' @param saveFits boolean: Save the fit of each fold?
-#' @param ... Other parameters that can be passed to RunMethods
+#' @param ... Other parameters that can be passed to \code{\link{runMethods}}
 #'
 #' @return List of fitted models and two data frames with coeffcients and penalty factors
 #' @import ggplot2
@@ -573,7 +573,7 @@ cv_compare <- function(X, y, annot, family="gaussian",
     Xtest <- X[use4test,]
 
     #fit models
-    AllFits <- RunMethods(Xtrain = as.matrix(Xtrain),
+    AllFits <- runMethods(Xtrain = as.matrix(Xtrain),
                           ytrain =as.vector(ytrain),
                           annot = annot, family = family,
                           ...)

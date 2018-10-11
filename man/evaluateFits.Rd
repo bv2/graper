@@ -9,7 +9,7 @@ evaluateFits(allFits, Xtest, ytest)
 \arguments{
 \item{allFits}{List as produced by \code{\link{runMethods}}}
 
-\item{Xtest}{Design matrix of size n' x p (same feature structure as used in runMethods)}
+\item{Xtest}{Design matrix of size n' x p (same feature structure as used in \code{\link{runMethods}})}
 
 \item{ytest}{Response vector of size n'}
 }

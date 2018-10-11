@@ -29,7 +29,7 @@ cv_compare(X, y, annot, family = "gaussian", ncores = 1, nfolds = 10,
 
 \item{saveFits}{boolean: Save the fit of each fold?}
 
-\item{...}{Other parameters that can be passed to RunMethods}
+\item{...}{Other parameters that can be passed to \code{\link{runMethods}}}
 }
 \value{
 List of fitted models and two data frames with coeffcients and penalty factors
