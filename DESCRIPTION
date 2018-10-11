@@ -1,12 +1,12 @@
 Package: grpRR
 Type: Package
-Title: Group-regularised Regression (grpRR) using a Hierarchical Bayesian Model 
-Version: 0.1.1
+Title: Group-Regularised Regression (grpRR) using adaptive Penalization 
+Version: 0.99.0
 Authors@R: person("Britta", "Velten", email = "britta.velten@embl.de", 
 	    role = c("aut", "cre"))
 Date: 2018-10-01
 License: GPL (>= 2)
-Description: Package to fit regularised regression with different feature groups.
+Description: This package enables to fit penalised regression with different relative strength for different feature groups. The optimal relative strengths are chosen adaptively by using a variational Bayes approach. It also facilitate comparison to other regression methods.
 Depends: R (>= 3.4)
 Encoding: UTF-8
 LazyData: TRUE
@@ -34,6 +34,7 @@ Imports:
 	magrittr
 LinkingTo: Rcpp,
 	RcppArmadillo
+biocViews: Regression, Bayesian, Classification
 RoxygenNote: 6.1.0
 Suggests: testthat,
     knitr,

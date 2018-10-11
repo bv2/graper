@@ -23,7 +23,8 @@
 #' @param compareAdaLasso boolean, indicating whether to fit an adpative lasso
 #' @param includeRF boolean, indicating whether to fit a random forest
 #' @param include_varbvs boolean, indicating whether to fit varbvs
-#' @param include_nogamma boolean, indicating whether to fit a grpRR model withou different slab parameters
+#' @param include_nogamma boolean, indicating whether to fit a grpRR model without different slab parameters
+#' @param include_grpRR_SS_ungrouped boolean, indicating whether to fit a grpRR model without group annotations
 #' @param verbose_progress boolean, indicating whether to print details on the progress
 #' @return List of fitted models and two data frames with coeffcients and penalty factors
 #' @import ggplot2 SGL GRridge ipflasso glmnet varbvs randomForest grpreg
@@ -42,7 +43,7 @@ RunMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
                        compareSparseGroupLasso =TRUE, compareIPF = TRUE,
                        compareGroupLasso = TRUE, includeRF = T,
                        compareAdaLasso = TRUE, include_varbvs=FALSE,
-                       include_nogamma=FALSE) {
+                       include_nogamma=FALSE, include_grpRR_SS_ungrouped= FALSE) {
 
   if (!standardize)
     warning("Group Lasso and Grridge are standardized by default, despite of standardized = FALSE")
