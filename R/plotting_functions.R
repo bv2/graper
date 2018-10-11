@@ -31,8 +31,8 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL, tau0 = N
             } else x <- c(0,seq(range[1], range[2], length.out = 1000))
             data.frame(beta=x, j=j, va_slab=va_slab, mean=mean, mu_slab=mu_slab, psi=psi, group=group)
             }) %>% bind_rows()
-        gr %<>% mutate(density = psi* dnorm(beta, mu_slab, sqrt(va_slab)) + (1-psi)*(beta==0))
-        if(!is.null(beta0)) gr %<>% mutate(true_beta = beta0[j])
+        gr <- mutate(gr,density = psi* dnorm(beta, mu_slab, sqrt(va_slab)) + (1-psi)*(beta==0))
+        if(!is.null(beta0)) gr <- mutate(gr, true_beta = beta0[j])
         gg <- ggplot(gr, aes(x=beta, y=density)) + geom_line() + facet_wrap(~j, scales="free", ncol=jmax) +
          geom_vline(aes(xintercept=mean, col="mean"),alpha=0.5, linetype="dashed")
         if(!is.null(beta0)) gg <- gg + geom_vline(aes(xintercept=true_beta, col="true_beta"), linetype="dashed",alpha=0.5)
@@ -54,8 +54,8 @@ theme(
             x <- c(0,1)
             data.frame(s=x, j=j, psi=psi,mean=mean, group=group)
             }) %>% bind_rows()
-        gr %<>% mutate(density = psi^s *(1-psi)^(1-s))
-        if(!is.null(s0)) gr %<>% mutate(true_s = s0[j])
+        gr <- mutate(gr, density = psi^s *(1-psi)^(1-s))
+        if(!is.null(s0)) gr <- mutate(gr, true_s = s0[j])
         gg <- ggplot(gr, aes(xend=s, x=s, yend=0, y=density)) + geom_segment() +geom_point() + facet_wrap(~j, ncol=jmax) +
          geom_vline(aes(xintercept=mean, col="mean"),alpha=0.5, linetype="dashed")
         if(!is.null(s0)) gg <- gg + geom_vline(aes(xintercept=true_s, col="true_s"), linetype="dashed",alpha=0.5)
@@ -72,9 +72,9 @@ theme(
             x <- seq(0, 1, length.out=1000)
             data.frame(pi=x, k=k)
             }) %>% bind_rows()
-        gr %<>% mutate(density = dbeta(pi, fit$alpha_pi[k], fit$beta_pi[k]),
+        gr <- mutate(gr, density = dbeta(pi, fit$alpha_pi[k], fit$beta_pi[k]),
                         mean = fit$EW_pi[k])
-        if(!is.null(pi0)) gr %<>% mutate(true_pi = pi0[k])
+        if(!is.null(pi0)) gr <- mutate(gr, true_pi = pi0[k])
         gg <- ggplot(gr, aes(x=pi, y=density)) + geom_line() + facet_wrap(~k, scales="free") +
          geom_vline(aes(xintercept=mean, col="mean"), linetype="dashed")
         if(!is.null(pi0)) gg <- gg + geom_vline(aes(xintercept=true_pi, col="true_pi"), linetype="dashed")
@@ -89,9 +89,9 @@ theme(
             else x <- seq(range[1], range[2], length.out = 1000)
             data.frame(gamma=x, k=k)
             }) %>% bind_rows()
-        gr %<>% mutate(density = dgamma(gamma, fit$alpha_gamma[k], fit$beta_gamma[k]),
+        gr <- mutate(gr, density = dgamma(gamma, fit$alpha_gamma[k], fit$beta_gamma[k]),
                         mean = fit$EW_gamma[k])
-        if(!is.null(gamma0)) gr %<>% mutate(true_gamma = gamma0[k])
+        if(!is.null(gamma0)) gr <- mutate(gr,true_gamma = gamma0[k])
         gg <- ggplot(gr, aes(x=gamma, y=density)) + geom_line() + facet_wrap(~k, scales="free") +
          geom_vline(aes(xintercept=mean, col="mean"), linetype="dashed")
         if(!is.null(gamma0)) gg <- gg + geom_vline(aes(xintercept=true_gamma, col="true_gamma"), linetype="dashed")
@@ -174,10 +174,10 @@ plotMethodComparison <- function(resultList, family = "gaussian", methods2plot="
         level = "run")[, 2:4]
 
     if(!any(methods2plot=="all")) {
-        eval_summary %<>% dplyr::filter(method %in% methods2plot)
-        pf_summary %<>% dplyr::filter(method %in% methods2plot)
-        sparsity_summary %<>% dplyr::filter(method %in% methods2plot)
-        runtime_summary %<>% dplyr::filter(method %in% methods2plot)
+        eval_summary <- dplyr::filter(eval_summary, method %in% methods2plot)
+        pf_summary <- dplyr::filter(pf_summary, method %in% methods2plot)
+        sparsity_summary <- dplyr::filter(sparsity_summary, method %in% methods2plot)
+        runtime_summary <- dplyr::filter(runtime_summary, method %in% methods2plot)
     }
 
     gg_pf <- ggplot(pf_summary, aes(x = as.factor(group), y = penalty_factor, fill = as.factor(group), group = as.factor(group))) + geom_boxplot() + facet_wrap(~method,

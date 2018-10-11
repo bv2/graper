@@ -30,8 +30,7 @@ Imports:
 	varbvs, 
 	randomForest, 
 	grpreg,
-	cowplot,
-	magrittr
+	cowplot
 LinkingTo: Rcpp,
 	RcppArmadillo
 biocViews: Regression, Bayesian, Classification

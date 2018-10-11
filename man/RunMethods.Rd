@@ -11,7 +11,8 @@ RunMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
   compareGRridge = FALSE, include_nonfacQ = FALSE,
   compareSparseGroupLasso = TRUE, compareIPF = TRUE,
   compareGroupLasso = TRUE, includeRF = T, compareAdaLasso = TRUE,
-  include_varbvs = FALSE, include_nogamma = FALSE)
+  include_varbvs = FALSE, include_nogamma = FALSE,
+  include_grpRR_SS_ungrouped = FALSE)
 }
 \arguments{
 \item{Xtrain}{Design matrix of size n x p}
@@ -60,7 +61,9 @@ RunMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
 
 \item{include_varbvs}{boolean, indicating whether to fit varbvs}
 
-\item{include_nogamma}{boolean, indicating whether to fit a grpRR model withou different slab parameters}
+\item{include_nogamma}{boolean, indicating whether to fit a grpRR model without different slab parameters}
+
+\item{include_grpRR_SS_ungrouped}{boolean, indicating whether to fit a grpRR model without group annotations}
 }
 \value{
 List of fitted models and two data frames with coeffcients and penalty factors
