@@ -62,7 +62,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
     if(family == "binomial"){
       if(calcELB){
         calcELB <- FALSE
-        warning("The implemntation of logistic regression is in beta-version.\n
+        warning("The implemntation of logistic regression is still in parts experimental.\n
                 ELBO calculations are not yet implemented for logistic regression.")
       }
     }
