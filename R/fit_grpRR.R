@@ -23,10 +23,7 @@
 #' @param standardize boolean whether to standardize the predictors or not (default TRUE)
 #' @param init_psi initial value for the spike variables
 #' @param nogamma If true, the normal prior will have same variance for all groups (only relevant for SS)
-
 #' @return List of fitted parameters
-
-
 #' @useDynLib grpRR
 #' @import Rcpp
 #' @export

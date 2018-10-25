@@ -117,7 +117,7 @@ makeExampleData <- function(n=100, p=200, g=4, gammas=c(0.1,1,10,100), pis=c(0.5
 #' @return list containin the design matrix X, the response y, the feautre annotation to
 #'  groups annot as well as the different parameters in the Bayesian model and the correlation strength rho
 #' @export
-#' @import stats
+#' @importFrom stats toeplitz rnorm rbinom
 makeExampleDataWithUnequalGroups <- function(n=100, pg=c(100,100,10,10), gammas=c(0.1,10,0.1,10),
                                              pis=c(0.5,0.5,0.5,0.5), tau=1, rho=0, response = "gaussian",
                                              intercept = 0) {
@@ -130,22 +130,23 @@ makeExampleDataWithUnequalGroups <- function(n=100, pg=c(100,100,10,10), gammas=
     if(!response %in% c("gaussian", "bernoulli")) stop("Response needs to be 'gaussian' or 'bernoulli'.")
 
     # construct design
-    Sigma <- toeplitz(rho^(0:(p-1)))
-    X <- matrix(rnorm(n*p),n,p) %*% chol(Sigma)
+    Sigma <- stats::toeplitz(rho^(0:(p-1)))
+    X <- matrix(stats::rnorm(n*p),n,p) %*% chol(Sigma)
     X <- scale(X)
 
     # simulate coefficients
-    beta_tilde <- Reduce(c,lapply(1:g, function(k) rnorm(pg[k],0,sqrt(1/gammas[k]))))
-    s <- Reduce(c,lapply(1:g, function(k) rbinom(pg[k],1,pis[k])))
+    beta_tilde <- Reduce(c,lapply(1:g, function(k) stats::rnorm(pg[k],0,sqrt(1/gammas[k]))))
+    s <- Reduce(c,lapply(1:g, function(k) stats::rbinom(pg[k],1,pis[k])))
     beta <- s* beta_tilde
 
     #simulate response
     if(response == "gaussian"){
-      y <- rnorm(n, X%*%beta + intercept, 1/sqrt(tau))
-    } else y <- rbinom(n, 1, 1/(1+exp(- (X%*%beta +intercept)) ))
+      y <- stats::rnorm(n, X%*%beta + intercept, 1/sqrt(tau))
+    } else y <- stats::rbinom(n, 1, 1/(1+exp(- (X%*%beta +intercept)) ))
 
     #group annotations
     annot <- rep(1:length(pg), times=pg)
 
-    list(X=X, y=y, annot=annot, gammas=gammas, pis=pis, tau=tau, rho=rho, g=g, p=p, n=n, beta=beta, s=s, beta_tilde=beta_tilde, intercept=intercept)
+    list(X=X, y=y, annot=annot, gammas=gammas, pis=pis, tau=tau, rho=rho,
+         g=g, p=p, n=n, beta=beta, s=s, beta_tilde=beta_tilde, intercept=intercept)
 }

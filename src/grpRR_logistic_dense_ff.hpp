@@ -16,7 +16,6 @@ private:
   mat  X;
   vec y;
   Row<int> annot;
-  double yty;
   int p,n,g;
   vec NoPerGroup;
   double d_gamma, r_gamma;
@@ -54,39 +53,39 @@ public:
   X(X)                                // design matrix
   , y(y)                                // response vector
   , annot(annot)                        // assignement of each feautre to a group
-  , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
-  , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
   , p(X.n_cols)                         //number of samples
   , n(X.n_rows)                         //number of samples
   , g(g)                                // number of groups
   , NoPerGroup(NoPerGroup)               //number of features per group
+  , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
+  , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
   , max_iter(max_iter)                  // maximal number of iterations
   , th(th)                              //threshold for ELBO to stop iterations
   , calcELB(calcELB)                    //whether to calculate ELBO
   , verbose(verbose)                    //whether to print intermediate messages
   , intercept(intercept)                //whether to use an itercept term in the model
-  , xi(n)                               // variational parameter, initialised to 0, should better be close to yX\beta
-  , lambda_xi(n)                       //lambda(xi)
-  , ELB(-std::numeric_limits<double>::infinity())                           //evidence lower bound
-  , sigma2_beta(p)                      //variance parameter of normal distribution for beta
-  , Sigma_beta(speye(p,p))              //diagonal covariance matrix
- , D_Lambda_xi(speye(n,n))
-  , mu_beta(mu_init)                          //initialise by 0
-  , EW_gamma(g)                         //initialise by expected value of a gamma distribution, one value per group
-  , alpha_gamma(g)                      //parameter of gamma distribution for tau (stays same in each iteration)
-  , beta_gamma(g)
-  , diff(th+1)                          // to ensure it is larger than th at the beginning
-  , n_iter(0)                           // counter of iterations
   , freqELB(freqELB)                    // freuqency of ELB calculation: each freqELB-th iteration ELBO is calculated
-  , ELB_trace(max_iter)
   , ListXrowSquared(n)
-  , yhat(y-0.5)
-  , Xtyhat(p)
-  , cov_beta0(p)
+    , ELB(-std::numeric_limits<double>::infinity())                           //evidence lower bound
   , beta0(0)
-   , EW_beta0(0)
+  , EW_beta0(0)
  , cond_var_beta0(0)
    , var_beta0(0)
+ , D_Lambda_xi(speye(n,n))
+  , cov_beta0(p)
+ , alpha_gamma(g)                      //parameter of gamma distribution for tau (stays same in each iteration)
+  , beta_gamma(g)
+  , xi(n)                               // variational parameter, initialised to 0, should better be close to yX\beta
+  , lambda_xi(n)                       //lambda(xi)
+    , Xtyhat(p)
+      , yhat(y-0.5)
+  , Sigma_beta(speye(p,p))              //diagonal covariance matrix
+    , sigma2_beta(p)                      //variance parameter of normal distribution for beta
+  , mu_beta(mu_init)                          //initialise by 0
+  , EW_gamma(g)                         //initialise by expected value of a gamma distribution, one value per group
+  , diff(th+1)                          // to ensure it is larger than th at the beginning
+  , n_iter(0)                           // counter of iterations
+  , ELB_trace(max_iter)
   { Xtyhat=trans(X)*yhat;
     EW_gamma.fill(r_gamma/d_gamma);
     alpha_gamma=r_gamma+NoPerGroup/2;

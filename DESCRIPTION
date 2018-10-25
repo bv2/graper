@@ -13,7 +13,6 @@ LazyData: TRUE
 Imports:
 	mvtnorm,
 	Matrix,
-	ggplot2,
 	glmnet,
 	grpreg,
 	reshape2,
@@ -21,15 +20,10 @@ Imports:
 	ipflasso, 	
 	GRridge, 
 	randomForest, 
-	reshape2,
 	dplyr,
 	ggplot2,
 	SGL,
-	GRridge,
-	ipflasso,
 	varbvs, 
-	randomForest, 
-	grpreg,
 	cowplot
 LinkingTo: Rcpp,
 	RcppArmadillo
@@ -38,5 +32,6 @@ RoxygenNote: 6.1.0
 Suggests: testthat,
     knitr,
     rmarkdown,
-   tidyverse
+    magrittr,
+    tidyverse
 VignetteBuilder: knitr

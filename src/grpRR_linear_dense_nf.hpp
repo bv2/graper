@@ -46,34 +46,34 @@ public:
        double d_gamma =0.001, double r_gamma =0.001, int max_iter=5000, double th=1e-7, bool calcELB=true, bool verbose=true,
        int freqELB =10):
   X(X)                                // design matrix
+  , XtX(trans(X)*X)
   , y(y)                                // response vector
+  , Xty(trans(X)*y)
+    , ytX(trans(y)*X)
   , annot(annot)                        // assignement of each feautre to a group
+    , yty(as_scalar(trans(y)*y))
+    , p(X.n_cols)                         //number of samples
+    , n(X.n_rows)                         //number of samples
+    , g(g)                              // number of groups
+    , NoPerGroup(NoPerGroup)            //number of features per group
   , d_tau(d_tau)                        // hyperparameters of gamma distribution for tau
   , r_tau(r_tau)                        // hyperparameters of gamma distribution for tau
   , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
   , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
-  , XtX(trans(X)*X)
-  , Xty(trans(X)*y)
-  , ytX(trans(y)*X)
-  , yty(as_scalar(trans(y)*y))
-  , p(X.n_cols)                         //number of samples
-  , n(X.n_rows)                         //number of samples
-  , g(g)                                // number of groups
   , r_gamma_mult(g)                    // hyperparameters of gamma distribution for gamma
-  , NoPerGroup(NoPerGroup)               //number of features per group
   , max_iter(max_iter)                  // maximal number of iterations
   , th(th)                              //threshold for ELBO to stop iterations
   , calcELB(calcELB)                    //whether to calculate ELBO
   , verbose(verbose)                    //whether to print intermediate messages
+    , freqELB(freqELB)                    // freuqency of ELB calculation: each freqELB-th iteration ELBO is calculated
   , EW_tau(r_tau/d_tau)                 //initialise by expected value of a gamma distribution
   , ELB(-std::numeric_limits<double>::infinity())                           //evidence lower bound
   , alpha_tau(r_tau+n/2)                //parameter of gamma distribution for tau (stays same in each iteration)
-  , EW_gamma(g)                         //initialise by expected value of a gamma distribution, one value per group
   , alpha_gamma(g)                      //parameter of gamma distribution for tau (stays same in each iteration)
   , beta_gamma(g)
+    , EW_gamma(g)                         //initialise by expected value of a gamma distribution, one value per group
   , diff(th+1)                          // to ensure it is larger than th at the beginning
   , n_iter(0)                           // counter of iterations
-  , freqELB(freqELB)                    // freuqency of ELB calculation: each freqELB-th iteration ELBO is calculated
   , ELB_trace(max_iter)
   {
       //r_gamma_mult.fill(r_gamma);

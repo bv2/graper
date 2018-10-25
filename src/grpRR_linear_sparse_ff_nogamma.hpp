@@ -54,45 +54,44 @@ public:
        double d_gamma, double r_gamma, double r_pi, double d_pi, int max_iter, double th, bool calcELB,
                   bool verbose, int freqELB, vec mu_init, vec psi_init):
   X(X)                                  // design matrix
+    , XtX(trans(X)*X)
   , y(y)                                // response vector
+    , Xty(trans(X)*y)
+    , diagXtX(XtX.diag())
+    , ytX(trans(y)*X)
+    , annot(annot)                        // assignement of each feautre to a group
+    , yty(as_scalar(trans(y)*y))
     , p(X.n_cols)                         //number of samples
     , n(X.n_rows)                         //number of samples
-    , g(g)
-  , annot(annot)                        // assignement of each feautre to a group
+    , g(g)                                 // number of groups
+    , NoPerGroup(NoPerGroup)               //number of features per group
   , d_tau(d_tau)                        // hyperparameters of gamma distribution for tau
   , r_tau(r_tau)                        // hyperparameters of gamma distribution for tau
   , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
   , r_gamma(r_gamma*p)                    // hyperparameters of gamma distribution for gamma
   , d_pi(d_pi)                          // hyperparameters of Beta distribution for pi
   , r_pi(r_pi)                          // hyperparameters of Beta distribution for pi
-  , XtX(trans(X)*X)
-  , diagXtX(XtX.diag())
-  , Xty(trans(X)*y)
-  , ytX(trans(y)*X)
-  , yty(as_scalar(trans(y)*y))
-                            // number of groups
-  , NoPerGroup(NoPerGroup)               //number of features per group
   , max_iter(max_iter)                  // maximal number of iterations
   , th(th)                              //threshold for ELBO to stop iterations
   , calcELB(calcELB)                    //whether to calculate ELBO
   , verbose(verbose)                    //whether to print intermediate messages
+  , freqELB(freqELB)                    // freuqency of ELB calculation: each freqELB-th iteration ELBO is calculated
+    , mu_tildebeta_1(p)
+    , sigma2_tildebeta_0(p)
+    , sigma2_tildebeta_1(p)
+    , psi(psi_init)                              // is idnetcal to EW_S as Bernoulli
   , EW_tau(r_tau/d_tau)                 //initialise by expected value of a gamma distribution
-  , psi(psi_init)                              // is idnetcal to EW_S as Bernoulli
+, ELB(-std::numeric_limits<double>::infinity())                           //evidence lower bound
+    , alpha_tau(r_tau+n/2)                //parameter of gamma distribution for tau (stays same in each iteration)
+    , alpha_gamma(r_gamma+p/2)             //parameter of gamma distribution for gamma (stays same in each iteration)
+    , beta_gamma(d_gamma)
+    , alpha_pi(g)
+    , beta_pi(g)
+    , EW_pi(g)
   , mu_beta(mu_init)                    //initialised randomly
-  , ELB(-std::numeric_limits<double>::infinity())                           //evidence lower bound
-  , alpha_tau(r_tau+n/2)                //parameter of gamma distribution for tau (stays same in each iteration)
   , EW_gamma(r_gamma/d_gamma)            //initialise by expected value of a gamma distribution, one value per group
-  , EW_pi(g)
-  , alpha_gamma(r_gamma+p/2)             //parameter of gamma distribution for gamma (stays same in each iteration)
-  , beta_gamma(d_gamma)
-  , alpha_pi(g)
-  , beta_pi(g)
-  , mu_tildebeta_1(p)
-  , sigma2_tildebeta_0(p)
-  , sigma2_tildebeta_1(p)
   , diff(th+1)                          // to ensure it is larger than th at the beginning
   , n_iter(0)                           // counter of iterations
-  , freqELB(freqELB)                    // freuqency of ELB calculation: each freqELB-th iteration ELBO is calculated
   , ELB_trace(max_iter)
   {
 

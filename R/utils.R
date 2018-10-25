@@ -9,10 +9,10 @@
 #' @param data design matrix
 #' @param family liklihood model for the response
 #' @export
-#' @import stats
+#' @importFrom stats glm
 MarginalCoefficient <- function(response, data, family = "gaussian") {
     apply(data, 2, function(c) {
-        lm.fit <- glm(response ~ c, family = family)
+        lm.fit <- stats::glm(response ~ c, family = family)
         s <- summary(lm.fit)
         s$coefficients[2, ]
     })
@@ -37,7 +37,7 @@ ImputeByMean <- function(x) {
 #' @param y_test response vectorof length number of  test samples
 #' @param beta0 true model coefficients (if known)
 #' @param family liklihood model for the response, either "gaussian" for linear regression or "binomial" for logisitc regression
-#'
+#' @importFrom GRridge auc roc
 #' @export
 EvaluateModel <- function(beta_est, intercept, X_test, y_test, beta0 = NULL, family) {
     if (is.null(intercept))

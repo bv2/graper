@@ -13,28 +13,30 @@
 #' @param jmax maximal number of betas per group to plot
 #' @param range plotting range (x-axis)
 #' @export
-#' @import stats
+#' @importFrom dplyr mutate
 # ---------------------------
 plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL, tau0 = NULL, pi0=NULL, s0=NULL, jmax=2, range=NULL) {
 
     if (param2plot=="beta") {
+      beta <- true_beta <- density <- mean_val <- mu_slab <- va_slab <- psi <- j <- NULL # avoid notes on global varibale binding in check
         message("Only plotting the first ", jmax, " coefficients per group.")
         js <- Reduce(c,lapply(unique(fit$annot), function(gr) which(fit$annot==gr)[1:min(jmax, sum(fit$annot==gr))]))
         gr <- lapply(js, function(j) {
             va_slab <- fit$sigma2_tildebeta_s1[j]
             mu_slab <- fit$EW_tildebeta_s1[j]
-            mean = fit$EW_beta[j]
+            mean_val = fit$EW_beta[j]
             psi <- fit$EW_s[j]
             group <- fit$annot[j]
             if(is.null(range)){
               x <- c(0,seq(min(0, mu_slab - abs(mu_slab)/2, beta0[j]), max(mu_slab + abs(mu_slab)/2, beta0[j],0), length.out=1000))
             } else x <- c(0,seq(range[1], range[2], length.out = 1000))
-            data.frame(beta=x, j=j, va_slab=va_slab, mean=mean, mu_slab=mu_slab, psi=psi, group=group)
-            }) %>% bind_rows()
-        gr <- mutate(gr,density = psi* dnorm(beta, mu_slab, sqrt(va_slab)) + (1-psi)*(beta==0))
-        if(!is.null(beta0)) gr <- mutate(gr, true_beta = beta0[j])
+            data.frame(beta=x, j=j, va_slab=va_slab, mean_val=mean_val, mu_slab=mu_slab, psi=psi, group=group)
+            })
+        gr <- bind_rows(gr)
+        gr <- dplyr::mutate(gr,density = psi* dnorm(beta, mu_slab, sqrt(va_slab)) + (1-psi)*(beta==0))
+        if(!is.null(beta0)) gr <- dplyr::mutate(gr, true_beta = beta0[j])
         gg <- ggplot(gr, aes(x=beta, y=density)) + geom_line() + facet_wrap(~j, scales="free", ncol=jmax) +
-         geom_vline(aes(xintercept=mean, col="mean"),alpha=0.5, linetype="dashed")
+         geom_vline(aes(xintercept=mean_val, col="mean"),alpha=0.5, linetype="dashed")
         if(!is.null(beta0)) gg <- gg + geom_vline(aes(xintercept=true_beta, col="true_beta"), linetype="dashed",alpha=0.5)
         gg <- gg+ scale_color_manual(name = "statistics", values = c(true_beta = "blue", mean = "red"))+
 theme(
@@ -45,19 +47,21 @@ theme(
     }
 
         if (param2plot=="s") {
+        s <- true_s <- density <- mean_val <- NULL # avoid notes on global varibale binding in check
         message("Only plotting the first ", jmax, " s per group.")
         js <- Reduce(c,lapply(unique(fit$annot), function(gr) which(fit$annot==gr)[1:min(jmax, sum(fit$annot==gr))]))
         gr <- lapply(js, function(j) {
             psi <- fit$EW_s[j]
-            mean <- psi
+            mean_val <- psi
             group <- fit$annot[j]
             x <- c(0,1)
-            data.frame(s=x, j=j, psi=psi,mean=mean, group=group)
-            }) %>% bind_rows()
-        gr <- mutate(gr, density = psi^s *(1-psi)^(1-s))
-        if(!is.null(s0)) gr <- mutate(gr, true_s = s0[j])
+            data.frame(s=x, j=j, psi=psi,mean_val=mean_val, group=group)
+            })
+        gr <- bind_rows()
+        gr <- dplyr::mutate(gr, density = psi^s *(1-psi)^(1-s))
+        if(!is.null(s0)) gr <- dplyr::mutate(gr, true_s = s0[j])
         gg <- ggplot(gr, aes(xend=s, x=s, yend=0, y=density)) + geom_segment() +geom_point() + facet_wrap(~j, ncol=jmax) +
-         geom_vline(aes(xintercept=mean, col="mean"),alpha=0.5, linetype="dashed")
+         geom_vline(aes(xintercept=mean_val, col="mean"),alpha=0.5, linetype="dashed")
         if(!is.null(s0)) gg <- gg + geom_vline(aes(xintercept=true_s, col="true_s"), linetype="dashed",alpha=0.5)
         gg <- gg+ scale_color_manual(name = "statistics", values = c(true_s = "blue", mean = "red"))+ theme_bw() +
 theme(
@@ -67,48 +71,52 @@ theme(
     }
 
         if (param2plot=="pi") {
+          pi <- true_pi <- density <- mean_val <- k <- NULL # avoid notes on global varibale binding in check
+
         gr <- lapply(1:length(fit$EW_pi), function(k) {
-            mea <- fit$EW_pi[k]
+            mean_val <- fit$EW_pi[k]
             x <- seq(0, 1, length.out=1000)
-            data.frame(pi=x, k=k)
-            }) %>% bind_rows()
-        gr <- mutate(gr, density = dbeta(pi, fit$alpha_pi[k], fit$beta_pi[k]),
-                        mean = fit$EW_pi[k])
-        if(!is.null(pi0)) gr <- mutate(gr, true_pi = pi0[k])
+            data.frame(pi=x, k=k, mean_val = mean_val)
+            })
+        gr <- bind_rows(gr)
+        gr <- dplyr::mutate(gr, density = dbeta(pi, fit$alpha_pi[k], fit$beta_pi[k]))
+        if(!is.null(pi0)) gr <- dplyr::mutate(gr, true_pi = pi0[k])
         gg <- ggplot(gr, aes(x=pi, y=density)) + geom_line() + facet_wrap(~k, scales="free") +
-         geom_vline(aes(xintercept=mean, col="mean"), linetype="dashed")
+         geom_vline(aes(xintercept=mean_val, col="mean"), linetype="dashed")
         if(!is.null(pi0)) gg <- gg + geom_vline(aes(xintercept=true_pi, col="true_pi"), linetype="dashed")
         gg <- gg+ scale_color_manual(name = "statistics", values = c(true_pi = "blue", mean = "red"))
         print(gg)
     }
     if (param2plot=="gamma") {
+      gamma <- true_gamma <- density <- k <- mean_val <- NULL # avoid notes on global varibale binding in check
         gr <- lapply(1:length(fit$alpha_gamma), function(k) {
             va <- fit$alpha_gamma[k]/fit$beta_gamma[k]^2
-            mea <- fit$EW_gamma[k]
-            if(is.null(range))  x <- seq(0, max(gamma0[k],5 * mea), , length.out=1000)
+            mean_val <- fit$EW_gamma[k]
+            if(is.null(range))  x <- seq(0, max(gamma0[k],5 * mean_val), , length.out=1000)
             else x <- seq(range[1], range[2], length.out = 1000)
-            data.frame(gamma=x, k=k)
-            }) %>% bind_rows()
-        gr <- mutate(gr, density = dgamma(gamma, fit$alpha_gamma[k], fit$beta_gamma[k]),
-                        mean = fit$EW_gamma[k])
-        if(!is.null(gamma0)) gr <- mutate(gr,true_gamma = gamma0[k])
+            data.frame(gamma=x, k=k, mean_val = mean_val)
+            })
+        gr <- bind_rows(gr)
+        gr <- dplyr::mutate(gr, density = dgamma(gamma, fit$alpha_gamma[k], fit$beta_gamma[k]))
+        if(!is.null(gamma0)) gr <- dplyr::mutate(gr,true_gamma = gamma0[k])
         gg <- ggplot(gr, aes(x=gamma, y=density)) + geom_line() + facet_wrap(~k, scales="free") +
-         geom_vline(aes(xintercept=mean, col="mean"), linetype="dashed")
+         geom_vline(aes(xintercept=mean_val, col="mean"), linetype="dashed")
         if(!is.null(gamma0)) gg <- gg + geom_vline(aes(xintercept=true_gamma, col="true_gamma"), linetype="dashed")
         gg <- gg+ scale_color_manual(name = "statistics", values = c(true_gamma = "blue", mean = "red"))
         print(gg)
     }
 
     if (param2plot=="tau") {
+      tau <- true_tau <- density <- mean_val <- NULL # avoid notes on global varibale binding in check
         va <- fit$alpha_tau/fit$alpha_tau^2
-        mea <- fit$EW_tau
-        if(is.null(range))  x <- seq(0, max(tau0,5 * mea), , length.out=1000)
+        mean_val <- fit$EW_tau
+        if(is.null(range))  x <- seq(0, max(tau0,5 * mean_val), , length.out=1000)
         else x <- seq(range[1], range[2], length.out = 1000)
         df <- data.frame(tau = x,
                          density = dgamma(x, shape = fit$alpha_tau, rate = fit$beta_tau),
-                         mean = fit$EW_tau)
+                         mean_val = mean_val)
         if(!is.null(tau0)) df$true_tau <- tau0
-        gg <- ggplot(df, aes(x=tau, y=density)) + geom_line() + geom_vline(aes(xintercept=mean, col="mean"), linetype="dashed")
+        gg <- ggplot(df, aes(x=tau, y=density)) + geom_line() + geom_vline(aes(xintercept=mean_val, col="mean"), linetype="dashed")
         if(!is.null(tau0)) gg <- gg + geom_vline(aes(xintercept=true_tau, col="true_tau"), linetype="dashed")
         gg <- gg+ scale_color_manual(name = "statistics", values = c(true_tau = "blue", mean = "red"))
         print(gg)
@@ -122,6 +130,7 @@ theme(
 #' @param fit fit as produced by fit_grpRR
 #' @export
 plotELBO <- function(fit){
+  iteration <- ELBO <- NULL # avoid notes in check
     if(is.null(fit$ELB_trace)) stop("ELBO was not computed for this fit.")
 
     df <- data.frame(iteration=1:length(fit$ELB_trace),
@@ -136,13 +145,14 @@ plotELBO <- function(fit){
 #' @param resultList List as created by cv_compare
 #' @param family gaussian or binomial (same as used in cv_compare)
 #' @param methods2plot which method to be plotted
-#' @import dplyr
-#' @import reshape2
+#' @importFrom dplyr filter bind_rows
+#' @importFrom reshape2 melt
 #' @import ggplot2
 #' @importFrom cowplot plot_grid
 #' @export
 
 plotMethodComparison <- function(resultList, family = "gaussian", methods2plot="all") {
+  runtime <- method <- group <- penalty_factor <- sparsity_level <- value <- runtime <-  NULL # avoid notes on global varibale binding in check
     # get results in dataframe format
     if(family=="gaussian"){
       if(!all(is.na(resultList[[1]]$FPR)))
@@ -165,10 +175,12 @@ plotMethodComparison <- function(resultList, family = "gaussian", methods2plot="
     }
 
     pf_summary <- lapply(seq_along(resultList), function(i) cbind(reshape2::melt(resultList[[i]]$pf_mat, varnames = c("group", "method"),
-        value.name = "penalty_factor"), Lrun = i)) %>% dplyr::bind_rows()
+        value.name = "penalty_factor"), Lrun = i))
+    pf_summary <- dplyr::bind_rows(pf_summary)
 
     sparsity_summary <- lapply(seq_along(resultList), function(i) cbind(reshape2::melt(resultList[[i]]$sparsity_mat, varnames = c("group",
-        "method"), value.name = "sparsity_level"), Lrun = i)) %>% dplyr::bind_rows()
+        "method"), value.name = "sparsity_level"), Lrun = i))
+    sparsity_summary <- dplyr::bind_rows(sparsity_summary)
 
     runtime_summary <- reshape2::melt(lapply(resultList, function(l) t(l$runtime)), varnames = c("const", "method"), value.name = "runtime",
         level = "run")[, 2:4]

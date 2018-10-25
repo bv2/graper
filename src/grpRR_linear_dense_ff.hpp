@@ -31,8 +31,8 @@ private:
   double EW_tau, ELB;
   double alpha_tau, beta_tau;
   vec  alpha_gamma, beta_gamma;
-  sp_mat Sigma_beta;
   vec sigma2_beta;
+  sp_mat Sigma_beta;
   vec mu_beta;
   vec EW_gamma;
   double diff;
@@ -47,38 +47,38 @@ public:
        double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose,
        int freqELB, vec mu_init):
   X(X)                                // design matrix
-  , y(y)                                // response vector
-  , annot(annot)                        // assignement of each feautre to a group
-  , d_tau(d_tau)                        // hyperparameters of gamma distribution for tau
-  , r_tau(r_tau)                        // hyperparameters of gamma distribution for tau
-  , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
-  , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
   , XtX(trans(X)*X)
-  , diagXtX(XtX.diag())
+  , y(y)                                // response vector
   , Xty(trans(X)*y)
+  , diagXtX(XtX.diag())
   , ytX(trans(y)*X)
+  , annot(annot)                        // assignement of each feautre to a group
   , yty(as_scalar(trans(y)*y))
   , p(X.n_cols)                         //number of samples
   , n(X.n_rows)                         //number of samples
   , g(g)                                // number of groups
-  , r_gamma_mult(g)                    // hyperparameters of gamma distribution for gamma
   , NoPerGroup(NoPerGroup)               //number of features per group
+  , d_tau(d_tau)                        // hyperparameters of gamma distribution for tau
+  , r_tau(r_tau)                        // hyperparameters of gamma distribution for tau
+  , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
+  , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
+  , r_gamma_mult(g)                    // hyperparameters of gamma distribution for gamma
   , max_iter(max_iter)                  // maximal number of iterations
   , th(th)                              //threshold for ELBO to stop iterations
   , calcELB(calcELB)                    //whether to calculate ELBO
   , verbose(verbose)                    //whether to print intermediate messages
+  , freqELB(freqELB)                    // freuqency of ELB calculation: each freqELB-th iteration ELBO is calculated
   , EW_tau(r_tau/d_tau)                 //initialise by expected value of a gamma distribution
   , ELB(-std::numeric_limits<double>::infinity())                           //evidence lower bound
   , alpha_tau(r_tau+n/2)                //parameter of gamma distribution for tau (stays same in each iteration)
+  , alpha_gamma(g)                      //parameter of gamma distribution for tau (stays same in each iteration)
+  , beta_gamma(g)
   , sigma2_beta(p)                      //variance parameter of normal distribution for beta
   , Sigma_beta(speye(p,p))              //diagonal covariance matrix
   , mu_beta(mu_init)                    //initialised randomly
   , EW_gamma(g)                         //initialise by expected value of a gamma distribution, one value per group
-  , alpha_gamma(g)                      //parameter of gamma distribution for tau (stays same in each iteration)
-  , beta_gamma(g)
   , diff(th+1)                          // to ensure it is larger than th at the beginning
   , n_iter(0)                           // counter of iterations
-  , freqELB(freqELB)                    // freuqency of ELB calculation: each freqELB-th iteration ELBO is calculated
   , ELB_trace(max_iter)
   {
       vec multgamma = ones<vec>(g); //NoPerGroup;

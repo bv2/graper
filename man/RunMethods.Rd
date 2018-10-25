@@ -27,11 +27,13 @@ runMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
 
 \item{max_iter}{maximum number of iterations}
 
-\item{family}{liklihood model for the response, either "gaussian" for linear regression or "binomial" for logisitc regression}
+\item{family}{liklihood model for the response, either "gaussian" for linear regression
+or "binomial" for logisitc regression}
 
 \item{intercept}{boolean, indicating wether to fit an intercept}
 
-\item{standardize}{boolean, indicating wether features for Ridge and Lasso fit should be standardized. Note this does not affect GRridge and grouplasso where standardization is default.}
+\item{standardize}{boolean, indicating wether features for Ridge and Lasso fit should be standardized.
+Note this does not affect GRridge and grouplasso where standardization is default.}
 
 \item{freqELB}{determines frequency at which ELB is to be calculated, i.e. each feqELB-th iteration}
 
@@ -47,7 +49,8 @@ runMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
 
 \item{compareGRridge}{boolean, indicating wether to fit a GRridge model}
 
-\item{include_nonfacQ}{include a VB method with multivariate variational distributon (can be very timme consuming for large data sets)}
+\item{include_nonfacQ}{include a VB method with multivariate variational distributon
+(can be very timme consuming for large data sets)}
 
 \item{compareSparseGroupLasso}{boolean, indicating whether to fit a sparse group lasso}
 
@@ -71,7 +74,8 @@ List of fitted models and two data frames with coeffcients and penalty factors
 a list with
  - a summaryList containing the complete individual fits (out) as well as other
 statistics (coefficients, runtime, sparsity, intercept, penalty factors)
-- the details on the data (sample size n, predictor number p, covariate annotation annot, group number G, feature and annotation names)
+- the details on the data (sample size n, predictor number p, covariate annotation annot,
+ group number G, feature and annotation names)
 }
 \description{
 Function to run serveral different methods for high-dimensional regression

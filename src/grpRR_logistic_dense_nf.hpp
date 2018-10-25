@@ -47,27 +47,27 @@ public:
   X(X)                                // design matrix
   , y(y)                                // response vector
   , annot(annot)                        // assignement of each feautre to a group
-  , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
-  , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
   , p(X.n_cols)                         //number of samples
   , n(X.n_rows)                         //number of samples
   , g(g)                                // number of groups
   , NoPerGroup(NoPerGroup)               //number of features per group
+  , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
+  , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
   , max_iter(max_iter)                  // maximal number of iterations
   , th(th)                              //threshold for ELBO to stop iterations
   , calcELB(calcELB)                    //whether to calculate ELBO
   , verbose(verbose)                    //whether to print intermediate messages
-  , xi(n)                               // variational parameter, initialised to 0, should better be close to yX\beta
-  , ELB(-std::numeric_limits<double>::infinity())                           //evidence lower bound
-  , EW_gamma(g)                         //initialise by expected value of a gamma distribution, one value per group
-  , alpha_gamma(g)                      //parameter of gamma distribution for tau (stays same in each iteration)
-  , beta_gamma(g)
-  , diff(th+1)                          // to ensure it is larger than th at the beginning
-  , n_iter(0)                           // counter of iterations
   , freqELB(freqELB)                    // freuqency of ELB calculation: each freqELB-th iteration ELBO is calculated
-  , ELB_trace(max_iter)
   , ListOfOuterX(n)
   , term4betamu(p)
+  , ELB(-std::numeric_limits<double>::infinity())                           //evidence lower bound
+    , alpha_gamma(g)                      //parameter of gamma distribution for tau (stays same in each iteration)
+  , beta_gamma(g)
+    , xi(n)                               // variational parameter, initialised to 0, should better be close to yX\beta
+  , EW_gamma(g)                         //initialise by expected value of a gamma distribution, one value per group
+  , diff(th+1)                          // to ensure it is larger than th at the beginning
+  , n_iter(0)                           // counter of iterations
+  , ELB_trace(max_iter)
   {
     EW_gamma.fill(r_gamma/d_gamma);
     alpha_gamma=r_gamma+NoPerGroup/2;
