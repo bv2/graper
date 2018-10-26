@@ -1,5 +1,3 @@
-# plotting_functions
-
 #' @title plotPosterior
 #' @name plotPosterior
 #' @description plot the posterior of the model parameters

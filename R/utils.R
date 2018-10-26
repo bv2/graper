@@ -1,7 +1,3 @@
-# utils This file contains simple helper functions
-# - MarginalCoefficient: Calculate Marginal coefficeints in a univariate GLM -
-# ImputeByMean: Impute missing values of a vector by its mean
-
 #' @title Get marginal coefficient from a (generalized) linear model
 #' @name MarginalCoefficient
 #' @description Function to compute marignal regression coefficients

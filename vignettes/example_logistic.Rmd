@@ -13,9 +13,7 @@ vignette: >
 
 ```{r, message=FALSE, warning=FALSE}
 library(grpRR)
-library(magrittr)
-library(reshape2)
-library(tidyverse)
+library(ggplot2)
 ```
 
 # Make example data with four groups
