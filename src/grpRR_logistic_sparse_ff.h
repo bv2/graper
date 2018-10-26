@@ -132,7 +132,7 @@ public:
 
   //main function: fit  model
   List fitModel() {
-    while(n_iter<max_iter && (std::abs(diff)>th || isinf(diff) || isnan(diff))){
+    while(n_iter<max_iter && (std::abs(diff)>th || std::isinf(diff) || std::isnan(diff))){
       iterate();
     }
 

@@ -28,9 +28,11 @@ Imports:
 	parallel,
 	stats
 LinkingTo: Rcpp,
-	RcppArmadillo
+	RcppArmadillo,
+	BH
 biocViews: Regression, Bayesian, Classification
 RoxygenNote: 6.1.0
 Suggests:  knitr,
     rmarkdown,
+    BiocStyle
 VignetteBuilder: knitr
