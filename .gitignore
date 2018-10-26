@@ -4,3 +4,6 @@ inst/doc
 tests/.DS_Storer
 .DS_Store
 *.Rproj
+*.o
+*.so
+*.dll
