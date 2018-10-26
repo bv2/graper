@@ -27,9 +27,9 @@ NULL otherwise (default)}
 \item{trueintercept}{True intercept in the linear model if known,
 NULL otherwise (default)}
 
-\item{max_iter}{maximum number of iterations}
+\item{max_iter}{Maximum number of iterations for grpRR methods (see also  \code{\link{fit_grpRR}})}
 
-\item{family}{liklihood model for the response,
+\item{family}{Likelihood model for the response,
  either "gaussian" for linear regression
 or "binomial" for logisitc regression}
 
@@ -40,52 +40,50 @@ features for Ridge and Lasso fit should be standardized.
 Note this does not affect GRridge and group Lasso
  where standardization is default.}
 
-\item{freqELB}{determines frequency at which ELB is to be calculated,
-i.e. each feqELB-th iteration}
+\item{freqELB}{Frequency at which the evidence lower bound (ELB) is to be calculated for grpRR,
+i.e. each freqELB-th iteration (see also  \code{\link{fit_grpRR}})}
 
-\item{calcELB}{boolean, indicating wether to calculate ELB}
+\item{calcELB}{Boolean, indicating whether to calculate the evidence lower bound (ELB) for grpRR (see also  \code{\link{fit_grpRR}})}
 
-\item{th}{convergence threshold on the ELBO
-for the variational Bayes algorithm}
+\item{th}{Convergence threshold for the evidence lower bound (ELB) in grpRR (see also  \code{\link{fit_grpRR}})}
 
-\item{n_rep}{number of repeated fits with
-variational Bayes using different random intilizations}
+\item{n_rep}{Number of reptitions with different random initilizations to be fit in grpRR (see also  \code{\link{fit_grpRR}})}
 
-\item{verbose}{boolean, indicating wether
+\item{verbose}{Boolean, indicating wether
 to print out intermediate messages during fitting}
 
-\item{verbose_progress}{boolean, indicating
+\item{verbose_progress}{Boolean, indicating
 whether to print details on the progress}
 
-\item{compareGRridge}{boolean, indicating
+\item{compareGRridge}{Boolean, indicating
 wether to fit a GRridge model}
 
 \item{include_nonfacQ}{include a VB method
 with multivariate variational distributon
 (can be very timme consuming for large data sets)}
 
-\item{compareSparseGroupLasso}{boolean, indicating
+\item{compareSparseGroupLasso}{Boolean, indicating
 whether to fit a sparse group lasso}
 
-\item{compareIPF}{boolean, indicating
+\item{compareIPF}{Boolean, indicating
 whether to fit a IPFLasso}
 
-\item{compareGroupLasso}{boolean, indicating
+\item{compareGroupLasso}{Boolean, indicating
 whether to fit a group lasso}
 
-\item{includeRF}{boolean, indicating
+\item{includeRF}{Boolean, indicating
 whether to fit a random forest}
 
-\item{compareAdaLasso}{boolean, indicating
+\item{compareAdaLasso}{Boolean, indicating
 whether to fit an adpative lasso}
 
-\item{include_varbvs}{boolean, indicating
+\item{include_varbvs}{Boolean, indicating
 whether to fit varbvs}
 
-\item{include_nogamma}{boolean, indicating
+\item{include_nogamma}{Boolean, indicating
 whether to fit a grpRR model without different slab parameters}
 
-\item{include_grpRR_SS_ungrouped}{boolean, indicating
+\item{include_grpRR_SS_ungrouped}{Boolean, indicating
 whether to fit a grpRR model without group annotations}
 }
 \value{
@@ -101,8 +99,7 @@ a list with
   feature and annotation names)
 }
 \description{
-Function to run serveral different methods
- for high-dimensional regression.
+Function to fit a regression methods using serveral different methods.
 }
 \examples{
 dat <- makeExampleData()

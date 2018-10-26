@@ -1,54 +1,51 @@
 #' @title Run various regression methods
 #' @name runMethods
-#' @description Function to run serveral different methods
-#'  for high-dimensional regression.
+#' @description Function to fit a regression methods using serveral different methods.
 #' @param Xtrain Design matrix of size n x p
 #' @param ytrain Response vector of size n
 #' @param annot Factor of length p indicating group membership of each feature
-#' @param beta0 True coefficients in the linear model if known,
-#'  NULL otherwise (default)
-#' @param trueintercept True intercept in the linear model if known,
-#'  NULL otherwise (default)
-#' @param max_iter maximum number of iterations
-#' @param family liklihood model for the response,
-#'  either "gaussian" for linear regression
-#' or "binomial" for logisitc regression
 #' @param intercept boolean, indicating wether to fit an intercept
 #' @param standardize boolean, indicating wether
 #'  features for Ridge and Lasso fit should be standardized.
 #'  Note this does not affect GRridge and group Lasso
 #'   where standardization is default.
-#' @param calcELB boolean, indicating wether to calculate ELB
-#' @param freqELB determines frequency at which ELB is to be calculated,
-#'  i.e. each feqELB-th iteration
-#' @param th convergence threshold on the ELBO
-#' for the variational Bayes algorithm
-#' @param n_rep number of repeated fits with
-#'  variational Bayes using different random intilizations
-#' @param verbose boolean, indicating wether
+#' @param beta0 True coefficients in the linear model if known,
+#'  NULL otherwise (default)
+#' @param trueintercept True intercept in the linear model if known,
+#'  NULL otherwise (default)
+#' @param max_iter Maximum number of iterations for grpRR methods (see also  \code{\link{fit_grpRR}})
+#' @param family Likelihood model for the response,
+#'  either "gaussian" for linear regression
+#' or "binomial" for logisitc regression
+#' @param calcELB Boolean, indicating whether to calculate the evidence lower bound (ELB) for grpRR (see also  \code{\link{fit_grpRR}})
+#' @param freqELB Frequency at which the evidence lower bound (ELB) is to be calculated for grpRR,
+#'  i.e. each freqELB-th iteration (see also  \code{\link{fit_grpRR}})
+#' @param th Convergence threshold for the evidence lower bound (ELB) in grpRR (see also  \code{\link{fit_grpRR}})
+#' @param n_rep Number of reptitions with different random initilizations to be fit in grpRR (see also  \code{\link{fit_grpRR}})
+#' @param verbose Boolean, indicating wether
 #'  to print out intermediate messages during fitting
-#' @param compareGRridge boolean, indicating
+#' @param compareGRridge Boolean, indicating
 #'  wether to fit a GRridge model
 #' @param include_nonfacQ include a VB method
 #'  with multivariate variational distributon
 #'  (can be very timme consuming for large data sets)
-#' @param compareIPF boolean, indicating
+#' @param compareIPF Boolean, indicating
 #' whether to fit a IPFLasso
-#' @param compareSparseGroupLasso boolean, indicating
+#' @param compareSparseGroupLasso Boolean, indicating
 #'  whether to fit a sparse group lasso
-#' @param compareGroupLasso boolean, indicating
+#' @param compareGroupLasso Boolean, indicating
 #'  whether to fit a group lasso
-#' @param compareAdaLasso boolean, indicating
+#' @param compareAdaLasso Boolean, indicating
 #'  whether to fit an adpative lasso
-#' @param includeRF boolean, indicating
+#' @param includeRF Boolean, indicating
 #'  whether to fit a random forest
-#' @param include_varbvs boolean, indicating
+#' @param include_varbvs Boolean, indicating
 #'  whether to fit varbvs
-#' @param include_nogamma boolean, indicating
+#' @param include_nogamma Boolean, indicating
 #'  whether to fit a grpRR model without different slab parameters
-#' @param include_grpRR_SS_ungrouped boolean, indicating
+#' @param include_grpRR_SS_ungrouped Boolean, indicating
 #'  whether to fit a grpRR model without group annotations
-#' @param verbose_progress boolean, indicating
+#' @param verbose_progress Boolean, indicating
 #'  whether to print details on the progress
 #' @return List of fitted models and two data frames with
 #'  coeffcients and penalty factors
