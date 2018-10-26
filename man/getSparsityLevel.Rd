@@ -7,7 +7,7 @@
 getSparsityLevel(AllFits)
 }
 \arguments{
-\item{AllFits}{object as produced by RunMethods}
+\item{AllFits}{object as produced by \code{\link{runMethods}}}
 }
 \description{
 get sparsity levels (1=dense, 0=sparse) from various methods

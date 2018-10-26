@@ -7,7 +7,7 @@
 getIntercept(AllFits)
 }
 \arguments{
-\item{AllFits}{object as produced by RunMethods}
+\item{AllFits}{object as produced by \code{\link{runMethods}}}
 }
 \description{
 get intercept estimated from various methods

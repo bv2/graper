@@ -7,7 +7,7 @@
 getl1error_beta(AllFits)
 }
 \arguments{
-\item{AllFits}{object as produced by RunMethods}
+\item{AllFits}{object as produced by \code{\link{evaluateFits}}}
 }
 \description{
 get absolute error on beta

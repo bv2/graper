@@ -7,7 +7,7 @@
 getRMSE(AllFits)
 }
 \arguments{
-\item{AllFits}{object as produced by RunMethods}
+\item{AllFits}{object as produced by \code{\link{evaluateFits}}}
 }
 \description{
 get RMSE of various methods

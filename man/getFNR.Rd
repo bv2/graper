@@ -7,7 +7,7 @@
 getFNR(AllFits)
 }
 \arguments{
-\item{AllFits}{object as produced by RunMethods}
+\item{AllFits}{object as produced by \code{\link{evaluateFits}}}
 }
 \description{
 get false negative rates of various methods

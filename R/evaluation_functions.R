@@ -212,7 +212,9 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
   Lasso_summary$pf <- rep(LassoFit$lambda.min, G)
   Lasso_summary$beta <- beta_lasso
   if(intercept) Lasso_summary$intercept <- as.vector(stats::coef(LassoFit, LassoFit$lambda.min))[1]
-  Lasso_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta_lasso[annot == gr] != 0)/sum(annot == gr))
+  Lasso_summary$sparsity <- vapply(unique(annot),
+                                   function(gr) sum(beta_lasso[annot == gr] != 0)/sum(annot == gr),
+                                   numeric(1))
   Lasso_summary$out <- LassoFit
   rm(LassoFit, beta_lasso)
   summaryList$Lasso <- Lasso_summary
@@ -228,7 +230,9 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
   ElasticNet_summary$pf <- rep(ENFit$lambda.min, G)
   ElasticNet_summary$beta <- beta_EN
   if(intercept) ElasticNet_summary$intercept <- as.vector(stats::coef(ENFit, ENFit$lambda.min))[1]
-  ElasticNet_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta_EN[annot == gr] != 0)/sum(annot == gr))
+  ElasticNet_summary$sparsity <- vapply(unique(annot),
+                                        function(gr) sum(beta_EN[annot == gr] != 0)/sum(annot == gr),
+                                        numeric(1))
   ElasticNet_summary$out <- ENFit
   rm(ENFit, beta_EN)
   summaryList$ElasticNet <- ElasticNet_summary
@@ -247,7 +251,9 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     varbvs_summary$pf <- rep(sum(varbvsFit$sa * varbvsFit$w),G)
     varbvs_summary$beta <- beta_varbvs
     if(intercept) varbvs_summary$identercept <- sum(varbvsFit$mu.cov * varbvsFit$w)
-    varbvs_summary$sparsity <- sapply(unique(annot), function(gr) mean(varbvsFit$pip[annot == gr]))
+    varbvs_summary$sparsity <- vapply(unique(annot),
+                                      function(gr) mean(varbvsFit$pip[annot == gr]),
+                                      numeric(1))
     varbvs_summary$out <- varbvsFit
     rm(varbvsFit, beta_varbvs)
     summaryList$varbvs <- varbvs_summary
@@ -288,7 +294,9 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
       GroupLasso_summary$pf <- rep(GrpLassoFit$lambda.min, G)
       GroupLasso_summary$beta <- beta_GrpLasso
       if(intercept) GroupLasso_summary$intercept <- as.vector(stats::coef(GrpLassoFit, GrpLassoFit$lambda.min))[1]
-      GroupLasso_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta_GrpLasso[annot == gr] != 0)/sum(annot == gr))
+      GroupLasso_summary$sparsity <- vapply(unique(annot),
+                                            function(gr) sum(beta_GrpLasso[annot == gr] != 0)/sum(annot == gr),
+                                            numeric(1))
       GroupLasso_summary$out <- GrpLassoFit
       rm(GrpLassoFit, beta_GrpLasso)
       summaryList$GroupLasso <- GroupLasso_summary
@@ -313,7 +321,9 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
       SpGroupLasso_summary$pf <- rep(SpGrpLassoFit$lambdas[which.min(SpGrpLassoFit$lldiff)], G)
       SpGroupLasso_summary$beta <- beta_SpGrpLasso
       SpGroupLasso_summary$intercept <- NULL
-      SpGroupLasso_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta_SpGrpLasso[annot == gr] != 0)/sum(annot == gr))
+      SpGroupLasso_summary$sparsity <- vapply(unique(annot),
+                                              function(gr) sum(beta_SpGrpLasso[annot == gr] != 0)/sum(annot == gr),
+                                              numeric(1))
       SpGroupLasso_summary$out <- SpGrpLassoFit
       rm(SpGrpLassoFit, beta_SpGrpLasso)
       summaryList$SparseGroupLasso <- SpGroupLasso_summary
@@ -372,10 +382,14 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     if(verbose_progress) message(" ### Including true model...")
     TrueModel_summary <- list()
     TrueModel_summary$runtime <- 0
-    TrueModel_summary$pf <- 1/sapply(unique(annot), function(gr) mean((beta0[annot == gr])^2))
+    TrueModel_summary$pf <- 1/vapply(unique(annot),
+                                     function(gr) mean((beta0[annot == gr])^2),
+                                     numeric(1))
     TrueModel_summary$beta <- beta0
     TrueModel_summary$intercept <- trueintercept
-    TrueModel_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta0[annot == gr] != 0)/sum(annot == gr))
+    TrueModel_summary$sparsity <- vapply(unique(annot),
+                                         function(gr) sum(beta0[annot == gr] != 0)/sum(annot == gr),
+                                         numeric(1))
     TrueModel_summary$out <- NULL
     summaryList$TrueModel <- TrueModel_summary
   }
@@ -404,7 +418,9 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
       IPFLasso_summary$pf <- pflist[[ipf.out$ind.bestpf]]
       IPFLasso_summary$beta <- ipf.out$coeff[-1,ipf.out$ind.bestlambda]
       IPFLasso_summary$intercept <- ipf.out$coeff[1,ipf.out$ind.bestlambda]
-      IPFLasso_summary$sparsity <-  sapply(unique(annot), function(gr) sum(IPFLasso_summary$beta[annot == gr] != 0)/sum(annot == gr))
+      IPFLasso_summary$sparsity <-  vapply(unique(annot),
+                                           function(gr) sum(IPFLasso_summary$beta[annot == gr] != 0)/sum(annot == gr),
+                                           numeric(1))
       IPFLasso_summary$out <- ipf.out
       rm(ipf.out)
       summaryList$IPFLasso <- IPFLasso_summary
@@ -426,10 +442,14 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     beta_adalasso <- as.vector(stats::coef(adaLassoFit, adaLassoFit$lambda.min))[-1]
     adaLasso_summary <- list()
     adaLasso_summary$runtime <- as.numeric(tmp)
-    adaLasso_summary$pf <- sapply(unique(annot), function(gr) mean(adaLassoFit$lambda.min * wRidge[annot == gr]))
+    adaLasso_summary$pf <- vapply(unique(annot),
+                                  function(gr) mean(adaLassoFit$lambda.min * wRidge[annot == gr]),
+                                  numeric(1))
     adaLasso_summary$beta <- beta_adalasso
     if(intercept) adaLasso_summary$intercept <- as.vector(stats::coef(adaLassoFit, adaLassoFit$lambda.min))[1]
-    adaLasso_summary$sparsity <- sapply(unique(annot), function(gr) sum(beta_adalasso[annot == gr] != 0)/sum(annot == gr))
+    adaLasso_summary$sparsity <- vapply(unique(annot),
+                                        function(gr) sum(beta_adalasso[annot == gr] != 0)/sum(annot == gr),
+                                        numeric(1))
     adaLasso_summary$out <- adaLassoFit
     rm(adaLassoFit, beta_adalasso)
     summaryList$adaptiveLasso <- adaLasso_summary
@@ -451,7 +471,7 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
 #' @param ytest Response vector of size n'
 #' @return List as prodcused by \code{\link{runMethods}} with additional predicition performance slots
 #' @export
-#' @import stats
+#' @importFrom stats predict
 
 
 evaluateFits <- function(allFits, Xtest, ytest) {
@@ -481,9 +501,9 @@ evaluateFits <- function(allFits, Xtest, ytest) {
       summary
     })
     if ("RandomForest" %in% names(summaryList))
-      summaryList$RandomForest$RMSE <- sqrt(1/length(ytest) * sum((predict(summaryList$RandomForest$out, Xtest) - ytest)^2))
+      summaryList$RandomForest$RMSE <- sqrt(1/length(ytest) * sum((stats::predict(summaryList$RandomForest$out, Xtest) - ytest)^2))
     if ("varbvs" %in% names(summaryList))
-      summaryList$varbvs$RMSE <- sqrt(1/length(ytest) * sum((predict(summaryList$varbvs$out, Xtest) - ytest)^2))
+      summaryList$varbvs$RMSE <- sqrt(1/length(ytest) * sum((stats::predict(summaryList$varbvs$out, Xtest) - ytest)^2))
   }
 
   # For binomial family calculate AUC and Brier Score
@@ -612,13 +632,13 @@ cv_compare <- function(X, y, annot, family="gaussian",
       RMSE <- getRMSE(AllFits)
       l <- list(FPR=FPR, FNR=FNR, RMSE=RMSE, pf_mat=pf_mat, beta_mat=beta_mat,
                 intercepts=intercepts, sparsity_mat=sparsity_mat, annot=AllFits$annot, runtime=runtime,
-                l1error_intercept, l1error_beta)
+                l1error_intercept=l1error_intercept, l1error_beta=l1error_beta)
     } else if(family=="binomial"){
       BS <- getBS(AllFits)
       AUC <- getAUC(AllFits)
       l <- list(FPR=FPR, FNR=FNR, BS=BS, AUC=AUC, pf_mat=pf_mat, beta_mat=beta_mat,
                 intercepts=intercepts, sparsity_mat=sparsity_mat, annot=AllFits$annot, runtime=runtime,
-                l1error_intercept, l1error_beta)
+                l1error_intercept=l1error_intercept, l1error_beta=l1error_beta)
     }
     else stop("Family not implemented")
     return(l)

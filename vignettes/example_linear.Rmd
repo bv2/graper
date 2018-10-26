@@ -13,8 +13,6 @@ vignette: >
 
 ```{r, message=FALSE, warning=FALSE}
 library(grpRR)
-library(magrittr)
-library(ggplot2)
 ```
 
 # Make example data with four groups
@@ -67,7 +65,7 @@ Some standard methods like Lasso and Ridge are always included in the comparison
 comp <- cv_compare(data$X, data$y, data$annot,
            compareIPF=FALSE, compareGroupLasso=FALSE,
            compareSparseGroupLasso=FALSE, includeRF=FALSE, 
-           nfolds = 3, plot_cv = FALSE, verbose=FALSE)
+           nfolds = 3, plot_cv = FALSE, verbose=FALSE, beta0  = data$beta)
 plotMethodComparison(comp, methods2plot = c("grpRR_SS", "Lasso"))
 ```
 

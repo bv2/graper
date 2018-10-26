@@ -7,7 +7,7 @@
 getPenaltyFactors(AllFits)
 }
 \arguments{
-\item{AllFits}{object as produced by RunMethods}
+\item{AllFits}{object as produced by \code{\link{runMethods}}}
 }
 \description{
 get penalty factors from various methods

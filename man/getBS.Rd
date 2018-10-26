@@ -7,7 +7,7 @@
 getBS(AllFits)
 }
 \arguments{
-\item{AllFits}{object as produced by RunMethods}
+\item{AllFits}{object as produced by \code{\link{evaluateFits}}}
 }
 \description{
 get Brier Score of various methods

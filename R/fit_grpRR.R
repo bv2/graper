@@ -47,7 +47,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
 
     # get group structure
     g <- length(unique(annot))
-    NoPerGroup <- sapply(unique(annot), function(x) sum(annot == x))
+    NoPerGroup <- vapply(unique(annot), function(x) sum(annot == x), numeric(1))
     names(NoPerGroup) <- unique(annot)
     message(paste("Fitting a model with", g, "groups,", n, "samples and", p , "features."))
 
@@ -147,7 +147,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
     if(n_rep==1) {
         res <- reslist[[1]]
     }  else {
-            best_idx <- which.max(sapply(reslist, function(l) l$ELB))
+            best_idx <- which.max(vapply(reslist, function(l) l$ELB, numeric(1)))
             if(is.na(best_idx) | is.null(best_idx)) {
                 warning("Model selection based on ELBO encountered errors. Returned model is picked arbitrarily!")
                 best_idx <- 1

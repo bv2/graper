@@ -14,6 +14,7 @@
 #' @param range plotting range (x-axis)
 #' @export
 #' @importFrom dplyr mutate
+#' @importFrom stats dbinom dnorm dgamma
 # ---------------------------
 plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL, tau0 = NULL, pi0=NULL, s0=NULL, jmax=2, range=NULL) {
 
@@ -33,7 +34,7 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL, tau0 = N
             data.frame(beta=x, j=j, va_slab=va_slab, mean_val=mean_val, mu_slab=mu_slab, psi=psi, group=group)
             })
         gr <- bind_rows(gr)
-        gr <- dplyr::mutate(gr,density = psi* dnorm(beta, mu_slab, sqrt(va_slab)) + (1-psi)*(beta==0))
+        gr <- dplyr::mutate(gr,density = psi* stats::dnorm(beta, mu_slab, sqrt(va_slab)) + (1-psi)*(beta==0))
         if(!is.null(beta0)) gr <- dplyr::mutate(gr, true_beta = beta0[j])
         gg <- ggplot(gr, aes(x=beta, y=density)) + geom_line() + facet_wrap(~j, scales="free", ncol=jmax) +
          geom_vline(aes(xintercept=mean_val, col="mean"),alpha=0.5, linetype="dashed")
@@ -79,7 +80,7 @@ theme(
             data.frame(pi=x, k=k, mean_val = mean_val)
             })
         gr <- bind_rows(gr)
-        gr <- dplyr::mutate(gr, density = dbeta(pi, fit$alpha_pi[k], fit$beta_pi[k]))
+        gr <- dplyr::mutate(gr, density = stats::dbeta(pi, fit$alpha_pi[k], fit$beta_pi[k]))
         if(!is.null(pi0)) gr <- dplyr::mutate(gr, true_pi = pi0[k])
         gg <- ggplot(gr, aes(x=pi, y=density)) + geom_line() + facet_wrap(~k, scales="free") +
          geom_vline(aes(xintercept=mean_val, col="mean"), linetype="dashed")
@@ -97,7 +98,7 @@ theme(
             data.frame(gamma=x, k=k, mean_val = mean_val)
             })
         gr <- bind_rows(gr)
-        gr <- dplyr::mutate(gr, density = dgamma(gamma, fit$alpha_gamma[k], fit$beta_gamma[k]))
+        gr <- dplyr::mutate(gr, density = stats::dgamma(gamma, fit$alpha_gamma[k], fit$beta_gamma[k]))
         if(!is.null(gamma0)) gr <- dplyr::mutate(gr,true_gamma = gamma0[k])
         gg <- ggplot(gr, aes(x=gamma, y=density)) + geom_line() + facet_wrap(~k, scales="free") +
          geom_vline(aes(xintercept=mean_val, col="mean"), linetype="dashed")
@@ -113,7 +114,7 @@ theme(
         if(is.null(range))  x <- seq(0, max(tau0,5 * mean_val), , length.out=1000)
         else x <- seq(range[1], range[2], length.out = 1000)
         df <- data.frame(tau = x,
-                         density = dgamma(x, shape = fit$alpha_tau, rate = fit$beta_tau),
+                         density = stats::dgamma(x, shape = fit$alpha_tau, rate = fit$beta_tau),
                          mean_val = mean_val)
         if(!is.null(tau0)) df$true_tau <- tau0
         gg <- ggplot(df, aes(x=tau, y=density)) + geom_line() + geom_vline(aes(xintercept=mean_val, col="mean"), linetype="dashed")
