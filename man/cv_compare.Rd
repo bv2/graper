@@ -21,7 +21,7 @@ or "binomial" for logisitc regression}
 
 \item{ncores}{number of cores to use}
 
-\item{nfolds}{number of fold for evaluation}
+\item{nfolds}{number of folds for evaluation}
 
 \item{plot_cv}{whether to produce summary plots from evaluation}
 
@@ -34,7 +34,20 @@ or "binomial" for logisitc regression}
 \item{...}{other parameters that can be passed to \code{\link{runMethods}}}
 }
 \value{
-List of perfromnce measures in each fold
+List with one entry per fold containing a list with
+\describe{
+\item{FPR}{False positive rate (requires \code{beta0} to be specified)}
+\item{FNR}{False neagtive rate (requires \code{beta0} to be specified)}
+\item{RMSE}{Root mean squared error on the left-out fold}
+\item{pf_mat}{matrix with learnt penalty factors per group (rows) and method (column)}
+\item{beta_mat}{matrix with estimated coefficients per feature (rows) and method (column)}
+\item{intercepts}{estimated intercepts per method}
+\item{sparsity_mat}{matrix with learnt sparsity levels per group (rows) and method (column) (0=sparse, 1=dense)}
+\item{annot}{annotation of features to groups as specified when calling \code{\link{cv_compare}}}
+\item{runtime}{vector of runtimes for the different methods}
+\item{l1error_intercept}{absolute error on the estimated intercept  (requires \code{trueintercept} to be specified)}
+\item{l1error_beta}{absolute error on the estimated coefficients (requires \code{beta0} to be specified)}
+}
 }
 \description{
 Function to fit a regresion model using serveral different methods
