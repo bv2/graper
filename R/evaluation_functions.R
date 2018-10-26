@@ -50,9 +50,9 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
                        freqELB = 10, calcELB = TRUE, th = 0.01,
                        n_rep=1, verbose = FALSE, verbose_progress = TRUE,
                        compareGRridge = FALSE, include_nonfacQ = FALSE,
-                       compareSparseGroupLasso =TRUE, compareIPF = TRUE,
-                       compareGroupLasso = TRUE, includeRF = T,
-                       compareAdaLasso = TRUE, include_varbvs=FALSE,
+                       compareSparseGroupLasso =FALSE, compareIPF = FALSE,
+                       compareGroupLasso = FALSE, includeRF = FALSE,
+                       compareAdaLasso = FALSE, include_varbvs=FALSE,
                        include_nogamma=FALSE, include_grpRR_SS_ungrouped= FALSE) {
 
   if (!standardize)
@@ -81,7 +81,7 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
   if (include_nonfacQ) {
     tmp <- Sys.time()
     if(verbose_progress) message(" ### Fitting grpRR model...")
-    grpRR <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = F, spikeslab = F,
+    grpRR <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = FALSE, spikeslab = FALSE,
                        max_iter = max_iter, intercept = intercept,
                        verbose = verbose, freqELB = freqELB, calcELB = calcELB,
                        family = family, th = th, standardize=standardize, n_rep=n_rep)
@@ -100,7 +100,7 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
   # grpRR_FF : fully factorized variational distribution, normal prior (dense)
   tmp <- Sys.time()
   if(verbose_progress) message(" ### Fitting grpRR_FF model...")
-  grpRR_FF <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = T, spikeslab = F,
+  grpRR_FF <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = TRUE, spikeslab = FALSE,
                         max_iter = max_iter, intercept = intercept,
                         verbose = verbose, freqELB = freqELB, calcELB = calcELB,
                         family = family, th = th, standardize=standardize, n_rep=n_rep)
@@ -118,7 +118,7 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
   # grpRR_SS: fully factorized variational distribution, spike and slab prior (sparse)
   tmp <- Sys.time()
   if(verbose_progress) message(" ### Fitting grpRR_SS model...")
-  grpRR_SS <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = T, spikeslab = T,
+  grpRR_SS <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = TRUE, spikeslab = TRUE,
                         max_iter = max_iter, intercept = intercept,
                         verbose = verbose, freqELB = freqELB, calcELB = calcELB,
                         th = th, family = family, standardize=standardize, n_rep=n_rep)

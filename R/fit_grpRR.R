@@ -5,7 +5,7 @@
 #' @param y Response vector of size n
 #' @param annot Factor of length p indicating group membership of each feature
 #' @param family liklihood model for the response, either "gaussian" for linear regression or "binomial" for logisitc regression
-#' @param factoriseQ If true, the variational distribution is assumed to fully factorize across features (rougher approx., but faster). If spikeslab=F, this is always done.
+#' @param factoriseQ If true, the variational distribution is assumed to fully factorize across features (rougher approx., but faster). If spikeslab=FALSE, this is always done.
 #' @param spikeslab If true, a spike and slab prior is used instead of a normal prior
 #' @param d_tau hyper-parameters for prior of tau (noise precision)
 #' @param r_tau hyper-parameters for prior of tau (noise precision)
@@ -52,7 +52,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
     message(paste("Fitting a model with", g, "groups,", n, "samples and", p , "features."))
 
     if(standardize){
-        X <- scale(X, center = F, scale=T)
+        X <- scale(X, center = FALSE, scale=TRUE)
         sf <- attr(X, "scaled:scale")
     } else sf <- rep(1,p)
 
@@ -75,8 +75,8 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
         if (family == "gaussian") {
             # remove intercept effect by centering X and y
             if (intercept) {
-                X <- scale(X, center = T, scale = F)
-                y <- scale(y, center = T, scale = F)
+                X <- scale(X, center = TRUE, scale = FALSE)
+                y <- scale(y, center = TRUE, scale = FALSE)
             }
 
             # call C function depending on FacType and spikeslap argument
