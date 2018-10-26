@@ -79,7 +79,7 @@ List containing
 }
 \description{
 Fit a regression model with grpRR given a matrix of predictors (X), a response vector (y) and
-a vector of group memberships for each predictor in X (annot).
+a vector of group memberships for each predictor in X (annot). For each group a different strength of penalization is determined adaptively.
 }
 \details{
 The function trains the grpRR model given a matrix of predictors (\code{X}), a response vector (\code{y}) and

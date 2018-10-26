@@ -1,7 +1,7 @@
 #' @title Fit a regression model with grpRR
 #' @name fit_grpRR
 #' @description Fit a regression model with grpRR given a matrix of predictors (X), a response vector (y) and
-#' a vector of group memberships for each predictor in X (annot).
+#' a vector of group memberships for each predictor in X (annot). For each group a different strength of penalization is determined adaptively.
 #' @param X Design matrix of size n (samples) x p (features)
 #' @param y Response vector of size n
 #' @param annot Factor of length p indicating group membership of each feature (column) in X
