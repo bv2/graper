@@ -7,7 +7,7 @@
 plotELBO(fit)
 }
 \arguments{
-\item{fit}{fit as produced by fit_grpRR}
+\item{fit}{fit as produced by \code{\link{fit_grpRR}}}
 }
 \value{
 a ggplot object

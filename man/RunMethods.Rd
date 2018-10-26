@@ -75,19 +75,23 @@ i.e. each freqELB-th iteration (see also  \code{\link{fit_grpRR}})}
 List of fitted models and two data frames with
  coeffcients and penalty factors
 
-a list with
- - a summaryList containing the complete individual fits
-   as well as other statistics such as estimated coefficients,
-    runtime, sparsity, intercept, penalty factors)
-- the details on the data (sample size n, predictor number p,
- covariate annotation annot, group number G,
-  feature and annotation names)
+a list containg
+\describe{
+\item{summaryList}{list with the fitted models for each method that was included in the comparison, each containing the
+runtime, estimated penalty factors, coefficients, intercepts, sparsity level and the full output returned by the methods' call (out)}
+\item{groupnames}{groupnames from \code{annot}}
+\item{varnames}{predictor names}
+\item{family}{likelihoods model used}
+\item{n}{number of samples}
+\item{p}{number of features}
+\item{G}{number of groups}
+\item{annot}{annotation of features to groups as specified when calling \code{\link{runMethods}}}
+}
 }
 \description{
 Function to fit a regression methods using serveral different methods.
 }
 \examples{
 dat <- makeExampleData()
-allFits <- runMethods(Xtrain=dat$X,
- ytrain=dat$y, annot=dat$annot)
+allFits <- runMethods(Xtrain=dat$X, ytrain=dat$y, annot=dat$annot)
 }

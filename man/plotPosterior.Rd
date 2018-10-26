@@ -8,7 +8,7 @@ plotPosterior(fit, param2plot, beta0 = NULL, gamma0 = NULL,
   tau0 = NULL, pi0 = NULL, s0 = NULL, jmax = 2, range = NULL)
 }
 \arguments{
-\item{fit}{fit as produced by fit_grpRR}
+\item{fit}{fit as produced by \code{\link{fit_grpRR}}}
 
 \item{param2plot}{which parametet to plot (gamma, beta, tau or s)}
 

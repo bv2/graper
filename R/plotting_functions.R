@@ -1,7 +1,7 @@
 #' @title plotPosterior
 #' @name plotPosterior
 #' @description plot the posterior of the model parameters
-#' @param fit fit as produced by fit_grpRR
+#' @param fit fit as produced by \code{\link{fit_grpRR}}
 #' @param param2plot which parametet to plot (gamma, beta, tau or s)
 #' @param beta0 true beta (if known)
 #' @param gamma0 true gamma (if known)
@@ -172,7 +172,7 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
 #' @title plotELBO
 #' @name plotELBO
 #' @description plot the ELBO over iteration to monitor convergence of the algorithm
-#' @param fit fit as produced by fit_grpRR
+#' @param fit fit as produced by \code{\link{fit_grpRR}}
 #' @export
 #' @return a ggplot object
 #' @examples

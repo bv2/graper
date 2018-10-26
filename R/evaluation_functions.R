@@ -42,18 +42,22 @@
 #' @importFrom GRridge CreatePartition grridge
 #' @importFrom ipflasso cvr2.ipflasso
 #' @importFrom stats coef
-#' @return a list with
-#'  - a summaryList containing the complete individual fits
-#'    as well as other statistics such as estimated coefficients,
-#'     runtime, sparsity, intercept, penalty factors)
-#' - the details on the data (sample size n, predictor number p,
-#'  covariate annotation annot, group number G,
-#'   feature and annotation names)
+#' @return a list containg
+#' \describe{
+#' \item{summaryList}{list with the fitted models for each method that was included in the comparison, each containing the
+#' runtime, estimated penalty factors, coefficients, intercepts, sparsity level and the full output returned by the methods' call (out)}
+#' \item{groupnames}{groupnames from \code{annot}}
+#' \item{varnames}{predictor names}
+#' \item{family}{likelihoods model used}
+#' \item{n}{number of samples}
+#' \item{p}{number of features}
+#' \item{G}{number of groups}
+#' \item{annot}{annotation of features to groups as specified when calling \code{\link{runMethods}}}
+#' }
 #' @export
 #' @examples
 #' dat <- makeExampleData()
-#' allFits <- runMethods(Xtrain=dat$X,
-#'  ytrain=dat$y, annot=dat$annot)
+#' allFits <- runMethods(Xtrain=dat$X, ytrain=dat$y, annot=dat$annot)
 
 runMethods <- function(Xtrain, ytrain, annot,
                        family = "gaussian", intercept = TRUE, standardize = TRUE,
@@ -500,9 +504,6 @@ runMethods <- function(Xtrain, ytrain, annot,
 }
 
 
-
-# ---------------------------
-
 #' @title Evaluate fits from various regression methods
 #' @name evaluateFits
 #' @description Function to evaluate results on test data
@@ -512,7 +513,26 @@ runMethods <- function(Xtrain, ytrain, annot,
 #' @param ytest Response vector of size n'
 #' @return List as prodcused by \code{\link{runMethods}} with
 #'  additional predicition performance slots in the summaryList
+#' @return a list containg
+#' \describe{
+#' \item{summaryList}{list with the fitted models for each method that was included in the comparison, each containing the
+#' runtime, estimated penalty factors, coefficients, intercepts, sparsity level and the full output returned by the methods' call (out) as in
+#' the output produced by \code{\link{runMethods}}. In addition, it contains performance statistics such as root mean squared error (RMSE) and
+#' feautre selection properties (if \code{beta0} was specified)}
+#' \item{groupnames}{groupnames from \code{annot}}
+#' \item{varnames}{predictor names}
+#' \item{family}{likelihoods model used}
+#' \item{n}{number of samples}
+#' \item{p}{number of features}
+#' \item{G}{number of groups}
+#' \item{annot}{annotation of features to groups as specified when calling \code{\link{runMethods}}}
+#' }
 #' @export
+#' @details This function can be used to evaluate the fits of various method as produced by \code{\link{runMethods}} on a test dataset.
+#' If the true coefficients of the model are known they can be specified via \code{beta0} and \code{trueintercept}.
+#' Then, additionally the error on the estimates is evaluates as well as the feature selection performance.
+#' Note that for grpRR the selected features are determined by the posterior inclusion probabilities  with
+#' a feature being called active for s>0.5 (The method grpRR_cutoff sets inactive with s<=0.5 coefficients to exactly zero).
 #' @importFrom stats predict
 #' @examples
 #' dat <- makeExampleData()
@@ -653,6 +673,12 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 #' }
 #' @import ggplot2
 #' @import parallel
+#' @details This function can be used to test various method for regression on a dataset in a cross-validated fashion.
+#' It fits the methods on all except one fold and evaluates their prediction performance on the remaining fold.
+#' If the true coefficients of the model are known they can be specified via \code{beta0} and \code{trueintercept}.
+#' Then, additionally the error on the estimates is evaluates as well as the feature selection performance.
+#' Note that for grpRR the selected features are determined by the posterior inclusion probabilities  with
+#' a feature being called active for s>0.5 (The method grpRR_cutoff sets inactive with s<=0.5 coefficients to exactly zero).
 #' @export
 #' @examples
 #' dat <- makeExampleData()

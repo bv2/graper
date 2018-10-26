@@ -53,6 +53,14 @@ List with one entry per fold containing a list with
 Function to fit a regresion model using serveral different methods
 and evaluate them in a cross-validated fashion in terms of prediction and estimation performance
 }
+\details{
+This function can be used to test various method for regression on a dataset in a cross-validated fashion.
+It fits the methods on all except one fold and evaluates their prediction performance on the remaining fold.
+If the true coefficients of the model are known they can be specified via \code{beta0} and \code{trueintercept}.
+Then, additionally the error on the estimates is evaluates as well as the feature selection performance.
+Note that for grpRR the selected features are determined by the posterior inclusion probabilities  with
+a feature being called active for s>0.5 (The method grpRR_cutoff sets inactive with s<=0.5 coefficients to exactly zero).
+}
 \examples{
 dat <- makeExampleData()
 cv.out <- cv_compare(dat$X, dat$y, dat$annot, nfolds=3)

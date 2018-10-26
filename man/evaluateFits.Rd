@@ -17,9 +17,31 @@ evaluateFits(allFits, Xtest, ytest)
 \value{
 List as prodcused by \code{\link{runMethods}} with
  additional predicition performance slots in the summaryList
+
+a list containg
+\describe{
+\item{summaryList}{list with the fitted models for each method that was included in the comparison, each containing the
+runtime, estimated penalty factors, coefficients, intercepts, sparsity level and the full output returned by the methods' call (out) as in
+the output produced by \code{\link{runMethods}}. In addition, it contains performance statistics such as root mean squared error (RMSE) and
+feautre selection properties (if \code{beta0} was specified)}
+\item{groupnames}{groupnames from \code{annot}}
+\item{varnames}{predictor names}
+\item{family}{likelihoods model used}
+\item{n}{number of samples}
+\item{p}{number of features}
+\item{G}{number of groups}
+\item{annot}{annotation of features to groups as specified when calling \code{\link{runMethods}}}
+}
 }
 \description{
 Function to evaluate results on test data
+}
+\details{
+This function can be used to evaluate the fits of various method as produced by \code{\link{runMethods}} on a test dataset.
+If the true coefficients of the model are known they can be specified via \code{beta0} and \code{trueintercept}.
+Then, additionally the error on the estimates is evaluates as well as the feature selection performance.
+Note that for grpRR the selected features are determined by the posterior inclusion probabilities  with
+a feature being called active for s>0.5 (The method grpRR_cutoff sets inactive with s<=0.5 coefficients to exactly zero).
 }
 \examples{
 dat <- makeExampleData()
