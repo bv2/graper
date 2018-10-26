@@ -13,6 +13,7 @@ vignette: >
 
 ```{r, message=FALSE, warning=FALSE}
 library(grpRR)
+library(ggplot2)
 ```
 
 # Make example data with four groups
