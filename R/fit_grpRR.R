@@ -1,7 +1,7 @@
 #' @title Fit a regression model with grpRR
 #' @name fit_grpRR
-#' @description Fit a regression model with grpRR given a matrix of predictors (X), a response vector (y) and
-#' a vector of group memberships for each predictor in X (annot). For each group a different strength of penalization is determined adaptively.
+#' @description Fit a regression model with grpRR given a matrix of predictors (\code{X}), a response vector (\code{y}) and
+#' a vector of group memberships for each predictor in \code{X} (\code{annot}). For each group a different strength of penalization is determined adaptively.
 #' @param X Design matrix of size n (samples) x p (features)
 #' @param y Response vector of size n
 #' @param annot Factor of length p indicating group membership of each feature (column) in X
@@ -17,11 +17,11 @@
 #' @param r_pi Hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior
 #' @param d_pi Hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior
 #' @param max_iter Maximum number of iterations
-#' @param th Convergence threshold for the evidence lower bound (ELBO)
+#' @param th Convergence threshold for the evidence lower bound (ELB)
 #' @param intercept Boolean, indicating whether to include an intercept into the model
-#' @param calcELB Boolean, indicating whether to calculate the evidence lower bound (ELBO)
+#' @param calcELB Boolean, indicating whether to calculate the evidence lower bound (ELB)
 #' @param verbose Boolean, indicating whether to print out intermediate messages during fitting
-#' @param freqELB Frequency at which the evidence lower bound (ELBO) is to be calculated,
+#' @param freqELB Frequency at which the evidence lower bound (ELB) is to be calculated,
 #'  i.e. each freqELB-th iteration
 #' @param n_rep Number of reptitions with different random initilizations to be fit
 #' @param standardize Boolean whether to standardize the predictors to unit variance
@@ -41,7 +41,7 @@
 #'
 #'  As the optimization is non-convex is can
 #'  be helpful to use multiple random initilizations by setting \code{n_rep} to a value larger 1. The returned model is then chosen
-#'  as the optimal fit with respect to the evidence lower bound (ELBO).
+#'  as the optimal fit with respect to the evidence lower bound (ELB).
 #'
 #'  Depending on the response vector a linear regression model (\code{family = "gaussian"}) or a logistic regression model
 #'  (\code{family = "binomial"}) is fitted. Note, that the implementation of logistic regression is still experimental.
@@ -76,7 +76,7 @@
 #' # fit a dense model without spike and slab prior
 #' fit <- fit_grpRR(dat$X, dat$y, dat$annot, spikeslab = FALSE)
 #'
-#' # fit a dense model without spike and slab prior and multivariate meanfield assumption
+#' # fit a dense model using a multivariate variational distribution
 #' fit <- fit_grpRR(dat$X, dat$y, dat$annot, factoriseQ = TRUE, spikeslab = FALSE)
 
 
@@ -119,7 +119,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
       if(calcELB){
         calcELB <- FALSE
         warning("The implementation of logistic regression is still experimental.
-                ELBO calculations are not yet implemented for logistic regression.")
+                ELB calculations are not yet implemented for logistic regression.")
       }
     }
 
@@ -206,7 +206,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
                                                 mu_init, intercept)
                     } else {
                       warning("factoriseQ=FALSE is not maintained currently for the logistic model.
-                              No intercept option and ELBO available.")
+                              No intercept option and ELB available.")
                       res <- grpRRCpp_logistic_nf(X, y, annot, g, NoPerGroup,
                                                   d_gamma, r_gamma, max_iter,
                                                   th, calcELB, verbose, freqELB)
@@ -225,7 +225,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
     }  else {
             best_idx <- which.max(vapply(reslist, function(l) l$ELB, numeric(1)))
             if(is.na(best_idx) | is.null(best_idx)) {
-                warning("Model selection based on ELBO encountered errors.
+                warning("Model selection based on ELB encountered errors.
                         Returned model is picked arbitrarily!")
                 best_idx <- 1
             }
@@ -256,7 +256,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
                             nogamma=nogamma,
                             standardize=standardize)
 
-    #remove ELBO slot if not calculated
+    #remove ELB slot if not calculated
     if(all(is.na(res$ELB_trace) | !is.finite(res$ELB_trace))){
       res$ELB_trace <- NULL
     }

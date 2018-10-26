@@ -34,7 +34,7 @@ either "gaussian" for linear regression or "binomial" for logistic regression}
 
 \item{max_iter}{Maximum number of iterations}
 
-\item{th}{Convergence threshold for the evidence lower bound (ELBO)}
+\item{th}{Convergence threshold for the evidence lower bound (ELB)}
 
 \item{d_tau}{Hyper-parameters for prior of tau (noise precision)}
 
@@ -48,11 +48,11 @@ either "gaussian" for linear regression or "binomial" for logistic regression}
 
 \item{d_pi}{Hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior}
 
-\item{calcELB}{Boolean, indicating whether to calculate the evidence lower bound (ELBO)}
+\item{calcELB}{Boolean, indicating whether to calculate the evidence lower bound (ELB)}
 
 \item{verbose}{Boolean, indicating whether to print out intermediate messages during fitting}
 
-\item{freqELB}{Frequency at which the evidence lower bound (ELBO) is to be calculated,
+\item{freqELB}{Frequency at which the evidence lower bound (ELB) is to be calculated,
 i.e. each freqELB-th iteration}
 
 \item{nogamma}{If true, the normal prior will have same variance for all groups
@@ -78,8 +78,8 @@ List containing
 }
 }
 \description{
-Fit a regression model with grpRR given a matrix of predictors (X), a response vector (y) and
-a vector of group memberships for each predictor in X (annot). For each group a different strength of penalization is determined adaptively.
+Fit a regression model with grpRR given a matrix of predictors (\code{X}), a response vector (\code{y}) and
+a vector of group memberships for each predictor in \code{X} (\code{annot}). For each group a different strength of penalization is determined adaptively.
 }
 \details{
 The function trains the grpRR model given a matrix of predictors (\code{X}), a response vector (\code{y}) and
@@ -95,7 +95,7 @@ For each feature group as specified in \code{annot} a penalty factor and sparsit
 
  As the optimization is non-convex is can
  be helpful to use multiple random initilizations by setting \code{n_rep} to a value larger 1. The returned model is then chosen
- as the optimal fit with respect to the evidence lower bound (ELBO).
+ as the optimal fit with respect to the evidence lower bound (ELB).
 
  Depending on the response vector a linear regression model (\code{family = "gaussian"}) or a logistic regression model
  (\code{family = "binomial"}) is fitted. Note, that the implementation of logistic regression is still experimental.
@@ -112,6 +112,6 @@ pf <- fit$EW_gamma #penalty factors per group
 # fit a dense model without spike and slab prior
 fit <- fit_grpRR(dat$X, dat$y, dat$annot, spikeslab = FALSE)
 
-# fit a dense model without spike and slab prior and multivariate meanfield assumption
+# fit a dense model using a multivariate variational distribution
 fit <- fit_grpRR(dat$X, dat$y, dat$annot, factoriseQ = TRUE, spikeslab = FALSE)
 }
