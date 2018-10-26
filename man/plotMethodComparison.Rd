@@ -10,9 +10,9 @@ plotMethodComparison(resultList, family = "gaussian",
   methods2plot = "all")
 }
 \arguments{
-\item{resultList}{List as created by \link{\code{cv_compare}}}
+\item{resultList}{List as created by \code{\link{cv_compare}}}
 
-\item{family}{gaussian or binomial (same as used in cv_compare)}
+\item{family}{gaussian or binomial (same as used in \code{\link{cv_compare}})}
 
 \item{methods2plot}{which method to be plotted}
 }

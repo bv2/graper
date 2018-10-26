@@ -16,7 +16,7 @@ a ggplot object
 plot the ELBO over iteration to monitor convergence of the algorithm
 }
 \examples{
-#' dat <- makeExampleData()
+dat <- makeExampleData()
 fit <- fit_grpRR(dat$X, dat$y, dat$annot)
 plotELBO(fit)
 }
