@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_grpRR.R
 \name{fit_grpRR}
 \alias{fit_grpRR}
-\title{Fit grpRR model}
+\title{Fit a regression model with grpRR}
 \usage{
 fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
   intercept = TRUE, family = "gaussian", standardize = TRUE,
@@ -61,30 +61,44 @@ i.e. each freqELB-th iteration}
 \item{init_psi}{Initial value for the spike variables}
 }
 \value{
-List of fitted parameters
+List containing
+\describe{
+\item{EW_beta}{estimated model coefficients in liner/logistic regression}
+\item{EW_s}{estimated posterior-inclusion probabilities for each feature}
+\item{intercept}{estimated intercept term}
+\item{annot}{annotation vector of features to the groups as specified when calling \code{\link{fit_grpRR}}}
+\item{EW_gamma}{estimated penalty factor per group}
+\item{EW_pi}{estimated sparsity level per group (from 1 (dense) to 0 (sparse))}
+\item{EW_tau}{estimated noise precision}
+\item{sigma2_tildebeta_s1, EW_tildebeta_s1, alpha_gamma, alpha_tau, beta_tau, Sigma_beta, alpha_pi, beta_pi}{parameters of
+ the variational distributions of beta, gamma, tau and pi}
+\item{ELB}{final value of the evidence lower bound}
+\item{ELB_trace}{values of the  evidence lower bound for all iterations}
+\item{Options}{other options used when calling \code{\link{fit_grpRR}}}
+}
 }
 \description{
 Fit a regression model with grpRR given a matrix of predictors (X), a response vector (y) and
 a vector of group memberships for each predictor in X (annot).
 }
 \details{
-The function trains the grpRR model given a matrix of predictors (`X`), a response vector (`y`) and
-a vector of group memberships for each predictor in `X` (`annot`).
-For each feature group as specified in `annot` a penalty factor and sparsity level is learnt.
+The function trains the grpRR model given a matrix of predictors (\code{X}), a response vector (\code{y}) and
+a vector of group memberships for each predictor in \code{X} (\code{annot}).
+For each feature group as specified in \code{annot} a penalty factor and sparsity level is learnt.
 
  By default it uses a Spike-and-Slab prior on the coefficients and uses a
  fully factorized variational distribution in the inference.
- This provides a fast way to train the model. Using `spikeslab=FALSE` a
+ This provides a fast way to train the model. Using \code{spikeslab=FALSE} a
  ridge regression like model can be fitted using a normal instead of the spike and slab prior.
- Setting `factoriseQ = FALSE` gives a more exact inference
+ Setting \code{factoriseQ = FALSE} gives a more exact inference
  scheme based on a multivariate variational distribution, but can be much slower.
 
  As the optimization is non-convex is can
- be helpful to use multiple random initilizations by setting `n_rep` to a value larger 1. The returned model is then chosen
+ be helpful to use multiple random initilizations by setting \code{n_rep} to a value larger 1. The returned model is then chosen
  as the optimal fit with respect to the evidence lower bound (ELBO).
 
- Depending on the response vector a linear regression model (`family = "gaussian"`) or a logistic regression model
- (`family = "binomial"`) is fitted. Note, that the implementation of logistic regression is still experimental.
+ Depending on the response vector a linear regression model (\code{family = "gaussian"}) or a logistic regression model
+ (\code{family = "binomial"}) is fitted. Note, that the implementation of logistic regression is still experimental.
 }
 \examples{
 # create data
