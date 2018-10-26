@@ -165,7 +165,7 @@ public:
     for(int i = 0; i< p; i++){
       //mean of component for s=1
         //  mu_tildebeta_1(i)= sigma2_tildebeta_1(i)* EW_tau * (Xty(i)- accu(XtX.row(i)%trans(mu_beta)) + XtX(i,i)*mu_beta(i));
-        // keep track of ld mu for efficient update of vec1
+        // keep track of old mu for efficient update of vec1
         double old_mu_i = mu_beta(i);
         
         mu_tildebeta_1(i)= sigma2_tildebeta_1(i)* EW_tau * (Xty(i)- accu(X.col(i) % vec1) + diagXtX(i)*mu_beta(i));

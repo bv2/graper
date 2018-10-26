@@ -132,9 +132,6 @@ public:
 
   //function to calculate updated parameters for beta variational distirbution
   void update_param_beta(){
-    // if(verbose) Rcout << "Updating beta.." << endl;
-    // auto start_beta=get_time::now();
-
     vec gamma_annot(p);
     for(int i = 0; i< p; i++) {
       gamma_annot(i)=EW_gamma(annot(i)-1);      // minus one as annot starts counting at 1 instead of 0
@@ -153,9 +150,6 @@ public:
     //update vec1 (only in new coordinate of mu to avoid recomputing the full pxp product and get linear complexity in inner loops)
     vec1 = vec1 + (mu_beta(i) - old_mu_i)*X.col(i);
     }
-
-    // auto time_beta = get_time::now() - start_beta;
-    // if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_beta).count()<<" ms "<<endl;
   }
 
   //function to calculate updated parameters for tau variational distribution
@@ -175,9 +169,6 @@ public:
 
   //function to update expected values involving beta
   void update_exp_beta(){
-      // if(verbose) Rcout << "Updating expected values containing beta.." << endl;
-      // auto start_beta=get_time::now();
-
     EW_betasq=square(mu_beta)+sigma2_beta;
     //EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % (Sigma_beta+mu_beta*trans(mu_beta))));
     EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(diagXtX % sigma2_beta) + trans(mu_beta)*XtX*mu_beta);
@@ -240,9 +231,6 @@ public:
     //evidence lower bound
     ELB=exp_Djoint+entropy_beta +entropy_gamma+entropy_tau;
     diff=ELB-ELB_old;
-
-    // auto time_ELB = get_time::now() - start_ELB;
-    // if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_ELB).count()<<" ms "<<endl;
 
     if(verbose){
       Rcout<<"ELB="<<ELB<<" diff="<<diff<<endl;

@@ -261,55 +261,6 @@ public:
   //function to calculate ELBO
   void calculate_ELBO(){
     if(n_iter==1) Rcout<<"ELB not implemented"<<endl;
-
-
-//     if(verbose) Rcout<<"Calculating ELB.."<<endl;
-//     auto start_ELB=get_time::now();
-//  
-//      double ELB_old = ELB;
-//      
-//      vec lgamma_alpha_gamma(g);
-//      vec digamma_alpha_gamma(g);
-//      for(int i =0; i<g;i++){
-//          lgamma_alpha_gamma(i)=lgamma((alpha_gamma(i)));                     // important to directly use log gamma to avoid numerical overflow
-//          digamma_alpha_gamma(i)=boost::math::digamma(alpha_gamma(i));
-//      }
-//      
-//      //expected values required in addition (log of Gamma r.v.)
-//      vec EW_loggamma = digamma_alpha_gamma-log(beta_gamma);
-//      
-//      //to get EW_loggamma[annot] and EW_gamma[annot]
-//      vec EW_loggamma_annot(p);
-//      vec EW_gamma_annot(p);
-//      for(int i = 0; i< p; i++){
-//          int k = annot(i)-1;                          // minus one as annot stars counting at 1 instead of 0
-//          EW_loggamma_annot(i) = EW_loggamma(k);
-//          EW_gamma_annot(i) = EW_gamma(k);
-//      }
-//      
-//      //expectation under variational density of log joint distribution
-//      double exp_logcondDy=n/2*EW_logtau -0.5*EW_tau*EW_leastSquares-n/2*log(2*M_PI);
-//      double exp_logcondDbeta=accu(0.5*EW_loggamma_annot-0.5*EW_gamma_annot%EW_betasq)-p/2*log(2*M_PI);
-//      double exp_logDgamma=accu((r_gamma-1)*EW_loggamma-d_gamma * EW_gamma)-g*lgamma(r_gamma)+g*r_gamma*log(d_gamma);
-//      double exp_Djoint=exp_logcondDy+exp_logcondDbeta+exp_logDgamma;
-//      
-//      
-//      //entropy of variational distribution
-//      double logdet_Sigma = accu(log(sigma2_beta));     //need to calculate sum of log instead of log of product to avoid numerical overflow
-//      double entropy_beta=p/2*(log(2*M_PI)+1)+0.5*logdet_Sigma;
-//      double entropy_gamma=accu(alpha_gamma-log(beta_gamma)+(lgamma_alpha_gamma)+(1-alpha_gamma)%digamma_alpha_gamma); //replace log(tgamma) by lgamma to avoid numeric issues of Inf
-//      
-//      //evidence lower bound
-//      ELB=exp_Djoint+entropy_beta +entropy_gamma;
-//      diff=ELB-ELB_old;
-//      
-//       auto time_ELB = get_time::now() - start_ELB;
-//       if(verbose) Rcout<<"Time required:"<<std::chrono::duration_cast<std::chrono::milliseconds>(time_ELB).count()<<" ms "<<endl;
-//      
-//      if(verbose){
-//          Rcout<<"ELB="<<ELB<<" diff="<<diff<<endl;
-//      }
-//      
   }
 
 

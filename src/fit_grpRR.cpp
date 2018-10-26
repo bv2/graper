@@ -1,4 +1,4 @@
-//C Functions calling the main function from classes
+//C Functions calling the main function from classes defined in the included files
 
 #include <RcppArmadillo.h>
 #include "grpRR_linear_dense_ff.h"
