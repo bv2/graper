@@ -1,65 +1,85 @@
-#'  @title Fit grpRR model
-#'  @name fit_grpRR
-#'  @description Main function to fit a grpRR model.
-#'  This provides an R wrapper to the different C functions.
-#' @param X Design matrix of size n x p
+#' @title Fit grpRR model
+#' @name fit_grpRR
+#' @description Fit a regression model with grpRR given a matrix of predictors (X), a response vector (y) and
+#' a vector of group memberships for each predictor in X (annot).
+#' @param X Design matrix of size n (samples) x p (features)
 #' @param y Response vector of size n
-#' @param annot Factor of length p indicating group membership of each feature
-#' @param family liklihood model for the response,
-#'  either "gaussian" for linear regression or "binomial" for logisitc regression
-#' @param factoriseQ If true, the variational distribution is assumed
-#'  to fully factorize across features (rougher approx., but faster).
-#'  If spikeslab=FALSE, this is always done.
-#' @param spikeslab If true, a spike and slab prior is used instead of a normal prior
-#' @param d_tau hyper-parameters for prior of tau (noise precision)
-#' @param r_tau hyper-parameters for prior of tau (noise precision)
-#' @param d_gamma hyper-parameters for prior of gamma (coeffient's prior precision)
-#' @param r_gamma hyper-parameters for prior of gamma (coeffient's prior precision)
-#' @param r_pi hyper-parameters for prior of pi
-#' (Spike-Slab-Bernoulli variable prior probabiliy of being 1)
-#' @param d_pi hyper-parameters for prior of pi
-#' (Spike-Slab-Bernoulli variable prior probabiliy of being 1)
-#' @param max_iter maximum number of iterations
-#' @param th convergence threshold for ELB
-#' @param intercept boolean, indicating wether to fit an intercept
-#' @param calcELB boolean, indicating wether to calculate ELB
-#' @param verbose boolean, indicating wether to
-#'  print out intermediate messages during fitting
-#' @param freqELB determines frequency at which ELB is to be calculated,
-#'  i.e. each feqELB-th iteration
-#' @param n_rep how many reptitions with random inits to be fit,
-#'  model selection is based on ELBO
-#' @param standardize boolean whether to standardize the predictors or not (default TRUE)
-#' @param init_psi initial value for the spike variables
+#' @param annot Factor of length p indicating group membership of each feature (column) in X
+#' @param family Likelihood model for the response,
+#'  either "gaussian" for linear regression or "binomial" for logistic regression
+#' @param factoriseQ If set to TRUE, the variational distribution is assumed
+#'  to fully factorize across features (faster, default). FALSE uses a multivariate variational distribution.
+#' @param spikeslab If set to TRUE, a spike and slab prior on the coeffiecients (default).
+#' @param d_tau Hyper-parameters for prior of tau (noise precision)
+#' @param r_tau Hyper-parameters for prior of tau (noise precision)
+#' @param d_gamma Hyper-parameters for prior of gamma (coeffient's prior precision)
+#' @param r_gamma Hyper-parameters for prior of gamma (coeffient's prior precision)
+#' @param r_pi Hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior
+#' @param d_pi Hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior
+#' @param max_iter Maximum number of iterations
+#' @param th Convergence threshold for the evidence lower bound (ELBO)
+#' @param intercept Boolean, indicating whether to include an intercept into the model
+#' @param calcELB Boolean, indicating whether to calculate the evidence lower bound (ELBO)
+#' @param verbose Boolean, indicating whether to print out intermediate messages during fitting
+#' @param freqELB Frequency at which the evidence lower bound (ELBO) is to be calculated,
+#'  i.e. each freqELB-th iteration
+#' @param n_rep Number of reptitions with different random initilizations to be fit
+#' @param standardize Boolean whether to standardize the predictors to unit variance
+#' @param init_psi Initial value for the spike variables
 #' @param nogamma If true, the normal prior will have same variance for all groups
 #' (only relevant for spikeslab = TRUE)
+#' @details The function trains the grpRR model given a matrix of predictors (`X`), a response vector (`y`) and
+#' a vector of group memberships for each predictor in `X` (`annot`).
+#' For each feature group as specified in `annot` a penalty factor and sparsity level is learnt.
+#'
+#'  By default it uses a Spike-and-Slab prior on the coefficients and uses a
+#'  fully factorized variational distribution in the inference.
+#'  This provides a fast way to train the model. Using `spikeslab=FALSE` a
+#'  ridge regression like model can be fitted using a normal instead of the spike and slab prior.
+#'  Setting `factoriseQ = FALSE` gives a more exact inference
+#'  scheme based on a multivariate variational distribution, but can be much slower.
+#'
+#'  As the optimization is non-convex is can
+#'  be helpful to use multiple random initilizations by setting `n_rep` to a value larger 1. The returned model is then chosen
+#'  as the optimal fit with respect to the evidence lower bound (ELBO).
+#'
+#'  Depending on the response vector a linear regression model (`family = "gaussian"`) or a logistic regression model
+#'  (`family = "binomial"`) is fitted. Note, that the implementation of logistic regression is still experimental.
+#'
 #' @return List of fitted parameters
 #' @useDynLib grpRR
 #' @import Rcpp
 #' @export
 #' @examples
+#' # create data
 #' dat <- makeExampleData()
+#'
 #' # fit a sparse model with spike and slab prior
 #' fit <- fit_grpRR(dat$X, dat$y, dat$annot)
+#' beta <- fit$EW_beta # model coeffients
+#' pf <- fit$EW_gamma #penalty factors per group
+#'
 #' # fit a dense model without spike and slab prior
 #' fit <- fit_grpRR(dat$X, dat$y, dat$annot, spikeslab = FALSE)
-#' # fit a dense model without spike and
-#' # slab prior and multivariate meanfield assumption
-#' fit <- fit_grpRR(dat$X, dat$y, dat$annot,
-#'  factoriseQ = TRUE, spikeslab = FALSE)
+#'
+#' # fit a dense model without spike and slab prior and multivariate meanfield assumption
+#' fit <- fit_grpRR(dat$X, dat$y, dat$annot, factoriseQ = TRUE, spikeslab = FALSE)
 
 
 fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
-                      d_tau = 0.001, r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001,
-                      r_pi = 1, d_pi = 1, max_iter = 3000, th = 0.01,
-                      intercept = TRUE, calcELB = TRUE, verbose = TRUE,
-                      freqELB = 1, family = "gaussian",
-                      nogamma=FALSE, standardize=TRUE,
-                      init_psi=1, n_rep=1) {
+                      intercept = TRUE, family = "gaussian",
+                      standardize=TRUE, n_rep=1,
+                      max_iter = 3000, th = 0.01,
+                      d_tau = 0.001, r_tau = 0.001,
+                      d_gamma = 0.001, r_gamma = 0.001,
+                      r_pi = 1, d_pi = 1,
+                      calcELB = TRUE, verbose = TRUE,
+                      freqELB = 1, nogamma=FALSE,
+                      init_psi=1) {
 
     stopifnot(ncol(X) == length(annot))
 
-    #nogamma only of use when spikeslab
+    # nogamma only of use when spikeslab
     if(!spikeslab & !nogamma) nogamma <- FALSE
 
     annot <- factor(annot, levels = unique(annot))

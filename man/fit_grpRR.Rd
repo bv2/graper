@@ -2,89 +2,102 @@
 % Please edit documentation in R/fit_grpRR.R
 \name{fit_grpRR}
 \alias{fit_grpRR}
-\title{@title Fit grpRR model
- @name fit_grpRR
- @description Main function to fit a grpRR model.
- This provides an R wrapper to the different C functions.}
+\title{Fit grpRR model}
 \usage{
 fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
-  d_tau = 0.001, r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001,
-  r_pi = 1, d_pi = 1, max_iter = 3000, th = 0.01,
-  intercept = TRUE, calcELB = TRUE, verbose = TRUE, freqELB = 1,
-  family = "gaussian", nogamma = FALSE, standardize = TRUE,
-  init_psi = 1, n_rep = 1)
+  intercept = TRUE, family = "gaussian", standardize = TRUE,
+  n_rep = 1, max_iter = 3000, th = 0.01, d_tau = 0.001,
+  r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001, r_pi = 1,
+  d_pi = 1, calcELB = TRUE, verbose = TRUE, freqELB = 1,
+  nogamma = FALSE, init_psi = 1)
 }
 \arguments{
-\item{X}{Design matrix of size n x p}
+\item{X}{Design matrix of size n (samples) x p (features)}
 
 \item{y}{Response vector of size n}
 
-\item{annot}{Factor of length p indicating group membership of each feature}
+\item{annot}{Factor of length p indicating group membership of each feature (column) in X}
 
-\item{factoriseQ}{If true, the variational distribution is assumed
-to fully factorize across features (rougher approx., but faster).
-If spikeslab=FALSE, this is always done.}
+\item{factoriseQ}{If set to TRUE, the variational distribution is assumed
+to fully factorize across features (faster, default). FALSE uses a multivariate variational distribution.}
 
-\item{spikeslab}{If true, a spike and slab prior is used instead of a normal prior}
+\item{spikeslab}{If set to TRUE, a spike and slab prior on the coeffiecients (default).}
 
-\item{d_tau}{hyper-parameters for prior of tau (noise precision)}
+\item{intercept}{Boolean, indicating whether to include an intercept into the model}
 
-\item{r_tau}{hyper-parameters for prior of tau (noise precision)}
+\item{family}{Likelihood model for the response,
+either "gaussian" for linear regression or "binomial" for logistic regression}
 
-\item{d_gamma}{hyper-parameters for prior of gamma (coeffient's prior precision)}
+\item{standardize}{Boolean whether to standardize the predictors to unit variance}
 
-\item{r_gamma}{hyper-parameters for prior of gamma (coeffient's prior precision)}
+\item{n_rep}{Number of reptitions with different random initilizations to be fit}
 
-\item{r_pi}{hyper-parameters for prior of pi
-(Spike-Slab-Bernoulli variable prior probabiliy of being 1)}
+\item{max_iter}{Maximum number of iterations}
 
-\item{d_pi}{hyper-parameters for prior of pi
-(Spike-Slab-Bernoulli variable prior probabiliy of being 1)}
+\item{th}{Convergence threshold for the evidence lower bound (ELBO)}
 
-\item{max_iter}{maximum number of iterations}
+\item{d_tau}{Hyper-parameters for prior of tau (noise precision)}
 
-\item{th}{convergence threshold for ELB}
+\item{r_tau}{Hyper-parameters for prior of tau (noise precision)}
 
-\item{intercept}{boolean, indicating wether to fit an intercept}
+\item{d_gamma}{Hyper-parameters for prior of gamma (coeffient's prior precision)}
 
-\item{calcELB}{boolean, indicating wether to calculate ELB}
+\item{r_gamma}{Hyper-parameters for prior of gamma (coeffient's prior precision)}
 
-\item{verbose}{boolean, indicating wether to
-print out intermediate messages during fitting}
+\item{r_pi}{Hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior}
 
-\item{freqELB}{determines frequency at which ELB is to be calculated,
-i.e. each feqELB-th iteration}
+\item{d_pi}{Hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior}
 
-\item{family}{liklihood model for the response,
-either "gaussian" for linear regression or "binomial" for logisitc regression}
+\item{calcELB}{Boolean, indicating whether to calculate the evidence lower bound (ELBO)}
+
+\item{verbose}{Boolean, indicating whether to print out intermediate messages during fitting}
+
+\item{freqELB}{Frequency at which the evidence lower bound (ELBO) is to be calculated,
+i.e. each freqELB-th iteration}
 
 \item{nogamma}{If true, the normal prior will have same variance for all groups
 (only relevant for spikeslab = TRUE)}
 
-\item{standardize}{boolean whether to standardize the predictors or not (default TRUE)}
-
-\item{init_psi}{initial value for the spike variables}
-
-\item{n_rep}{how many reptitions with random inits to be fit,
-model selection is based on ELBO}
+\item{init_psi}{Initial value for the spike variables}
 }
 \value{
 List of fitted parameters
 }
 \description{
-@title Fit grpRR model
- @name fit_grpRR
- @description Main function to fit a grpRR model.
- This provides an R wrapper to the different C functions.
+Fit a regression model with grpRR given a matrix of predictors (X), a response vector (y) and
+a vector of group memberships for each predictor in X (annot).
+}
+\details{
+The function trains the grpRR model given a matrix of predictors (`X`), a response vector (`y`) and
+a vector of group memberships for each predictor in `X` (`annot`).
+For each feature group as specified in `annot` a penalty factor and sparsity level is learnt.
+
+ By default it uses a Spike-and-Slab prior on the coefficients and uses a
+ fully factorized variational distribution in the inference.
+ This provides a fast way to train the model. Using `spikeslab=FALSE` a
+ ridge regression like model can be fitted using a normal instead of the spike and slab prior.
+ Setting `factoriseQ = FALSE` gives a more exact inference
+ scheme based on a multivariate variational distribution, but can be much slower.
+
+ As the optimization is non-convex is can
+ be helpful to use multiple random initilizations by setting `n_rep` to a value larger 1. The returned model is then chosen
+ as the optimal fit with respect to the evidence lower bound (ELBO).
+
+ Depending on the response vector a linear regression model (`family = "gaussian"`) or a logistic regression model
+ (`family = "binomial"`) is fitted. Note, that the implementation of logistic regression is still experimental.
 }
 \examples{
+# create data
 dat <- makeExampleData()
+
 # fit a sparse model with spike and slab prior
 fit <- fit_grpRR(dat$X, dat$y, dat$annot)
+beta <- fit$EW_beta # model coeffients
+pf <- fit$EW_gamma #penalty factors per group
+
 # fit a dense model without spike and slab prior
 fit <- fit_grpRR(dat$X, dat$y, dat$annot, spikeslab = FALSE)
-# fit a dense model without spike and
-# slab prior and multivariate meanfield assumption
-fit <- fit_grpRR(dat$X, dat$y, dat$annot,
- factoriseQ = TRUE, spikeslab = FALSE)
+
+# fit a dense model without spike and slab prior and multivariate meanfield assumption
+fit <- fit_grpRR(dat$X, dat$y, dat$annot, factoriseQ = TRUE, spikeslab = FALSE)
 }

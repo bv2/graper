@@ -660,6 +660,7 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 #' @examples
 #' dat <- makeExampleData()
 #' cv.out <- cv_compare(dat$X, dat$y, dat$annot, nfolds=3)
+
 cv_compare <- function(X, y, annot, family="gaussian",
                        ncores=1, nfolds=10, plot_cv=FALSE,
                        seed=NULL, parallel=FALSE, saveFits=FALSE, ...){
