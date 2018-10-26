@@ -4,87 +4,72 @@
 \alias{runMethods}
 \title{Run various regression methods}
 \usage{
-runMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
-  max_iter = 5000, family = "gaussian", intercept = TRUE,
-  standardize = TRUE, freqELB = 10, calcELB = TRUE, th = 0.01,
-  n_rep = 1, verbose = FALSE, verbose_progress = TRUE,
-  compareGRridge = FALSE, include_nonfacQ = FALSE,
-  compareSparseGroupLasso = FALSE, compareIPF = FALSE,
-  compareGroupLasso = FALSE, includeRF = FALSE,
+runMethods(Xtrain, ytrain, annot, family = "gaussian",
+  intercept = TRUE, standardize = TRUE, beta0 = NULL,
+  trueintercept = NULL, max_iter = 5000, freqELB = 10,
+  calcELB = TRUE, th = 0.01, n_rep = 1, verbose = FALSE,
+  verbose_progress = TRUE, compareGRridge = FALSE,
+  include_nonfacQ = FALSE, compareSparseGroupLasso = FALSE,
+  compareIPF = FALSE, compareGroupLasso = FALSE, includeRF = FALSE,
   compareAdaLasso = FALSE, include_varbvs = FALSE,
   include_nogamma = FALSE, include_grpRR_SS_ungrouped = FALSE)
 }
 \arguments{
-\item{Xtrain}{Design matrix of size n x p}
+\item{Xtrain}{design matrix with samples in rows and features in columns (n x p)}
 
-\item{ytrain}{Response vector of size n}
+\item{ytrain}{response vector of length n}
 
-\item{annot}{Factor of length p indicating group membership of each feature}
+\item{annot}{factor of length p indicating group membership of each feature}
 
-\item{beta0}{True coefficients in the linear model if known,
-NULL otherwise (default)}
-
-\item{trueintercept}{True intercept in the linear model if known,
-NULL otherwise (default)}
-
-\item{max_iter}{Maximum number of iterations for grpRR methods (see also  \code{\link{fit_grpRR}})}
-
-\item{family}{Likelihood model for the response,
+\item{family}{likelihood model for the response,
  either "gaussian" for linear regression
 or "binomial" for logisitc regression}
 
-\item{intercept}{boolean, indicating wether to fit an intercept}
+\item{intercept}{whether to include an intercept into the model}
 
-\item{standardize}{boolean, indicating wether
-features for Ridge and Lasso fit should be standardized.
-Note this does not affect GRridge and group Lasso
- where standardization is default.}
+\item{standardize}{whether to standardize the predictors to unit variance.
+Note this does not affect GRridge and group Lasso  where standardization is default.}
 
-\item{freqELB}{Frequency at which the evidence lower bound (ELB) is to be calculated for grpRR,
+\item{beta0}{true coefficients in the linear model if known,
+NULL otherwise (default)}
+
+\item{trueintercept}{true intercept in the linear model if known,
+NULL otherwise (default)}
+
+\item{max_iter}{maximum number of iterations for grpRR methods (see also  \code{\link{fit_grpRR}})}
+
+\item{freqELB}{frequency at which the evidence lower bound (ELB) is to be calculated for grpRR,
 i.e. each freqELB-th iteration (see also  \code{\link{fit_grpRR}})}
 
-\item{calcELB}{Boolean, indicating whether to calculate the evidence lower bound (ELB) for grpRR (see also  \code{\link{fit_grpRR}})}
+\item{calcELB}{whether to calculate the evidence lower bound (ELB) for grpRR (see also  \code{\link{fit_grpRR}})}
 
-\item{th}{Convergence threshold for the evidence lower bound (ELB) in grpRR (see also  \code{\link{fit_grpRR}})}
+\item{th}{convergence threshold for the evidence lower bound (ELB) in grpRR (see also  \code{\link{fit_grpRR}})}
 
-\item{n_rep}{Number of reptitions with different random initilizations to be fit in grpRR (see also  \code{\link{fit_grpRR}})}
+\item{n_rep}{number of reptitions with different random initilizations to be fit in grpRR (see also  \code{\link{fit_grpRR}})}
 
-\item{verbose}{Boolean, indicating wether
-to print out intermediate messages during fitting}
+\item{verbose}{whether to print out intermediate messages during fitting}
 
-\item{verbose_progress}{Boolean, indicating
-whether to print details on the progress}
+\item{verbose_progress}{whether to print out details on the overall progress}
 
-\item{compareGRridge}{Boolean, indicating
-wether to fit a GRridge model}
+\item{compareGRridge}{whether to fit GRridge}
 
-\item{include_nonfacQ}{include a VB method
-with multivariate variational distributon
-(can be very timme consuming for large data sets)}
+\item{include_nonfacQ}{whether to fit grpRR method with multivariate variational distributon be fitted (can be slow for large data sets)}
 
-\item{compareSparseGroupLasso}{Boolean, indicating
-whether to fit a sparse group lasso}
+\item{compareSparseGroupLasso}{whether to fit sparse group Lasso}
 
-\item{compareIPF}{Boolean, indicating
-whether to fit a IPFLasso}
+\item{compareIPF}{whether to fit IPF-Lasso be fitted}
 
-\item{compareGroupLasso}{Boolean, indicating
-whether to fit a group lasso}
+\item{compareGroupLasso}{whether to fit group Lasso}
 
-\item{includeRF}{Boolean, indicating
-whether to fit a random forest}
+\item{includeRF}{whether to fit random forest}
 
-\item{compareAdaLasso}{Boolean, indicating
-whether to fit an adpative lasso}
+\item{compareAdaLasso}{whether to fit Lasso}
 
-\item{include_varbvs}{Boolean, indicating
-whether to fit varbvs}
+\item{include_varbvs}{whether to fit varbvs}
 
-\item{include_nogamma}{Boolean, indicating
-whether to fit a grpRR model without different slab parameters}
+\item{include_nogamma}{whether to fit grpRR with same penalty factor but different sparity levels  per group}
 
-\item{include_grpRR_SS_ungrouped}{Boolean, indicating
-whether to fit a grpRR model without group annotations}
+\item{include_grpRR_SS_ungrouped}{whether to fit grpRR without group annotations}
 }
 \value{
 List of fitted models and two data frames with

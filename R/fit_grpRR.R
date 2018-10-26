@@ -2,31 +2,31 @@
 #' @name fit_grpRR
 #' @description Fit a regression model with grpRR given a matrix of predictors (\code{X}), a response vector (\code{y}) and
 #' a vector of group memberships for each predictor in \code{X} (\code{annot}). For each group a different strength of penalization is determined adaptively.
-#' @param X Design matrix of size n (samples) x p (features)
-#' @param y Response vector of size n
-#' @param annot Factor of length p indicating group membership of each feature (column) in X
+#' @param X design matrix of size n (samples) x p (features)
+#' @param y response vector of size n
+#' @param annot factor of length p indicating group membership of each feature (column) in X
 #' @param family Likelihood model for the response,
 #'  either "gaussian" for linear regression or "binomial" for logistic regression
-#' @param factoriseQ If set to TRUE, the variational distribution is assumed
+#' @param factoriseQ if set to TRUE, the variational distribution is assumed
 #'  to fully factorize across features (faster, default). FALSE uses a multivariate variational distribution.
-#' @param spikeslab If set to TRUE, a spike and slab prior on the coeffiecients (default).
-#' @param d_tau Hyper-parameters for prior of tau (noise precision)
-#' @param r_tau Hyper-parameters for prior of tau (noise precision)
-#' @param d_gamma Hyper-parameters for prior of gamma (coeffient's prior precision)
-#' @param r_gamma Hyper-parameters for prior of gamma (coeffient's prior precision)
-#' @param r_pi Hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior
-#' @param d_pi Hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior
-#' @param max_iter Maximum number of iterations
-#' @param th Convergence threshold for the evidence lower bound (ELB)
-#' @param intercept Boolean, indicating whether to include an intercept into the model
-#' @param calcELB Boolean, indicating whether to calculate the evidence lower bound (ELB)
-#' @param verbose Boolean, indicating whether to print out intermediate messages during fitting
-#' @param freqELB Frequency at which the evidence lower bound (ELB) is to be calculated,
+#' @param spikeslab if set to TRUE, a spike and slab prior on the coeffiecients (default).
+#' @param d_tau hyper-parameters for prior of tau (noise precision)
+#' @param r_tau hyper-parameters for prior of tau (noise precision)
+#' @param d_gamma hyper-parameters for prior of gamma (coeffient's prior precision)
+#' @param r_gamma hyper-parameters for prior of gamma (coeffient's prior precision)
+#' @param r_pi hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior
+#' @param d_pi hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior
+#' @param max_iter maximum number of iterations
+#' @param th convergence threshold for the evidence lower bound (ELB)
+#' @param intercept whether to include an intercept into the model
+#' @param calcELB whether to calculate the evidence lower bound (ELB)
+#' @param verbose  whether to print out intermediate messages during fitting
+#' @param freqELB frequency at which the evidence lower bound (ELB) is to be calculated,
 #'  i.e. each freqELB-th iteration
-#' @param n_rep Number of reptitions with different random initilizations to be fit
-#' @param standardize Boolean whether to standardize the predictors to unit variance
-#' @param init_psi Initial value for the spike variables
-#' @param nogamma If true, the normal prior will have same variance for all groups
+#' @param n_rep number of reptitions with different random initilizations to be fit
+#' @param standardize whether to standardize the predictors to unit variance
+#' @param init_psi initial value for the spike variables
+#' @param nogamma if TRUE, the normal prior will have same variance for all groups
 #' (only relevant for spikeslab = TRUE)
 #' @details The function trains the grpRR model given a matrix of predictors (\code{X}), a response vector (\code{y}) and
 #' a vector of group memberships for each predictor in \code{X} (\code{annot}).

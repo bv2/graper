@@ -1,52 +1,37 @@
 #' @title Run various regression methods
 #' @name runMethods
 #' @description Function to fit a regression methods using serveral different methods.
-#' @param Xtrain Design matrix of size n x p
-#' @param ytrain Response vector of size n
-#' @param annot Factor of length p indicating group membership of each feature
-#' @param intercept boolean, indicating wether to fit an intercept
-#' @param standardize boolean, indicating wether
-#'  features for Ridge and Lasso fit should be standardized.
-#'  Note this does not affect GRridge and group Lasso
-#'   where standardization is default.
-#' @param beta0 True coefficients in the linear model if known,
+#' @param Xtrain design matrix with samples in rows and features in columns (n x p)
+#' @param ytrain response vector of length n
+#' @param annot factor of length p indicating group membership of each feature
+#' @param intercept  whether to include an intercept into the model
+#' @param standardize  whether to standardize the predictors to unit variance.
+#'  Note this does not affect GRridge and group Lasso  where standardization is default.
+#' @param beta0 true coefficients in the linear model if known,
 #'  NULL otherwise (default)
-#' @param trueintercept True intercept in the linear model if known,
+#' @param trueintercept true intercept in the linear model if known,
 #'  NULL otherwise (default)
-#' @param max_iter Maximum number of iterations for grpRR methods (see also  \code{\link{fit_grpRR}})
-#' @param family Likelihood model for the response,
+#' @param max_iter maximum number of iterations for grpRR methods (see also  \code{\link{fit_grpRR}})
+#' @param family likelihood model for the response,
 #'  either "gaussian" for linear regression
 #' or "binomial" for logisitc regression
-#' @param calcELB Boolean, indicating whether to calculate the evidence lower bound (ELB) for grpRR (see also  \code{\link{fit_grpRR}})
-#' @param freqELB Frequency at which the evidence lower bound (ELB) is to be calculated for grpRR,
+#' @param calcELB whether to calculate the evidence lower bound (ELB) for grpRR (see also  \code{\link{fit_grpRR}})
+#' @param freqELB frequency at which the evidence lower bound (ELB) is to be calculated for grpRR,
 #'  i.e. each freqELB-th iteration (see also  \code{\link{fit_grpRR}})
-#' @param th Convergence threshold for the evidence lower bound (ELB) in grpRR (see also  \code{\link{fit_grpRR}})
-#' @param n_rep Number of reptitions with different random initilizations to be fit in grpRR (see also  \code{\link{fit_grpRR}})
-#' @param verbose Boolean, indicating wether
-#'  to print out intermediate messages during fitting
-#' @param compareGRridge Boolean, indicating
-#'  wether to fit a GRridge model
-#' @param include_nonfacQ include a VB method
-#'  with multivariate variational distributon
-#'  (can be very timme consuming for large data sets)
-#' @param compareIPF Boolean, indicating
-#' whether to fit a IPFLasso
-#' @param compareSparseGroupLasso Boolean, indicating
-#'  whether to fit a sparse group lasso
-#' @param compareGroupLasso Boolean, indicating
-#'  whether to fit a group lasso
-#' @param compareAdaLasso Boolean, indicating
-#'  whether to fit an adpative lasso
-#' @param includeRF Boolean, indicating
-#'  whether to fit a random forest
-#' @param include_varbvs Boolean, indicating
-#'  whether to fit varbvs
-#' @param include_nogamma Boolean, indicating
-#'  whether to fit a grpRR model without different slab parameters
-#' @param include_grpRR_SS_ungrouped Boolean, indicating
-#'  whether to fit a grpRR model without group annotations
-#' @param verbose_progress Boolean, indicating
-#'  whether to print details on the progress
+#' @param th convergence threshold for the evidence lower bound (ELB) in grpRR (see also  \code{\link{fit_grpRR}})
+#' @param n_rep number of reptitions with different random initilizations to be fit in grpRR (see also  \code{\link{fit_grpRR}})
+#' @param verbose  whether to print out intermediate messages during fitting
+#' @param compareGRridge  whether to fit GRridge
+#' @param include_nonfacQ  whether to fit grpRR method with multivariate variational distributon be fitted (can be slow for large data sets)
+#' @param compareIPF  whether to fit IPF-Lasso be fitted
+#' @param compareSparseGroupLasso  whether to fit sparse group Lasso
+#' @param compareGroupLasso  whether to fit group Lasso
+#' @param compareAdaLasso  whether to fit Lasso
+#' @param includeRF whether to fit random forest
+#' @param include_varbvs  whether to fit varbvs
+#' @param include_nogamma  whether to fit grpRR with same penalty factor but different sparity levels  per group
+#' @param include_grpRR_SS_ungrouped whether to fit grpRR without group annotations
+#' @param verbose_progress  whether to print out details on the overall progress
 #' @return List of fitted models and two data frames with
 #'  coeffcients and penalty factors
 #' @importFrom glmnet cv.glmnet
@@ -70,10 +55,10 @@
 #' allFits <- runMethods(Xtrain=dat$X,
 #'  ytrain=dat$y, annot=dat$annot)
 
-runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL,
-                       trueintercept = NULL, max_iter = 5000,
+runMethods <- function(Xtrain, ytrain, annot,
                        family = "gaussian", intercept = TRUE, standardize = TRUE,
-                       freqELB = 10, calcELB = TRUE, th = 0.01,
+                       beta0 = NULL, trueintercept = NULL,
+                       max_iter = 5000, freqELB = 10, calcELB = TRUE, th = 0.01,
                        n_rep=1, verbose = FALSE, verbose_progress = TRUE,
                        compareGRridge = FALSE, include_nonfacQ = FALSE,
                        compareSparseGroupLasso =FALSE, compareIPF = FALSE,
@@ -637,19 +622,21 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 
 #' @title Compare various regression method via cross-validation
 #' @name cv_compare
-#' @description  Function to run serveral different methods for
-#' high-dimensional regression and evaluate them in a cross-validated fashion
-#' @param X Design matrix of size n x p
-#' @param y Response vector of size n
-#' @param annot Factor of length p indicating group membership of each feature
-#' @param family Liklihood model to use for response, either binomial or gaussian
-#' @param nfolds Number of fold for evaluation
-#' @param ncores Number of cores to use
-#' @param plot_cv boolean whether to plot summary from evaluation
+#' @description  Function to fit a regresion model using serveral different methods
+#' and evaluate them in a cross-validated fashion in terms of prediction and estimation performance
+#' @param X design matrix with samples in rows and features in columns (n x p)
+#' @param y response vector of length n
+#' @param annot factor of length p indicating group membership of each feature
+#' @param family likelihood model for the response,
+#'  either "gaussian" for linear regression
+#' or "binomial" for logisitc regression
+#' @param nfolds number of folds for evaluation
+#' @param ncores number of cores to use
+#' @param plot_cv whether to produce summary plots from evaluation
 #' @param seed optional seed for the choice of folds
-#' @param parallel boolean: Run cross-validation in parallel?
-#' @param saveFits boolean: Save the fit of each fold?
-#' @param ... Other parameters that can be passed to \code{\link{runMethods}}
+#' @param parallel whether to run cross-validation in parallel
+#' @param saveFits whether to save the fit of each fold
+#' @param ... other parameters that can be passed to \code{\link{runMethods}}
 #' @return List of perfromnce measures in each fold
 #' @import ggplot2
 #' @import parallel

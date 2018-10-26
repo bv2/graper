@@ -12,53 +12,53 @@ fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
   nogamma = FALSE, init_psi = 1)
 }
 \arguments{
-\item{X}{Design matrix of size n (samples) x p (features)}
+\item{X}{design matrix of size n (samples) x p (features)}
 
-\item{y}{Response vector of size n}
+\item{y}{response vector of size n}
 
-\item{annot}{Factor of length p indicating group membership of each feature (column) in X}
+\item{annot}{factor of length p indicating group membership of each feature (column) in X}
 
-\item{factoriseQ}{If set to TRUE, the variational distribution is assumed
+\item{factoriseQ}{if set to TRUE, the variational distribution is assumed
 to fully factorize across features (faster, default). FALSE uses a multivariate variational distribution.}
 
-\item{spikeslab}{If set to TRUE, a spike and slab prior on the coeffiecients (default).}
+\item{spikeslab}{if set to TRUE, a spike and slab prior on the coeffiecients (default).}
 
-\item{intercept}{Boolean, indicating whether to include an intercept into the model}
+\item{intercept}{whether to include an intercept into the model}
 
 \item{family}{Likelihood model for the response,
 either "gaussian" for linear regression or "binomial" for logistic regression}
 
-\item{standardize}{Boolean whether to standardize the predictors to unit variance}
+\item{standardize}{whether to standardize the predictors to unit variance}
 
-\item{n_rep}{Number of reptitions with different random initilizations to be fit}
+\item{n_rep}{number of reptitions with different random initilizations to be fit}
 
-\item{max_iter}{Maximum number of iterations}
+\item{max_iter}{maximum number of iterations}
 
-\item{th}{Convergence threshold for the evidence lower bound (ELB)}
+\item{th}{convergence threshold for the evidence lower bound (ELB)}
 
-\item{d_tau}{Hyper-parameters for prior of tau (noise precision)}
+\item{d_tau}{hyper-parameters for prior of tau (noise precision)}
 
-\item{r_tau}{Hyper-parameters for prior of tau (noise precision)}
+\item{r_tau}{hyper-parameters for prior of tau (noise precision)}
 
-\item{d_gamma}{Hyper-parameters for prior of gamma (coeffient's prior precision)}
+\item{d_gamma}{hyper-parameters for prior of gamma (coeffient's prior precision)}
 
-\item{r_gamma}{Hyper-parameters for prior of gamma (coeffient's prior precision)}
+\item{r_gamma}{hyper-parameters for prior of gamma (coeffient's prior precision)}
 
-\item{r_pi}{Hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior}
+\item{r_pi}{hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior}
 
-\item{d_pi}{Hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior}
+\item{d_pi}{hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior}
 
-\item{calcELB}{Boolean, indicating whether to calculate the evidence lower bound (ELB)}
+\item{calcELB}{whether to calculate the evidence lower bound (ELB)}
 
-\item{verbose}{Boolean, indicating whether to print out intermediate messages during fitting}
+\item{verbose}{whether to print out intermediate messages during fitting}
 
-\item{freqELB}{Frequency at which the evidence lower bound (ELB) is to be calculated,
+\item{freqELB}{frequency at which the evidence lower bound (ELB) is to be calculated,
 i.e. each freqELB-th iteration}
 
-\item{nogamma}{If true, the normal prior will have same variance for all groups
+\item{nogamma}{if TRUE, the normal prior will have same variance for all groups
 (only relevant for spikeslab = TRUE)}
 
-\item{init_psi}{Initial value for the spike variables}
+\item{init_psi}{initial value for the spike variables}
 }
 \value{
 List containing

@@ -9,34 +9,36 @@ cv_compare(X, y, annot, family = "gaussian", ncores = 1, nfolds = 10,
   ...)
 }
 \arguments{
-\item{X}{Design matrix of size n x p}
+\item{X}{design matrix with samples in rows and features in columns (n x p)}
 
-\item{y}{Response vector of size n}
+\item{y}{response vector of length n}
 
-\item{annot}{Factor of length p indicating group membership of each feature}
+\item{annot}{factor of length p indicating group membership of each feature}
 
-\item{family}{Liklihood model to use for response, either binomial or gaussian}
+\item{family}{likelihood model for the response,
+ either "gaussian" for linear regression
+or "binomial" for logisitc regression}
 
-\item{ncores}{Number of cores to use}
+\item{ncores}{number of cores to use}
 
-\item{nfolds}{Number of fold for evaluation}
+\item{nfolds}{number of fold for evaluation}
 
-\item{plot_cv}{boolean whether to plot summary from evaluation}
+\item{plot_cv}{whether to produce summary plots from evaluation}
 
 \item{seed}{optional seed for the choice of folds}
 
-\item{parallel}{boolean: Run cross-validation in parallel?}
+\item{parallel}{whether to run cross-validation in parallel}
 
-\item{saveFits}{boolean: Save the fit of each fold?}
+\item{saveFits}{whether to save the fit of each fold}
 
-\item{...}{Other parameters that can be passed to \code{\link{runMethods}}}
+\item{...}{other parameters that can be passed to \code{\link{runMethods}}}
 }
 \value{
 List of perfromnce measures in each fold
 }
 \description{
-Function to run serveral different methods for
-high-dimensional regression and evaluate them in a cross-validated fashion
+Function to fit a regresion model using serveral different methods
+and evaluate them in a cross-validated fashion in terms of prediction and estimation performance
 }
 \examples{
 dat <- makeExampleData()
