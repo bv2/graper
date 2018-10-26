@@ -15,7 +15,12 @@
 #' @export
 #' @importFrom dplyr mutate
 #' @importFrom stats dbinom dnorm dgamma
-# ---------------------------
+#' @return a ggplot object
+#' @examples
+#' dat <- makeExampleData()
+#' fit <- fit_grpRR(dat$X, dat$y, dat$annot)
+#' plotPosterior(fit, param2plot="gamma")
+
 plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
                           tau0 = NULL, pi0=NULL, s0=NULL, jmax=2, range=NULL) {
 
@@ -171,6 +176,11 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
 #' @description plot the ELBO over iteration to monitor convergence of the algorithm
 #' @param fit fit as produced by fit_grpRR
 #' @export
+#' @return a ggplot object
+#' @examples
+#' dat <- makeExampleData()
+#' fit <- fit_grpRR(dat$X, dat$y, dat$annot)
+#' plotELBO(fit)
 plotELBO <- function(fit){
   iteration <- ELBO <- NULL # avoid notes in check
     if(is.null(fit$ELB_trace)) stop("ELBO was not computed for this fit.")
@@ -184,14 +194,19 @@ plotELBO <- function(fit){
 #'  @title plot comparison of methods
 #'  @name plotMethodComparison
 #'  @description Function to plot method comparison across several runs
-#' @param resultList List as created by cv_compare
-#' @param family gaussian or binomial (same as used in cv_compare)
+#' @param resultList List as created by \code{\link{cv_compare}}
+#' @param family gaussian or binomial (same as used in \code{\link{cv_compare}})
 #' @param methods2plot which method to be plotted
 #' @importFrom dplyr filter bind_rows
 #' @importFrom reshape2 melt
 #' @import ggplot2
 #' @importFrom cowplot plot_grid
 #' @export
+#' @return a ggplot object
+#' @examples
+#' dat <- makeExampleData()
+#' cv.out <- cv_compare(dat$X, dat$y, dat$annot, nfolds=3)
+#' plotMethodComparison(cv.out)
 
 plotMethodComparison <- function(resultList, family = "gaussian", methods2plot="all") {
   # avoid notes on global varibale binding in check

@@ -9,13 +9,24 @@ evaluateFits(allFits, Xtest, ytest)
 \arguments{
 \item{allFits}{List as produced by \code{\link{runMethods}}}
 
-\item{Xtest}{Design matrix of size n' x p (same feature structure as used in \code{\link{runMethods}})}
+\item{Xtest}{Design matrix of size n' x p
+(same feature structure as used in \code{\link{runMethods}})}
 
 \item{ytest}{Response vector of size n'}
 }
 \value{
-List as prodcused by \code{\link{runMethods}} with additional predicition performance slots
+List as prodcused by \code{\link{runMethods}} with
+ additional predicition performance slots in the summaryList
 }
 \description{
 Function to evaluate results on test data
+}
+\examples{
+dat <- makeExampleData()
+ntrain <- dat$n/2
+fit <- runMethods(dat$X[seq_len(ntrain),],
+ dat$y[seq_len(ntrain)], dat$annot,
+  beta0 = dat$beta)
+evalFit <- evaluateFits(fit, dat$X[seq_len(ntrain) + dat$n/2,],
+ dat$y[seq_len(ntrain)+ dat$n/2])
 }

@@ -21,62 +21,91 @@ runMethods(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL,
 
 \item{annot}{Factor of length p indicating group membership of each feature}
 
-\item{beta0}{True coefficients in the linear model if known, NULL otherwise (default)}
+\item{beta0}{True coefficients in the linear model if known,
+NULL otherwise (default)}
 
-\item{trueintercept}{True intercept in the linear model if known, NULL otherwise (default)}
+\item{trueintercept}{True intercept in the linear model if known,
+NULL otherwise (default)}
 
 \item{max_iter}{maximum number of iterations}
 
-\item{family}{liklihood model for the response, either "gaussian" for linear regression
+\item{family}{liklihood model for the response,
+ either "gaussian" for linear regression
 or "binomial" for logisitc regression}
 
 \item{intercept}{boolean, indicating wether to fit an intercept}
 
-\item{standardize}{boolean, indicating wether features for Ridge and Lasso fit should be standardized.
-Note this does not affect GRridge and grouplasso where standardization is default.}
+\item{standardize}{boolean, indicating wether
+features for Ridge and Lasso fit should be standardized.
+Note this does not affect GRridge and group Lasso
+ where standardization is default.}
 
-\item{freqELB}{determines frequency at which ELB is to be calculated, i.e. each feqELB-th iteration}
+\item{freqELB}{determines frequency at which ELB is to be calculated,
+i.e. each feqELB-th iteration}
 
 \item{calcELB}{boolean, indicating wether to calculate ELB}
 
-\item{th}{convergence threshold on the ELBO for the variational Bayes algorithm}
+\item{th}{convergence threshold on the ELBO
+for the variational Bayes algorithm}
 
-\item{n_rep}{number of repeated fits with variational Bayes using different random intilizations}
+\item{n_rep}{number of repeated fits with
+variational Bayes using different random intilizations}
 
-\item{verbose}{boolean, indicating wether to print out intermediate messages during fitting}
+\item{verbose}{boolean, indicating wether
+to print out intermediate messages during fitting}
 
-\item{verbose_progress}{boolean, indicating whether to print details on the progress}
+\item{verbose_progress}{boolean, indicating
+whether to print details on the progress}
 
-\item{compareGRridge}{boolean, indicating wether to fit a GRridge model}
+\item{compareGRridge}{boolean, indicating
+wether to fit a GRridge model}
 
-\item{include_nonfacQ}{include a VB method with multivariate variational distributon
+\item{include_nonfacQ}{include a VB method
+with multivariate variational distributon
 (can be very timme consuming for large data sets)}
 
-\item{compareSparseGroupLasso}{boolean, indicating whether to fit a sparse group lasso}
+\item{compareSparseGroupLasso}{boolean, indicating
+whether to fit a sparse group lasso}
 
-\item{compareIPF}{boolean, indicating whether to fit a IPFLasso}
+\item{compareIPF}{boolean, indicating
+whether to fit a IPFLasso}
 
-\item{compareGroupLasso}{boolean, indicating whether to fit a group lasso}
+\item{compareGroupLasso}{boolean, indicating
+whether to fit a group lasso}
 
-\item{includeRF}{boolean, indicating whether to fit a random forest}
+\item{includeRF}{boolean, indicating
+whether to fit a random forest}
 
-\item{compareAdaLasso}{boolean, indicating whether to fit an adpative lasso}
+\item{compareAdaLasso}{boolean, indicating
+whether to fit an adpative lasso}
 
-\item{include_varbvs}{boolean, indicating whether to fit varbvs}
+\item{include_varbvs}{boolean, indicating
+whether to fit varbvs}
 
-\item{include_nogamma}{boolean, indicating whether to fit a grpRR model without different slab parameters}
+\item{include_nogamma}{boolean, indicating
+whether to fit a grpRR model without different slab parameters}
 
-\item{include_grpRR_SS_ungrouped}{boolean, indicating whether to fit a grpRR model without group annotations}
+\item{include_grpRR_SS_ungrouped}{boolean, indicating
+whether to fit a grpRR model without group annotations}
 }
 \value{
-List of fitted models and two data frames with coeffcients and penalty factors
+List of fitted models and two data frames with
+ coeffcients and penalty factors
 
 a list with
- - a summaryList containing the complete individual fits (out) as well as other
-statistics (coefficients, runtime, sparsity, intercept, penalty factors)
-- the details on the data (sample size n, predictor number p, covariate annotation annot,
- group number G, feature and annotation names)
+ - a summaryList containing the complete individual fits
+   as well as other statistics such as estimated coefficients,
+    runtime, sparsity, intercept, penalty factors)
+- the details on the data (sample size n, predictor number p,
+ covariate annotation annot, group number G,
+  feature and annotation names)
 }
 \description{
-Function to run serveral different methods for high-dimensional regression
+Function to run serveral different methods
+ for high-dimensional regression.
+}
+\examples{
+dat <- makeExampleData()
+allFits <- runMethods(Xtrain=dat$X,
+ ytrain=dat$y, annot=dat$annot)
 }

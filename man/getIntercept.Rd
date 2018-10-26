@@ -9,6 +9,14 @@ getIntercept(AllFits)
 \arguments{
 \item{AllFits}{object as produced by \code{\link{runMethods}}}
 }
+\value{
+A vector of intercept values for each method.
+}
 \description{
 get intercept estimated from various methods
+}
+\examples{
+dat <- makeExampleData()
+fit <- runMethods(dat$X, dat$y, dat$annot)
+getIntercept(fit)
 }

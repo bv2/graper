@@ -9,6 +9,13 @@ ImputeByMean(x)
 \arguments{
 \item{x}{vector to with value to impute}
 }
+\value{
+vector with imputed values
+}
 \description{
 Function to impute by mean
+}
+\examples{
+x <- c(1,0.4,1.3, NA)
+ImputeByMean(x)
 }

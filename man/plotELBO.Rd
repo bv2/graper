@@ -9,6 +9,14 @@ plotELBO(fit)
 \arguments{
 \item{fit}{fit as produced by fit_grpRR}
 }
+\value{
+a ggplot object
+}
 \description{
 plot the ELBO over iteration to monitor convergence of the algorithm
+}
+\examples{
+#' dat <- makeExampleData()
+fit <- fit_grpRR(dat$X, dat$y, dat$annot)
+plotELBO(fit)
 }

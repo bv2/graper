@@ -61,11 +61,17 @@
 #' @importFrom ipflasso cvr2.ipflasso
 #' @importFrom stats coef
 #' @return a list with
-#'  - a summaryList containing the complete individual fits (out) as well as other
-#' statistics (coefficients, runtime, sparsity, intercept, penalty factors)
-#' - the details on the data (sample size n, predictor number p, covariate annotation annot,
-#'  group number G, feature and annotation names)
+#'  - a summaryList containing the complete individual fits
+#'    as well as other statistics such as estimated coefficients,
+#'     runtime, sparsity, intercept, penalty factors)
+#' - the details on the data (sample size n, predictor number p,
+#'  covariate annotation annot, group number G,
+#'   feature and annotation names)
 #' @export
+#' @examples
+#' dat <- makeExampleData()
+#' allFits <- runMethods(Xtrain=dat$X,
+#'  ytrain=dat$y, annot=dat$annot)
 
 runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL,
                        trueintercept = NULL, max_iter = 5000,
@@ -489,8 +495,8 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL,
     adaLasso_summary <- list()
     adaLasso_summary$runtime <- as.numeric(tmp)
     adaLasso_summary$pf <- vapply(unique(annot), function(gr){
-      mean(adaLassoFit$lambda.min * wRidge[annot == gr]),
-    } numeric(1))
+      mean(adaLassoFit$lambda.min * wRidge[annot == gr])
+    }, numeric(1))
     adaLasso_summary$beta <- beta_adalasso
     if(intercept) {
       adaLasso_summary$intercept <- as.vector(stats::coef(adaLassoFit, adaLassoFit$lambda.min))[1]
@@ -523,10 +529,17 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL,
 #' (same feature structure as used in \code{\link{runMethods}})
 #' @param ytest Response vector of size n'
 #' @return List as prodcused by \code{\link{runMethods}} with
-#'  additional predicition performance slots
+#'  additional predicition performance slots in the summaryList
 #' @export
 #' @importFrom stats predict
-
+#' @examples
+#' dat <- makeExampleData()
+#' ntrain <- dat$n/2
+#' fit <- runMethods(dat$X[seq_len(ntrain),],
+#'  dat$y[seq_len(ntrain)], dat$annot,
+#'   beta0 = dat$beta)
+#' evalFit <- evaluateFits(fit, dat$X[seq_len(ntrain) + dat$n/2,],
+#'  dat$y[seq_len(ntrain)+ dat$n/2])
 
 evaluateFits <- function(allFits, Xtest, ytest) {
 
@@ -640,15 +653,15 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 #' @param parallel boolean: Run cross-validation in parallel?
 #' @param saveFits boolean: Save the fit of each fold?
 #' @param ... Other parameters that can be passed to \code{\link{runMethods}}
-#'
-#' @return List of fitted models and two data frames with
-#'  coeffcients and penalty factors
+#' @return List of perfromnce measures in each fold
 #' @import ggplot2
 #' @import parallel
 #' @export
-
+#' @examples
+#' dat <- makeExampleData()
+#' cv.out <- cv_compare(dat$X, dat$y, dat$annot, nfolds=3)
 cv_compare <- function(X, y, annot, family="gaussian",
-                       ncores=1, nfolds=10, plot_cv=TRUE,
+                       ncores=1, nfolds=10, plot_cv=FALSE,
                        seed=NULL, parallel=FALSE, saveFits=FALSE, ...){
 
   # split observations into folds

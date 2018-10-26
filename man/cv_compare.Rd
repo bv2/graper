@@ -5,7 +5,7 @@
 \title{Compare various regression method via cross-validation}
 \usage{
 cv_compare(X, y, annot, family = "gaussian", ncores = 1, nfolds = 10,
-  plot_cv = TRUE, seed = NULL, parallel = FALSE, saveFits = FALSE,
+  plot_cv = FALSE, seed = NULL, parallel = FALSE, saveFits = FALSE,
   ...)
 }
 \arguments{
@@ -32,8 +32,13 @@ cv_compare(X, y, annot, family = "gaussian", ncores = 1, nfolds = 10,
 \item{...}{Other parameters that can be passed to \code{\link{runMethods}}}
 }
 \value{
-List of fitted models and two data frames with coeffcients and penalty factors
+List of perfromnce measures in each fold
 }
 \description{
-Function to run serveral different methods for high-dimensional regression and evaluate them in a cross-validated fashion
+Function to run serveral different methods for
+high-dimensional regression and evaluate them in a cross-validated fashion
+}
+\examples{
+dat <- makeExampleData()
+cv.out <- cv_compare(dat$X, dat$y, dat$annot, nfolds=3)
 }

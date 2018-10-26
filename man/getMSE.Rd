@@ -9,6 +9,18 @@ getMSE(AllFits)
 \arguments{
 \item{AllFits}{object as produced by \code{\link{evaluateFits}}}
 }
+\value{
+A vector of the mean squared error on the test data for each method.
+}
 \description{
 get MSE of various methods
+}
+\examples{
+dat <- makeExampleData()
+ntrain <- dat$n/2
+fit <- runMethods(dat$X[seq_len(ntrain),],
+ dat$y[seq_len(ntrain)], dat$annot)
+evalFit <- evaluateFits(fit, dat$X[seq_len(ntrain) + dat$n/2,],
+ dat$y[seq_len(ntrain)+ dat$n/2])
+getMSE(evalFit)
 }

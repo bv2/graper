@@ -9,6 +9,18 @@ getFNR(AllFits)
 \arguments{
 \item{AllFits}{object as produced by \code{\link{evaluateFits}}}
 }
+\value{
+A vector of the FNR on the selected coefficients for each method.
+}
 \description{
 get false negative rates of various methods
+}
+\examples{
+dat <- makeExampleData()
+ntrain <- dat$n/2
+fit <- runMethods(dat$X[seq_len(ntrain),],
+ dat$y[seq_len(ntrain)], dat$annot, beta0 = dat$beta)
+evalFit <- evaluateFits(fit, dat$X[seq_len(ntrain) + dat$n/2,],
+ dat$y[seq_len(ntrain)+ dat$n/2])
+getFNR(evalFit)
 }

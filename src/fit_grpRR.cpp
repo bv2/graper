@@ -1,13 +1,13 @@
 //C Functions calling the main function from classes
 
 #include <RcppArmadillo.h>
-#include "grpRR_linear_dense_ff.hpp"
-#include "grpRR_linear_dense_nf.hpp"
-#include "grpRR_linear_sparse_ff_nogamma.hpp"
-#include "grpRR_linear_sparse_ff.hpp"
-#include "grpRR_logistic_dense_ff.hpp"
-#include "grpRR_logistic_dense_nf.hpp"
-#include "grpRR_logistic_sparse_ff.hpp"
+#include "grpRR_linear_dense_ff.h"
+#include "grpRR_linear_dense_nf.h"
+#include "grpRR_linear_sparse_ff_nogamma.h"
+#include "grpRR_linear_sparse_ff.h"
+#include "grpRR_logistic_dense_ff.h"
+#include "grpRR_logistic_dense_nf.h"
+#include "grpRR_logistic_sparse_ff.h"
 
 
 // [[Rcpp::depends(RcppArmadillo)]]

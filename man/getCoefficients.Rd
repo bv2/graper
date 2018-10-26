@@ -9,6 +9,14 @@ getCoefficients(AllFits)
 \arguments{
 \item{AllFits}{object as produced by \code{\link{runMethods}}}
 }
+\value{
+A matrix of coefficients per feature (rows) and method (columns).
+}
 \description{
 get coefficients estimated from various methods
+}
+\examples{
+dat <- makeExampleData()
+fit <- runMethods(dat$X, dat$y, dat$annot)
+getCoefficients(fit)
 }

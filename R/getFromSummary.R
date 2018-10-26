@@ -3,6 +3,11 @@
 #' @description get penalty factors from various methods
 #' @param AllFits object as produced by \code{\link{runMethods}}
 #' @export
+#' @return A matrix of penalty factors per group (rows) and method (columns).
+#' @examples
+#' dat <- makeExampleData()
+#' fit <- runMethods(dat$X, dat$y, dat$annot)
+#' getPenaltyFactors(fit)
 
 getPenaltyFactors <- function(AllFits) {
     G <- AllFits$G
@@ -20,6 +25,12 @@ getPenaltyFactors <- function(AllFits) {
 #' @description get sparsity levels (1=dense, 0=sparse) from various methods
 #' @param AllFits object as produced by \code{\link{runMethods}}
 #' @export
+#' @return A matrix of sparsity levels per group (rows) and method (columns).
+#' @examples
+#' dat <- makeExampleData()
+#' fit <- runMethods(dat$X, dat$y, dat$annot)
+#' getSparsityLevel(fit)
+
 getSparsityLevel <- function(AllFits) {
     G <- AllFits$G
     sparsity_mat <- vapply(AllFits$summaryList, function(l) {
@@ -36,6 +47,11 @@ getSparsityLevel <- function(AllFits) {
 #' @description get coefficients estimated from various methods
 #' @param AllFits object as produced by \code{\link{runMethods}}
 #' @export
+#' @return A matrix of coefficients per feature (rows) and method (columns).
+#' @examples
+#' dat <- makeExampleData()
+#' fit <- runMethods(dat$X, dat$y, dat$annot)
+#' getCoefficients(fit)
 
 getCoefficients <- function(AllFits) {
     p <- AllFits$p
@@ -53,6 +69,12 @@ getCoefficients <- function(AllFits) {
 #' @description get intercept estimated from various methods
 #' @param AllFits object as produced by \code{\link{runMethods}}
 #' @export
+#' @return A vector of intercept values for each method.
+#' @examples
+#' dat <- makeExampleData()
+#' fit <- runMethods(dat$X, dat$y, dat$annot)
+#' getIntercept(fit)
+
 getIntercept <- function(AllFits) {
     vapply(AllFits$summaryList, function(l) {
         intercept <- l$intercept
@@ -67,6 +89,11 @@ getIntercept <- function(AllFits) {
 #' @description get run times of various methods
 #' @param AllFits object as produced by \code{\link{runMethods}}
 #' @export
+#' @return A vector of run times for each method.
+#' @examples
+#' dat <- makeExampleData()
+#' fit <- runMethods(dat$X, dat$y, dat$annot)
+#' getRunTime(fit)
 
 getRunTime <- function(AllFits) {
     vapply(AllFits$summaryList, function(l) {
@@ -82,6 +109,15 @@ getRunTime <- function(AllFits) {
 #' @description get RMSE of various methods
 #' @param AllFits object as produced by \code{\link{evaluateFits}}
 #' @export
+#' @return A vector of the root mean squared error on the test data for each method.
+#' @examples
+#' dat <- makeExampleData()
+#' ntrain <- dat$n/2
+#' fit <- runMethods(dat$X[seq_len(ntrain),],
+#'  dat$y[seq_len(ntrain)], dat$annot)
+#' evalFit <- evaluateFits(fit, dat$X[seq_len(ntrain) + dat$n/2,],
+#'  dat$y[seq_len(ntrain)+ dat$n/2])
+#' getRMSE(evalFit)
 
 getRMSE <- function(AllFits) {
     vapply(AllFits$summaryList, function(l) {
@@ -97,6 +133,14 @@ getRMSE <- function(AllFits) {
 #' @description get Brier Score of various methods
 #' @param AllFits object as produced by \code{\link{evaluateFits}}
 #' @export
+#' @return A vector of the Brier score on the test data for each method.
+#' @examples
+#' dat <- makeExampleData(response = "bernoulli")
+#' ntrain <- dat$n/2
+#' fit <- runMethods(dat$X[seq_len(ntrain),], dat$y[seq_len(ntrain)], dat$annot, family = "binomial")
+#' evalFit <- evaluateFits(fit, dat$X[seq_len(ntrain) + dat$n/2,],
+#'  dat$y[seq_len(ntrain)+ dat$n/2])
+#' getBS(evalFit)
 
 getBS <- function(AllFits) {
     vapply(AllFits$summaryList, function(l) {
@@ -114,6 +158,14 @@ getBS <- function(AllFits) {
 #' @description get AUC of various methods
 #' @param AllFits object as produced by \code{\link{evaluateFits}}
 #' @export
+#' @return A vector of the AUC values on the test data for each method.
+#' @examples
+#' dat <- makeExampleData(response = "bernoulli")
+#' ntrain <- dat$n/2
+#' fit <- runMethods(dat$X[seq_len(ntrain),], dat$y[seq_len(ntrain)], dat$annot, family = "binomial")
+#' evalFit <- evaluateFits(fit, dat$X[seq_len(ntrain) + dat$n/2,],
+#' dat$y[seq_len(ntrain)+ dat$n/2])
+#' getAUC(evalFit)
 
 getAUC <- function(AllFits) {
     vapply(AllFits$summaryList, function(l) {
@@ -130,6 +182,15 @@ getAUC <- function(AllFits) {
 #' @description get MSE of various methods
 #' @param AllFits object as produced by \code{\link{evaluateFits}}
 #' @export
+#' @return A vector of the mean squared error on the test data for each method.
+#' @examples
+#' dat <- makeExampleData()
+#' ntrain <- dat$n/2
+#' fit <- runMethods(dat$X[seq_len(ntrain),],
+#'  dat$y[seq_len(ntrain)], dat$annot)
+#' evalFit <- evaluateFits(fit, dat$X[seq_len(ntrain) + dat$n/2,],
+#'  dat$y[seq_len(ntrain)+ dat$n/2])
+#' getMSE(evalFit)
 
 getMSE <- function(AllFits) {
     vapply(AllFits$summaryList, function(l) {
@@ -147,7 +208,16 @@ getMSE <- function(AllFits) {
 #' @description get false negative rates of various methods
 #' @param AllFits object as produced by \code{\link{evaluateFits}}
 #' @export
-#'
+#' @return A vector of the FNR on the selected coefficients for each method.
+#' @examples
+#' dat <- makeExampleData()
+#' ntrain <- dat$n/2
+#' fit <- runMethods(dat$X[seq_len(ntrain),],
+#'  dat$y[seq_len(ntrain)], dat$annot, beta0 = dat$beta)
+#' evalFit <- evaluateFits(fit, dat$X[seq_len(ntrain) + dat$n/2,],
+#'  dat$y[seq_len(ntrain)+ dat$n/2])
+#' getFNR(evalFit)
+
 getFNR <- function(AllFits) {
     vapply(AllFits$summaryList, function(l) {
         FNR <- l$FNR
@@ -163,6 +233,15 @@ getFNR <- function(AllFits) {
 #' @description get false positive rates of various methods
 #' @param AllFits object as produced by \code{\link{evaluateFits}}
 #' @export
+#' @return A vector of the FPR on the selected coefficients for each method.
+#' @examples
+#' dat <- makeExampleData()
+#' ntrain <- dat$n/2
+#' fit <- runMethods(dat$X[seq_len(ntrain),],
+#'  dat$y[seq_len(ntrain)], dat$annot, beta0 = dat$beta)
+#' evalFit <- evaluateFits(fit, dat$X[seq_len(ntrain) + dat$n/2,],
+#'  dat$y[seq_len(ntrain)+ dat$n/2])
+#' getFPR(evalFit)
 
 getFPR <- function(AllFits) {
     vapply(AllFits$summaryList, function(l) {
@@ -178,7 +257,16 @@ getFPR <- function(AllFits) {
 #' @description get absolute error on beta
 #' @param AllFits object as produced by \code{\link{evaluateFits}}
 #' @export
-#'
+#' @return A vector of the absolute error on the estimated coefficients for each method.
+#' @examples
+#' dat <- makeExampleData()
+#' ntrain <- dat$n/2
+#' fit <- runMethods(dat$X[seq_len(ntrain),],
+#'  dat$y[seq_len(ntrain)], dat$annot, beta0 = dat$beta)
+#' evalFit <- evaluateFits(fit, dat$X[seq_len(ntrain) + dat$n/2,],
+#'  dat$y[seq_len(ntrain)+ dat$n/2])
+#' getl1error_beta(evalFit)
+
 getl1error_beta <- function(AllFits) {
     vapply(AllFits$summaryList, function(l) {
         l1error_beta <- l$l1error_beta
@@ -193,6 +281,16 @@ getl1error_beta <- function(AllFits) {
 #' @description get absolute error on intercept
 #' @param AllFits object as produced by \code{\link{evaluateFits}}
 #' @export
+#' @return A vector of the absolute error on the estimated intercept for each method.
+#' @examples
+#' dat <- makeExampleData(intercept = 1)
+#' ntrain <- dat$n/2
+#' fit <- runMethods(dat$X[seq_len(ntrain),],
+#'  dat$y[seq_len(ntrain)], dat$annot,
+#'   beta0 = dat$beta, trueintercept = 1)
+#' evalFit <- evaluateFits(fit, dat$X[seq_len(ntrain) + dat$n/2,],
+#'  dat$y[seq_len(ntrain)+ dat$n/2])
+#' getl1error_intercept(evalFit)
 
 getl1error_intercept <- function(AllFits) {
     vapply(AllFits$summaryList, function(l) {

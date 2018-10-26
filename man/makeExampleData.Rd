@@ -38,3 +38,6 @@ list containin the design matrix X,
 Simulate data from the Bayesian model
  with specified parameters gamma and tau
 }
+\examples{
+dat <- makeExampleData()
+}

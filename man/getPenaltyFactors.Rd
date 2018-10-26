@@ -9,6 +9,14 @@ getPenaltyFactors(AllFits)
 \arguments{
 \item{AllFits}{object as produced by \code{\link{runMethods}}}
 }
+\value{
+A matrix of penalty factors per group (rows) and method (columns).
+}
 \description{
 get penalty factors from various methods
+}
+\examples{
+dat <- makeExampleData()
+fit <- runMethods(dat$X, dat$y, dat$annot)
+getPenaltyFactors(fit)
 }

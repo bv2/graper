@@ -9,7 +9,12 @@
 #' @param data design matrix
 #' @param family liklihood model for the response
 #' @export
+#' @return a matrix containing estimates, standard errors, statistics
+#'  and p-values (rows) for each feature (columns) in the desing matrix
 #' @importFrom stats glm
+#' @examples
+#' dat <- makeExampleData(response="bernoulli")
+#' MarginalCoefficient(dat$y, dat$X, family= "binomial")
 MarginalCoefficient <- function(response, data, family = "gaussian") {
     apply(data, 2, function(c) {
         lm.fit <- stats::glm(response ~ c, family = family)
@@ -23,6 +28,10 @@ MarginalCoefficient <- function(response, data, family = "gaussian") {
 #' @description Function to impute by mean
 #' @param x vector to with value to impute
 #' @export
+#' @return vector with imputed values
+#' @examples
+#' x <- c(1,0.4,1.3, NA)
+#' ImputeByMean(x)
 ImputeByMean <- function(x) {
     x[is.na(x)] <- mean(x, na.rm = TRUE)
     return(x)
@@ -41,6 +50,14 @@ ImputeByMean <- function(x) {
 #'  "gaussian" for linear regression or "binomial" for logisitc regression
 #' @importFrom GRridge auc roc
 #' @export
+#' @return A list containting various performance measures such as RMSE, FNR, FPR etc
+#' @examples
+#' dat <- makeExampleData()
+#' # take a null model with all coefficeints set to zero for evaluation
+#' beta <- rep(0, dat$p)
+#' eval.out <- EvaluateModel(beta, intercept = 0, X_test = dat$X,
+#'  y_test = dat$y, beta0 = dat$beta, family = "gaussian")
+
 EvaluateModel <- function(beta_est, intercept, X_test,
                           y_test, beta0 = NULL, family) {
     if (is.null(intercept))

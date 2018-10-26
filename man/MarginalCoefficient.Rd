@@ -13,6 +13,14 @@ MarginalCoefficient(response, data, family = "gaussian")
 
 \item{family}{liklihood model for the response}
 }
+\value{
+a matrix containing estimates, standard errors, statistics
+ and p-values (rows) for each feature (columns) in the desing matrix
+}
 \description{
 Function to compute marignal regression coefficients
+}
+\examples{
+dat <- makeExampleData(response="bernoulli")
+MarginalCoefficient(dat$y, dat$X, family= "binomial")
 }

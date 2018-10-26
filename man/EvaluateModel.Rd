@@ -11,14 +11,26 @@ EvaluateModel(beta_est, intercept, X_test, y_test, beta0 = NULL, family)
 
 \item{intercept}{Estiamted intercept}
 
-\item{X_test}{design matrix test data of size number of test samples times features (used for fitting)}
+\item{X_test}{design matrix test data of size
+number of test samples times features (used for fitting)}
 
 \item{y_test}{response vectorof length number of  test samples}
 
 \item{beta0}{true model coefficients (if known)}
 
-\item{family}{liklihood model for the response, either "gaussian" for linear regression or "binomial" for logisitc regression}
+\item{family}{liklihood model for the response, either
+"gaussian" for linear regression or "binomial" for logisitc regression}
+}
+\value{
+A list containting various performance measures such as RMSE, FNR, FPR etc
 }
 \description{
 Function to evaluate model fits on test data
+}
+\examples{
+dat <- makeExampleData()
+# take a null model with all coefficeints set to zero for evaluation
+beta <- rep(0, dat$p)
+eval.out <- EvaluateModel(beta, intercept = 0, X_test = dat$X,
+ y_test = dat$y, beta0 = dat$beta, family = "gaussian")
 }

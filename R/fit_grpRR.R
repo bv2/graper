@@ -37,6 +37,16 @@
 #' @useDynLib grpRR
 #' @import Rcpp
 #' @export
+#' @examples
+#' dat <- makeExampleData()
+#' # fit a sparse model with spike and slab prior
+#' fit <- fit_grpRR(dat$X, dat$y, dat$annot)
+#' # fit a dense model without spike and slab prior
+#' fit <- fit_grpRR(dat$X, dat$y, dat$annot, spikeslab = FALSE)
+#' # fit a dense model without spike and
+#' # slab prior and multivariate meanfield assumption
+#' fit <- fit_grpRR(dat$X, dat$y, dat$annot,
+#'  factoriseQ = TRUE, spikeslab = FALSE)
 
 
 fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
@@ -61,8 +71,8 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
     # get group structure
     g <- length(unique(annot))
     NoPerGroup <- vapply(unique(annot), function(x){
-      sum(annot == x), numeric(1)
-      })
+      sum(annot == x)
+      }, numeric(1))
     names(NoPerGroup) <- unique(annot)
     message(paste("Fitting a model with", g, "groups,", n, "samples and", p , "features."))
 
@@ -74,7 +84,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
     if(family == "binomial"){
       if(calcELB){
         calcELB <- FALSE
-        warning("The implemntation of logistic regression is still in parts experimental.\n
+        warning("The implementation of logistic regression is still experimental.
                 ELBO calculations are not yet implemented for logistic regression.")
       }
     }

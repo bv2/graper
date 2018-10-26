@@ -10,14 +10,22 @@ plotMethodComparison(resultList, family = "gaussian",
   methods2plot = "all")
 }
 \arguments{
-\item{resultList}{List as created by cv_compare}
+\item{resultList}{List as created by \link{\code{cv_compare}}}
 
 \item{family}{gaussian or binomial (same as used in cv_compare)}
 
 \item{methods2plot}{which method to be plotted}
 }
+\value{
+a ggplot object
+}
 \description{
 @title plot comparison of methods
  @name plotMethodComparison
  @description Function to plot method comparison across several runs
+}
+\examples{
+dat <- makeExampleData()
+cv.out <- cv_compare(dat$X, dat$y, dat$annot, nfolds=3)
+plotMethodComparison(cv.out)
 }

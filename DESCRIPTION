@@ -7,11 +7,10 @@ Authors@R: person("Britta", "Velten", email = "britta.velten@embl.de",
 Date: 2018-10-01
 License: GPL (>= 2)
 Description: This package enables to fit penalised regression with different relative strength for different feature groups. The optimal relative strengths are chosen adaptively by using a variational Bayes approach. It also facilitate comparison to other regression methods.
-Depends: R (>= 3.4)
+Depends: R (>= 3.5)
 Encoding: UTF-8
 LazyData: TRUE
 Imports:
-	mvtnorm,
 	Matrix,
 	glmnet,
 	grpreg,
@@ -24,7 +23,9 @@ Imports:
 	ggplot2,
 	SGL,
 	varbvs, 
-	cowplot
+	cowplot,
+	parallel,
+	stats
 LinkingTo: Rcpp,
 	RcppArmadillo
 biocViews: Regression, Bayesian, Classification

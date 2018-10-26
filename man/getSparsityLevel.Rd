@@ -9,6 +9,14 @@ getSparsityLevel(AllFits)
 \arguments{
 \item{AllFits}{object as produced by \code{\link{runMethods}}}
 }
+\value{
+A matrix of sparsity levels per group (rows) and method (columns).
+}
 \description{
 get sparsity levels (1=dense, 0=sparse) from various methods
+}
+\examples{
+dat <- makeExampleData()
+fit <- runMethods(dat$X, dat$y, dat$annot)
+getSparsityLevel(fit)
 }

@@ -9,6 +9,19 @@ getl1error_intercept(AllFits)
 \arguments{
 \item{AllFits}{object as produced by \code{\link{evaluateFits}}}
 }
+\value{
+A vector of the absolute error on the estimated intercept for each method.
+}
 \description{
 get absolute error on intercept
+}
+\examples{
+dat <- makeExampleData(intercept = 1)
+ntrain <- dat$n/2
+fit <- runMethods(dat$X[seq_len(ntrain),],
+ dat$y[seq_len(ntrain)], dat$annot,
+  beta0 = dat$beta, trueintercept = 1)
+evalFit <- evaluateFits(fit, dat$X[seq_len(ntrain) + dat$n/2,],
+ dat$y[seq_len(ntrain)+ dat$n/2])
+getl1error_intercept(evalFit)
 }

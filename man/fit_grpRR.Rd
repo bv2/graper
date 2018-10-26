@@ -49,20 +49,24 @@ If spikeslab=FALSE, this is always done.}
 
 \item{calcELB}{boolean, indicating wether to calculate ELB}
 
-\item{verbose}{boolean, indicating wether to print out intermediate messages during fitting}
+\item{verbose}{boolean, indicating wether to
+print out intermediate messages during fitting}
 
-\item{freqELB}{determines frequency at which ELB is to be calculated, i.e. each feqELB-th iteration}
+\item{freqELB}{determines frequency at which ELB is to be calculated,
+i.e. each feqELB-th iteration}
 
 \item{family}{liklihood model for the response,
 either "gaussian" for linear regression or "binomial" for logisitc regression}
 
-\item{nogamma}{If true, the normal prior will have same variance for all groups (only relevant for SS)}
+\item{nogamma}{If true, the normal prior will have same variance for all groups
+(only relevant for spikeslab = TRUE)}
 
 \item{standardize}{boolean whether to standardize the predictors or not (default TRUE)}
 
 \item{init_psi}{initial value for the spike variables}
 
-\item{n_rep}{how many reptitions with random inits to be fit, model selection is based on ELBO}
+\item{n_rep}{how many reptitions with random inits to be fit,
+model selection is based on ELBO}
 }
 \value{
 List of fitted parameters
@@ -72,4 +76,15 @@ List of fitted parameters
  @name fit_grpRR
  @description Main function to fit a grpRR model.
  This provides an R wrapper to the different C functions.
+}
+\examples{
+dat <- makeExampleData()
+# fit a sparse model with spike and slab prior
+fit <- fit_grpRR(dat$X, dat$y, dat$annot)
+# fit a dense model without spike and slab prior
+fit <- fit_grpRR(dat$X, dat$y, dat$annot, spikeslab = FALSE)
+# fit a dense model without spike and
+# slab prior and multivariate meanfield assumption
+fit <- fit_grpRR(dat$X, dat$y, dat$annot,
+ factoriseQ = TRUE, spikeslab = FALSE)
 }

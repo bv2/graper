@@ -33,3 +33,6 @@ list containin the design matrix X, the response y, the feautre annotation to
 \description{
 Simulate data from the Bayesian model with specified parameters gamma and tau.
 }
+\examples{
+dat <- makeExampleDataWithUnequalGroups()
+}

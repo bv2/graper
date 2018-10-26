@@ -26,6 +26,14 @@ plotPosterior(fit, param2plot, beta0 = NULL, gamma0 = NULL,
 
 \item{range}{plotting range (x-axis)}
 }
+\value{
+a ggplot object
+}
 \description{
 plot the posterior of the model parameters
+}
+\examples{
+dat <- makeExampleData()
+fit <- fit_grpRR(dat$X, dat$y, dat$annot)
+plotPosterior(fit, param2plot="gamma")
 }

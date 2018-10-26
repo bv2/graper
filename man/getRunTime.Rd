@@ -9,6 +9,14 @@ getRunTime(AllFits)
 \arguments{
 \item{AllFits}{object as produced by \code{\link{runMethods}}}
 }
+\value{
+A vector of run times for each method.
+}
 \description{
 get run times of various methods
+}
+\examples{
+dat <- makeExampleData()
+fit <- runMethods(dat$X, dat$y, dat$annot)
+getRunTime(fit)
 }
