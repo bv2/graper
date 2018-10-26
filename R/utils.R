@@ -33,13 +33,16 @@ ImputeByMean <- function(x) {
 #' @description Function to evaluate model fits on test data
 #' @param beta_est Estimated model coefficients
 #' @param intercept Estiamted intercept
-#' @param X_test design matrix test data of size number of test samples times features (used for fitting)
+#' @param X_test design matrix test data of size
+#'  number of test samples times features (used for fitting)
 #' @param y_test response vectorof length number of  test samples
 #' @param beta0 true model coefficients (if known)
-#' @param family liklihood model for the response, either "gaussian" for linear regression or "binomial" for logisitc regression
+#' @param family liklihood model for the response, either
+#'  "gaussian" for linear regression or "binomial" for logisitc regression
 #' @importFrom GRridge auc roc
 #' @export
-EvaluateModel <- function(beta_est, intercept, X_test, y_test, beta0 = NULL, family) {
+EvaluateModel <- function(beta_est, intercept, X_test,
+                          y_test, beta0 = NULL, family) {
     if (is.null(intercept))
         intercept <- 0
     intercept <- as.numeric(intercept)
@@ -69,7 +72,8 @@ EvaluateModel <- function(beta_est, intercept, X_test, y_test, beta0 = NULL, fam
         RMSE_test <- sqrt(sum((y_test - pred_gauss)^2)/length(y_test))
     } else if (family == "binomial") {
         # Brier score
-        predexp <- pmin(intercept + X_test %*% beta_est, 500)  # to avoid NaN for too large numbers
+      # to avoid NaN for too large numbers
+        predexp <- pmin(intercept + X_test %*% beta_est, 500)
         predprob <- exp(predexp)/(1 + exp(predexp))
         BrierScore <- sum((y_test - predprob)^2)/length(y_test)
 

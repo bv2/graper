@@ -1,97 +1,24 @@
-# This file contains function to simulate data according to a linear model with grouped features
-# - simulateExplicit uses fixed coefficients
-# - makeExampleData simulates coeffients from the Bayesian model
-
-#' @title Simulate Data According to a linear model with given coefficients
-#' @name simulateExplicit
-#' @param n number of samples
-#' @param p number of features
-#' @param beta model coefficients
-#' @param sigma2 noise variance
-#' @param seed random seed
-#' @param exp_decay_cor covariance matrix with exponential decay of covariance
-#' @param equiCor coefficient amplitude in most-informative group
-#' @param block_cor correlation within feature blocks
-#' @param blockSize size of correlated blocks (if block_cor>0)
-#' @return list with simulated response y and design matrix X
-#' @export
-
-simulateExplicit <- function(n, p, beta, sigma2, seed, exp_decay_cor =0, block_cor = 0, equiCor = 0, blockSize = 0) {
-
-    stopifnot(p == length(beta))  #number of features should be a multiple of the number of groups
-    stopifnot(block_cor == 0 | p%%blockSize == 0)  #number of features should be a multiple of the blockSize
-
-    set.seed(seed)
-
-    stopifnot(exp_decay_cor == 0 | ( block_cor == 0 & equiCor == 0))
-    # construct design
-    if(exp_decay_cor>0){
-      # option A: construct covariance matrix with exponential decay of covariance
-    pp <- expand.grid(seq_len(p), seq_len(p))
-    Sigma <- matrix(exp(-1/exp_decay_cor*abs(pp[,1]-pp[,2])), nrow=p)
-    X <- mvtnorm::rmvnorm(n, rep(0, p), Sigma)
-    } else if (block_cor != 0 | equiCor != 0) {
-        # option B: construct covariance matrix with block correlation
-        block <- matrix(block_cor, nrow = blockSize, ncol = blockSize)
-        diag(block) <- 1
-        Sigma <- Matrix::bdiag(rep(list(block), p/blockSize))
-        if (equiCor != 0)
-            Sigma[Sigma == 0] <- equiCor
-        X <- mvtnorm::rmvnorm(n, rep(0, p), as.matrix(Sigma))
-    } else {
-      #option C: indep.
-      X <- matrix(rnorm(p * n, 0, 1), ncol = p, nrow = n)
-    }
-
-    # simulate response
-    y <- X %*% beta + rnorm(n, 0, sqrt(sigma2))
-
-    return(list(y = y, X = X))
-}
-
-#' @title Simulate gaussian data with given coefficients and toeplitz design matrix
-#' @name simulateData_toeplitz
-#' @description Simulate data according to a linear model with given coefficients and toeplitz design matrix
-#' @param n number of samples
-#' @param p number of features
-#' @param beta model coefficients
-#' @param sigma2 noise variance
-#' @param seed random seed
-#' @param rho Toeplitz parameter
-#' @return list with simulated response y and design matrix X
-#' @export
-simulateData_toeplitz <- function(n, p, beta, sigma2, seed, rho) {
-
-    stopifnot(p == length(beta))  #number of features should be a multiple of the number of groups
-    set.seed(seed)
-
-    # construct design
-    Sigma = toeplitz(rho^(0:(p-1)))
-    X = matrix(rnorm(n*p),n) %*% chol(Sigma)
-
-    # simulate response
-    y <- X %*% beta + rnorm(n, 0, sqrt(sigma2))
-
-    return(list(y = y, X = X))
-}
-
-
 #' @title Simulate example data with groups of equal size
 #' @name makeExampleData
-#' @description Simulate data from the Bayesian model with specified parameters gamma and tau
+#' @description Simulate data from the Bayesian model
+#'  with specified parameters gamma and tau
 #' @param n number of samples
 #' @param p number of features
 #' @param g number of groups
-#' @param gammas vector of length g, sepcifying the slab precision of the prior on beta per group
+#' @param gammas vector of length g, sepcifying the slab precision
+#'  of the prior on beta per group
 #' @param pis vector of length g, sepcifying the probability of s to be 1 (slab)
 #' @param tau noise precision
 #' @param rho correlation of design matrix (Toeplitz structure)
 #' @param response gaussion or bernoulli for linear or logistic regression, respectively
 #' @param intercept model intercept (default: 0)
-#' @return list containin the design matrix X, the response y, the feautre annotation to
-#'  groups annot as well as the different parameters in the Bayesian model and the correlation strength rho
+#' @return list containin the design matrix X,
+#'  the response y, the feautre annotation to
+#'  groups annot as well as the different parameters
+#'  in the Bayesian model and the correlation strength rho
 #' @export
-makeExampleData <- function(n=100, p=200, g=4, gammas=c(0.1,1,10,100), pis=c(0.5,0.5,0.5,0.5),
+makeExampleData <- function(n=100, p=200, g=4,
+                            gammas=c(0.1,1,10,100), pis=c(0.5,0.5,0.5,0.5),
                             tau=1, rho=0, response = "gaussian", intercept = 0) {
 
     #checks
@@ -115,11 +42,14 @@ makeExampleData <- function(n=100, p=200, g=4, gammas=c(0.1,1,10,100), pis=c(0.5
 #' @param response gaussion or bernoulli for linear or logistic regression, respectively
 #' @param intercept model intercept (default: 0)
 #' @return list containin the design matrix X, the response y, the feautre annotation to
-#'  groups annot as well as the different parameters in the Bayesian model and the correlation strength rho
+#'  groups annot as well as the different parameters in the Bayesian model
+#'   and the correlation strength rho
 #' @export
 #' @importFrom stats toeplitz rnorm rbinom
-makeExampleDataWithUnequalGroups <- function(n=100, pg=c(100,100,10,10), gammas=c(0.1,10,0.1,10),
-                                             pis=c(0.5,0.5,0.5,0.5), tau=1, rho=0, response = "gaussian",
+makeExampleDataWithUnequalGroups <- function(n=100, pg=c(100,100,10,10),
+                                             gammas=c(0.1,10,0.1,10),
+                                             pis=c(0.5,0.5,0.5,0.5),
+                                             tau=1, rho=0, response = "gaussian",
                                              intercept = 0) {
 
     #checks
@@ -127,7 +57,9 @@ makeExampleDataWithUnequalGroups <- function(n=100, pg=c(100,100,10,10), gammas=
     p <- sum(pg)
     stopifnot(length(gammas)==g)
     stopifnot(length(pis)==g)
-    if(!response %in% c("gaussian", "bernoulli")) stop("Response needs to be 'gaussian' or 'bernoulli'.")
+    if(!response %in% c("gaussian", "bernoulli")){
+      stop("Response needs to be 'gaussian' or 'bernoulli'.")
+    }
 
     # construct design
     Sigma <- stats::toeplitz(rho^(0:(p-1)))
@@ -135,8 +67,10 @@ makeExampleDataWithUnequalGroups <- function(n=100, pg=c(100,100,10,10), gammas=
     X <- scale(X)
 
     # simulate coefficients
-    beta_tilde <- Reduce(c,lapply(seq_len(g), function(k) stats::rnorm(pg[k],0,sqrt(1/gammas[k]))))
-    s <- Reduce(c,lapply(seq_len(g), function(k) stats::rbinom(pg[k],1,pis[k])))
+    beta_tilde <- Reduce(c,lapply(seq_len(g),
+                                  function(k) stats::rnorm(pg[k],0,sqrt(1/gammas[k]))))
+    s <- Reduce(c,lapply(seq_len(g),
+                         function(k) stats::rbinom(pg[k],1,pis[k])))
     beta <- s* beta_tilde
 
     #simulate response

@@ -15,7 +15,8 @@ makeExampleData(n = 100, p = 200, g = 4, gammas = c(0.1, 1, 10,
 
 \item{g}{number of groups}
 
-\item{gammas}{vector of length g, sepcifying the slab precision of the prior on beta per group}
+\item{gammas}{vector of length g, sepcifying the slab precision
+of the prior on beta per group}
 
 \item{pis}{vector of length g, sepcifying the probability of s to be 1 (slab)}
 
@@ -28,9 +29,12 @@ makeExampleData(n = 100, p = 200, g = 4, gammas = c(0.1, 1, 10,
 \item{intercept}{model intercept (default: 0)}
 }
 \value{
-list containin the design matrix X, the response y, the feautre annotation to
- groups annot as well as the different parameters in the Bayesian model and the correlation strength rho
+list containin the design matrix X,
+ the response y, the feautre annotation to
+ groups annot as well as the different parameters
+ in the Bayesian model and the correlation strength rho
 }
 \description{
-Simulate data from the Bayesian model with specified parameters gamma and tau
+Simulate data from the Bayesian model
+ with specified parameters gamma and tau
 }

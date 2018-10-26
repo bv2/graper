@@ -1,5 +1,3 @@
-# Functions to extract specific statistics from the results list produced by \code{\link{runMethods}}
-
 #' @title get penalty factors
 #' @name getPenaltyFactors
 #' @description get penalty factors from various methods

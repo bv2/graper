@@ -27,7 +27,8 @@ makeExampleDataWithUnequalGroups(n = 100, pg = c(100, 100, 10, 10),
 }
 \value{
 list containin the design matrix X, the response y, the feautre annotation to
- groups annot as well as the different parameters in the Bayesian model and the correlation strength rho
+ groups annot as well as the different parameters in the Bayesian model
+  and the correlation strength rho
 }
 \description{
 Simulate data from the Bayesian model with specified parameters gamma and tau.

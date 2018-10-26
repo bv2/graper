@@ -4,7 +4,8 @@
 \alias{fit_grpRR}
 \title{@title Fit grpRR model
  @name fit_grpRR
- @description Main function to fit a grpRR model. This provides an R wrapper to the different C functions.}
+ @description Main function to fit a grpRR model.
+ This provides an R wrapper to the different C functions.}
 \usage{
 fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
   d_tau = 0.001, r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001,
@@ -20,7 +21,9 @@ fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
 
 \item{annot}{Factor of length p indicating group membership of each feature}
 
-\item{factoriseQ}{If true, the variational distribution is assumed to fully factorize across features (rougher approx., but faster). If spikeslab=F, this is always done.}
+\item{factoriseQ}{If true, the variational distribution is assumed
+to fully factorize across features (rougher approx., but faster).
+If spikeslab=FALSE, this is always done.}
 
 \item{spikeslab}{If true, a spike and slab prior is used instead of a normal prior}
 
@@ -32,9 +35,11 @@ fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
 
 \item{r_gamma}{hyper-parameters for prior of gamma (coeffient's prior precision)}
 
-\item{r_pi}{hyper-parameters for prior of pi (Spike-Slab-Bernoulli variable prior probabiliy of being 1)}
+\item{r_pi}{hyper-parameters for prior of pi
+(Spike-Slab-Bernoulli variable prior probabiliy of being 1)}
 
-\item{d_pi}{hyper-parameters for prior of pi (Spike-Slab-Bernoulli variable prior probabiliy of being 1)}
+\item{d_pi}{hyper-parameters for prior of pi
+(Spike-Slab-Bernoulli variable prior probabiliy of being 1)}
 
 \item{max_iter}{maximum number of iterations}
 
@@ -48,7 +53,8 @@ fit_grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
 
 \item{freqELB}{determines frequency at which ELB is to be calculated, i.e. each feqELB-th iteration}
 
-\item{family}{liklihood model for the response, either "gaussian" for linear regression or "binomial" for logisitc regression}
+\item{family}{liklihood model for the response,
+either "gaussian" for linear regression or "binomial" for logisitc regression}
 
 \item{nogamma}{If true, the normal prior will have same variance for all groups (only relevant for SS)}
 
@@ -64,5 +70,6 @@ List of fitted parameters
 \description{
 @title Fit grpRR model
  @name fit_grpRR
- @description Main function to fit a grpRR model. This provides an R wrapper to the different C functions.
+ @description Main function to fit a grpRR model.
+ This provides an R wrapper to the different C functions.
 }

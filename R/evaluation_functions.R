@@ -1,35 +1,57 @@
 #' @title Run various regression methods
 #' @name runMethods
-#' @description Function to run serveral different methods for high-dimensional regression
+#' @description Function to run serveral different methods
+#'  for high-dimensional regression.
 #' @param Xtrain Design matrix of size n x p
 #' @param ytrain Response vector of size n
 #' @param annot Factor of length p indicating group membership of each feature
-#' @param beta0 True coefficients in the linear model if known, NULL otherwise (default)
-#' @param trueintercept True intercept in the linear model if known, NULL otherwise (default)
+#' @param beta0 True coefficients in the linear model if known,
+#'  NULL otherwise (default)
+#' @param trueintercept True intercept in the linear model if known,
+#'  NULL otherwise (default)
 #' @param max_iter maximum number of iterations
-#' @param family liklihood model for the response, either "gaussian" for linear regression
-#'  or "binomial" for logisitc regression
+#' @param family liklihood model for the response,
+#'  either "gaussian" for linear regression
+#' or "binomial" for logisitc regression
 #' @param intercept boolean, indicating wether to fit an intercept
-#' @param standardize boolean, indicating wether features for Ridge and Lasso fit should be standardized.
-#'  Note this does not affect GRridge and grouplasso where standardization is default.
+#' @param standardize boolean, indicating wether
+#'  features for Ridge and Lasso fit should be standardized.
+#'  Note this does not affect GRridge and group Lasso
+#'   where standardization is default.
 #' @param calcELB boolean, indicating wether to calculate ELB
-#' @param freqELB determines frequency at which ELB is to be calculated, i.e. each feqELB-th iteration
-#' @param th convergence threshold on the ELBO for the variational Bayes algorithm
-#' @param n_rep number of repeated fits with variational Bayes using different random intilizations
-#' @param verbose boolean, indicating wether to print out intermediate messages during fitting
-#' @param compareGRridge boolean, indicating wether to fit a GRridge model
-#' @param include_nonfacQ include a VB method with multivariate variational distributon
+#' @param freqELB determines frequency at which ELB is to be calculated,
+#'  i.e. each feqELB-th iteration
+#' @param th convergence threshold on the ELBO
+#' for the variational Bayes algorithm
+#' @param n_rep number of repeated fits with
+#'  variational Bayes using different random intilizations
+#' @param verbose boolean, indicating wether
+#'  to print out intermediate messages during fitting
+#' @param compareGRridge boolean, indicating
+#'  wether to fit a GRridge model
+#' @param include_nonfacQ include a VB method
+#'  with multivariate variational distributon
 #'  (can be very timme consuming for large data sets)
-#' @param compareIPF boolean, indicating whether to fit a IPFLasso
-#' @param compareSparseGroupLasso boolean, indicating whether to fit a sparse group lasso
-#' @param compareGroupLasso boolean, indicating whether to fit a group lasso
-#' @param compareAdaLasso boolean, indicating whether to fit an adpative lasso
-#' @param includeRF boolean, indicating whether to fit a random forest
-#' @param include_varbvs boolean, indicating whether to fit varbvs
-#' @param include_nogamma boolean, indicating whether to fit a grpRR model without different slab parameters
-#' @param include_grpRR_SS_ungrouped boolean, indicating whether to fit a grpRR model without group annotations
-#' @param verbose_progress boolean, indicating whether to print details on the progress
-#' @return List of fitted models and two data frames with coeffcients and penalty factors
+#' @param compareIPF boolean, indicating
+#' whether to fit a IPFLasso
+#' @param compareSparseGroupLasso boolean, indicating
+#'  whether to fit a sparse group lasso
+#' @param compareGroupLasso boolean, indicating
+#'  whether to fit a group lasso
+#' @param compareAdaLasso boolean, indicating
+#'  whether to fit an adpative lasso
+#' @param includeRF boolean, indicating
+#'  whether to fit a random forest
+#' @param include_varbvs boolean, indicating
+#'  whether to fit varbvs
+#' @param include_nogamma boolean, indicating
+#'  whether to fit a grpRR model without different slab parameters
+#' @param include_grpRR_SS_ungrouped boolean, indicating
+#'  whether to fit a grpRR model without group annotations
+#' @param verbose_progress boolean, indicating
+#'  whether to print details on the progress
+#' @return List of fitted models and two data frames with
+#'  coeffcients and penalty factors
 #' @importFrom glmnet cv.glmnet
 #' @importFrom varbvs varbvs
 #' @importFrom randomForest randomForest
@@ -45,7 +67,8 @@
 #'  group number G, feature and annotation names)
 #' @export
 
-runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL, max_iter = 5000,
+runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL,
+                       trueintercept = NULL, max_iter = 5000,
                        family = "gaussian", intercept = TRUE, standardize = TRUE,
                        freqELB = 10, calcELB = TRUE, th = 0.01,
                        n_rep=1, verbose = FALSE, verbose_progress = TRUE,
@@ -56,7 +79,8 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
                        include_nogamma=FALSE, include_grpRR_SS_ungrouped= FALSE) {
 
   if (!standardize)
-    warning("Group Lasso and GRridge are alwyas standardized, despite of standardized = FALSE.")
+    warning("Group Lasso and GRridge are alwyas standardized,
+            despite of standardized = FALSE.")
 
   # sanity checks
   stopifnot(nrow(Xtrain) == length(ytrain))
@@ -143,7 +167,8 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
   summaryList$grpRR_SScutoff <- grpRR_SScutoff_summary
   rm(grpRR_SS)
 
-  # grpRR_SS_nogamma: fully factorized variational distribution, spike and slab prior (sparse) without different slab precisions
+  # grpRR_SS_nogamma: fully factorized variational distribution,
+  # spike and slab prior (sparse) without different slab precisions
   if(include_nogamma){
     tmp <- Sys.time()
     if(verbose_progress) message(" ### Fitting grpRR_SS model without gamma...")
@@ -168,10 +193,13 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
   if(include_grpRR_SS_ungrouped){
     tmp <- Sys.time()
     if(verbose_progress) message(" ### Fitting grpRR_SS model without group annotations...")
-    grpRR_SS_ungrouped <- fit_grpRR(Xtrain, ytrain, annot = rep(1,ncol(Xtrain)), factoriseQ = TRUE,
-                                    spikeslab = TRUE, max_iter = max_iter, intercept = intercept,
-                                    verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th,
-                                    family = family,  nogamma = TRUE, standardize=standardize, n_rep=n_rep)
+    grpRR_SS_ungrouped <- fit_grpRR(Xtrain, ytrain, annot = rep(1,ncol(Xtrain)),
+                                    factoriseQ = TRUE, spikeslab = TRUE,
+                                    max_iter = max_iter, intercept = intercept,
+                                    verbose = verbose, freqELB = freqELB,
+                                    calcELB = calcELB, th = th,
+                                    family = family,  nogamma = TRUE,
+                                    standardize=standardize, n_rep=n_rep)
     timeSS_ungrouped <- difftime(Sys.time(), tmp, units = "secs")
     grpRR_SS_ungrouped_summary <- list()
     grpRR_SS_ungrouped_summary$runtime <- as.numeric(timeSS_ungrouped)
@@ -195,7 +223,9 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
   Ridge_summary$runtime <- as.numeric(tmp)
   Ridge_summary$pf <- rep(RidgeFit$lambda.min, G)
   Ridge_summary$beta <- beta_ridge
-  if(intercept) Ridge_summary$intercept <- as.vector(stats::coef(RidgeFit, RidgeFit$lambda.min))[1]
+  if(intercept) {
+    Ridge_summary$intercept <- as.vector(stats::coef(RidgeFit, RidgeFit$lambda.min))[1]
+  }
   Ridge_summary$sparsity <- rep(1, G)  #dense - no sparsity per groups
   Ridge_summary$out <- RidgeFit
   rm(RidgeFit, beta_ridge)
@@ -204,14 +234,17 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
   # Lasso
   tmp <- Sys.time()
   if(verbose_progress) message(" ### Fitting Lasso...")
-  LassoFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 1, intercept = intercept, standardize = standardize, family = family)
+  LassoFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 1, intercept = intercept,
+                                standardize = standardize, family = family)
   tmp <- difftime(Sys.time(), tmp, units = "secs")
   beta_lasso <- as.vector(stats::coef(LassoFit, LassoFit$lambda.min))[-1]
   Lasso_summary <- list()
   Lasso_summary$runtime <- as.numeric(tmp)
   Lasso_summary$pf <- rep(LassoFit$lambda.min, G)
   Lasso_summary$beta <- beta_lasso
-  if(intercept) Lasso_summary$intercept <- as.vector(stats::coef(LassoFit, LassoFit$lambda.min))[1]
+  if(intercept) {
+    Lasso_summary$intercept <- as.vector(stats::coef(LassoFit, LassoFit$lambda.min))[1]
+  }
   Lasso_summary$sparsity <- vapply(unique(annot),
                                    function(gr) sum(beta_lasso[annot == gr] != 0)/sum(annot == gr),
                                    numeric(1))
@@ -222,7 +255,8 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
   # elastic net
   tmp <- Sys.time()
   if(verbose_progress) message(" ### Fitting elastic net...")
-  ENFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 0.2, intercept = intercept, standardize = standardize, family = family)
+  ENFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 0.2, intercept = intercept,
+                             standardize = standardize, family = family)
   tmp <- difftime(Sys.time(), tmp, units = "secs")
   beta_EN <- as.vector(stats::coef(ENFit, ENFit$lambda.min))[-1]
   ElasticNet_summary <- list()
@@ -263,8 +297,11 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
   if (includeRF) {
     tmp <- Sys.time()
     if(verbose_progress) message(" ### Fitting random forest...")
-    if(family=="gaussian") rf.out <- randomForest::randomForest(x = Xtrain, y = ytrain)
-    else if(family=="binomial") rf.out <- randomForest::randomForest(x = Xtrain, y = as.factor(ytrain))
+    if(family=="gaussian") {
+      rf.out <- randomForest::randomForest(x = Xtrain, y = ytrain)
+    } else if(family=="binomial") {
+      rf.out <- randomForest::randomForest(x = Xtrain, y = as.factor(ytrain))
+    }
     tmp <- difftime(Sys.time(), tmp, units = "secs")
     RandomForest_summary <- list()
     RandomForest_summary$runtime <- as.numeric(tmp)
@@ -293,10 +330,13 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
       GroupLasso_summary$runtime <- as.numeric(tmp)
       GroupLasso_summary$pf <- rep(GrpLassoFit$lambda.min, G)
       GroupLasso_summary$beta <- beta_GrpLasso
-      if(intercept) GroupLasso_summary$intercept <- as.vector(stats::coef(GrpLassoFit, GrpLassoFit$lambda.min))[1]
+      if(intercept) {
+        GroupLasso_summary$intercept <- as.vector(stats::coef(GrpLassoFit, GrpLassoFit$lambda.min))[1]
+      }
       GroupLasso_summary$sparsity <- vapply(unique(annot),
-                                            function(gr) sum(beta_GrpLasso[annot == gr] != 0)/sum(annot == gr),
-                                            numeric(1))
+                                            function(gr) {
+                                              sum(beta_GrpLasso[annot == gr] != 0)/sum(annot == gr)
+                                              }, numeric(1))
       GroupLasso_summary$out <- GrpLassoFit
       rm(GrpLassoFit, beta_GrpLasso)
       summaryList$GroupLasso <- GroupLasso_summary
@@ -305,7 +345,9 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
 
   # sparse group lasso
   if (compareSparseGroupLasso) {
-    if(intercept) warning("Sparse group lasso does not fit an intercept, need to center beforehand")
+    if(intercept) {
+      warning("Sparse group lasso does not fit an intercept, need to center beforehand")
+    }
     tmp <- Sys.time()
     if(verbose_progress) message(" ### Fitting sparse group Lasso...")
     SpGrpLassoFit <- try(SGL::cvSGL(list(x=Xtrain, y=ytrain),
@@ -321,9 +363,9 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
       SpGroupLasso_summary$pf <- rep(SpGrpLassoFit$lambdas[which.min(SpGrpLassoFit$lldiff)], G)
       SpGroupLasso_summary$beta <- beta_SpGrpLasso
       SpGroupLasso_summary$intercept <- NULL
-      SpGroupLasso_summary$sparsity <- vapply(unique(annot),
-                                              function(gr) sum(beta_SpGrpLasso[annot == gr] != 0)/sum(annot == gr),
-                                              numeric(1))
+      SpGroupLasso_summary$sparsity <- vapply(unique(annot), function(gr){
+        sum(beta_SpGrpLasso[annot == gr] != 0)/sum(annot == gr)
+      }, numeric(1))
       SpGroupLasso_summary$out <- SpGrpLassoFit
       rm(SpGrpLassoFit, beta_SpGrpLasso)
       summaryList$SparseGroupLasso <- SpGroupLasso_summary
@@ -337,10 +379,12 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     partition <- GRridge::CreatePartition(as.factor(annot))
     if (intercept) {
       #notes itself which type of respone (new version!)
-      MessagesGR <- utils::capture.output(GRfit <- try(GRridge::grridge(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~1)))
+      MessagesGR <- utils::capture.output(GRfit <- try(GRridge::grridge(t(Xtrain), as.numeric(ytrain),
+                                                                        list(partition), unpenal = ~1)))
     } else {
       #notes itself which type of respone (new version!)
-      MessagesGR <- utils::capture.output(GRfit <- try(GRridge::grridge(t(Xtrain), as.numeric(ytrain), list(partition), unpenal = ~0)))
+      MessagesGR <- utils::capture.output(GRfit <- try(GRridge::grridge(t(Xtrain), as.numeric(ytrain),
+                                                                        list(partition), unpenal = ~0)))
     }
     tmp <- difftime(Sys.time(), tmp, units = "secs")
     if (verbose)
@@ -418,9 +462,9 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
       IPFLasso_summary$pf <- pflist[[ipf.out$ind.bestpf]]
       IPFLasso_summary$beta <- ipf.out$coeff[-1,ipf.out$ind.bestlambda]
       IPFLasso_summary$intercept <- ipf.out$coeff[1,ipf.out$ind.bestlambda]
-      IPFLasso_summary$sparsity <-  vapply(unique(annot),
-                                           function(gr) sum(IPFLasso_summary$beta[annot == gr] != 0)/sum(annot == gr),
-                                           numeric(1))
+      IPFLasso_summary$sparsity <-  vapply(unique(annot), function(gr) {
+        sum(IPFLasso_summary$beta[annot == gr] != 0)/sum(annot == gr)
+        }, numeric(1))
       IPFLasso_summary$out <- ipf.out
       rm(ipf.out)
       summaryList$IPFLasso <- IPFLasso_summary
@@ -433,30 +477,38 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
     tmp <- Sys.time()
     if(verbose_progress) message(" ### Fitting adaptive Lasso...")
     ## Ridge Regression to create the Adaptive Weights Vector
-    RidgeFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 0, intercept = intercept, standardize = standardize, family = family)
+    RidgeFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 0, intercept = intercept,
+                                  standardize = standardize, family = family)
     wRidge <- pmin(1/abs((stats::coef(RidgeFit, s = RidgeFit$lambda.min))), 1e+300)
     wRidge <- wRidge[-1]
     adaLassoFit <- glmnet::cv.glmnet(Xtrain, ytrain, alpha = 1, intercept = intercept,
-                                     standardize = standardize, family = family, penalty.factor = wRidge)
+                                     standardize = standardize, family = family,
+                                     penalty.factor = wRidge)
     tmp <- difftime(Sys.time(), tmp, units = "secs")
     beta_adalasso <- as.vector(stats::coef(adaLassoFit, adaLassoFit$lambda.min))[-1]
     adaLasso_summary <- list()
     adaLasso_summary$runtime <- as.numeric(tmp)
-    adaLasso_summary$pf <- vapply(unique(annot),
-                                  function(gr) mean(adaLassoFit$lambda.min * wRidge[annot == gr]),
-                                  numeric(1))
+    adaLasso_summary$pf <- vapply(unique(annot), function(gr){
+      mean(adaLassoFit$lambda.min * wRidge[annot == gr]),
+    } numeric(1))
     adaLasso_summary$beta <- beta_adalasso
-    if(intercept) adaLasso_summary$intercept <- as.vector(stats::coef(adaLassoFit, adaLassoFit$lambda.min))[1]
-    adaLasso_summary$sparsity <- vapply(unique(annot),
-                                        function(gr) sum(beta_adalasso[annot == gr] != 0)/sum(annot == gr),
-                                        numeric(1))
+    if(intercept) {
+      adaLasso_summary$intercept <- as.vector(stats::coef(adaLassoFit, adaLassoFit$lambda.min))[1]
+    }
+    adaLasso_summary$sparsity <- vapply(unique(annot), function(gr) {
+      sum(beta_adalasso[annot == gr] != 0)/sum(annot == gr)
+      }, numeric(1))
     adaLasso_summary$out <- adaLassoFit
     rm(adaLassoFit, beta_adalasso)
     summaryList$adaptiveLasso <- adaLasso_summary
   }
 
-  return(list(summaryList = summaryList, groupnames = groupnames, varnames = varnames,
-              family = family, n = n, p = p, G = G, annot = annot))
+  return(list(summaryList = summaryList,
+              groupnames = groupnames,
+              varnames = varnames,
+              family = family,
+              n = n, p = p,
+              G = G, annot = annot))
 }
 
 
@@ -467,9 +519,11 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
 #' @name evaluateFits
 #' @description Function to evaluate results on test data
 #' @param allFits List as produced by \code{\link{runMethods}}
-#' @param Xtest Design matrix of size n' x p (same feature structure as used in \code{\link{runMethods}})
+#' @param Xtest Design matrix of size n' x p
+#' (same feature structure as used in \code{\link{runMethods}})
 #' @param ytest Response vector of size n'
-#' @return List as prodcused by \code{\link{runMethods}} with additional predicition performance slots
+#' @return List as prodcused by \code{\link{runMethods}} with
+#'  additional predicition performance slots
 #' @export
 #' @importFrom stats predict
 
@@ -495,7 +549,8 @@ evaluateFits <- function(allFits, Xtest, ytest) {
       intercept <- summary$intercept
       if (!is.null(beta)) {
         # for cases with linear coefficients
-        RMSE <- EvaluateModel(beta, intercept = intercept, Xtest, ytest, beta0 = beta0, family = "gaussian")$RMSE_test
+        RMSE <- EvaluateModel(beta, intercept = intercept, Xtest, ytest,
+                              beta0 = beta0, family = "gaussian")$RMSE_test
         summary$RMSE <- RMSE
       }
       summary
@@ -513,7 +568,8 @@ evaluateFits <- function(allFits, Xtest, ytest) {
       intercept <- summary$intercept
       if (!is.null(beta)) {
         # for cases with linear coeeficients
-        eval.out <- EvaluateModel(beta, intercept = intercept, Xtest, ytest, beta0 = beta0, family = "binomial")
+        eval.out <- EvaluateModel(beta, intercept = intercept, Xtest,
+                                  ytest, beta0 = beta0, family = "binomial")
         summary$AUC <- eval.out$AUC
         summary$BS <- eval.out$BrierScore
       }
@@ -529,7 +585,8 @@ evaluateFits <- function(allFits, Xtest, ytest) {
       intercept <- summary$intercept
       if (!is.null(beta)) {
         # for cases without linear coeeficients e.g. Random Forest
-        eval.out <- EvaluateModel(beta, intercept = intercept, Xtest, ytest, beta0 = beta0, family = family)
+        eval.out <- EvaluateModel(beta, intercept = intercept, Xtest,
+                                  ytest, beta0 = beta0, family = family)
         summary$FPR <- eval.out$FPR
         summary$FNR <- eval.out$FNR
         summary$precision <- eval.out$precision
@@ -570,7 +627,8 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 
 #' @title Compare various regression method via cross-validation
 #' @name cv_compare
-#' @description  Function to run serveral different methods for high-dimensional regression and evaluate them in a cross-validated fashion
+#' @description  Function to run serveral different methods for
+#' high-dimensional regression and evaluate them in a cross-validated fashion
 #' @param X Design matrix of size n x p
 #' @param y Response vector of size n
 #' @param annot Factor of length p indicating group membership of each feature
@@ -583,7 +641,8 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 #' @param saveFits boolean: Save the fit of each fold?
 #' @param ... Other parameters that can be passed to \code{\link{runMethods}}
 #'
-#' @return List of fitted models and two data frames with coeffcients and penalty factors
+#' @return List of fitted models and two data frames with
+#'  coeffcients and penalty factors
 #' @import ggplot2
 #' @import parallel
 #' @export
@@ -596,7 +655,8 @@ cv_compare <- function(X, y, annot, family="gaussian",
   if(!is.null(seed)) set.seed(seed)
   foldid <- sample(rep(seq(nfolds), length=nrow(X)))
 
-  # function for each fold in cross-validation: train method on all excpet one fold, evaluate on the hold-out fold
+  # function for each fold in cross-validation: train method on all
+  # excpet one fold, evaluate on the hold-out fold
   runPerFold <- function(foldidx){
     # split in train and test data
     use4test <- foldid==foldidx
@@ -630,15 +690,21 @@ cv_compare <- function(X, y, annot, family="gaussian",
 
     if (family=="gaussian"){
       RMSE <- getRMSE(AllFits)
-      l <- list(FPR=FPR, FNR=FNR, RMSE=RMSE, pf_mat=pf_mat, beta_mat=beta_mat,
-                intercepts=intercepts, sparsity_mat=sparsity_mat, annot=AllFits$annot, runtime=runtime,
-                l1error_intercept=l1error_intercept, l1error_beta=l1error_beta)
+      l <- list(FPR=FPR, FNR=FNR, RMSE=RMSE,
+                pf_mat=pf_mat, beta_mat=beta_mat,
+                intercepts=intercepts, sparsity_mat=sparsity_mat,
+                annot=AllFits$annot, runtime=runtime,
+                l1error_intercept=l1error_intercept,
+                l1error_beta=l1error_beta)
     } else if(family=="binomial"){
       BS <- getBS(AllFits)
       AUC <- getAUC(AllFits)
-      l <- list(FPR=FPR, FNR=FNR, BS=BS, AUC=AUC, pf_mat=pf_mat, beta_mat=beta_mat,
-                intercepts=intercepts, sparsity_mat=sparsity_mat, annot=AllFits$annot, runtime=runtime,
-                l1error_intercept=l1error_intercept, l1error_beta=l1error_beta)
+      l <- list(FPR=FPR, FNR=FNR, BS=BS, AUC=AUC,
+                pf_mat=pf_mat, beta_mat=beta_mat,
+                intercepts=intercepts, sparsity_mat=sparsity_mat,
+                annot=AllFits$annot, runtime=runtime,
+                l1error_intercept=l1error_intercept,
+                l1error_beta=l1error_beta)
     }
     else stop("Family not implemented")
     return(l)
@@ -646,7 +712,8 @@ cv_compare <- function(X, y, annot, family="gaussian",
 
 
   if(parallel){
-    resultList <- parallel::mclapply(seq_len(nfolds), runPerFold, mc.cores = ncores)
+    resultList <- parallel::mclapply(seq_len(nfolds), runPerFold,
+                                     mc.cores = ncores)
   } else resultList <- lapply(seq_len(nfolds), runPerFold)
 
   # plot results
