@@ -25,33 +25,32 @@ data <- makeExampleData(n = 400, p=800, g=4,
 ```
 
 # Fit the model
-`fit_grpRR` is the main function of this package, which allows to fit the proposed Bayesian models with different settings on the prior (setting `spikeslab` to FALSE or TRUE) and the variational approximation (setting factoriseQ to FALSE or TRUE). By default, the model is fit with a sparsity promoting spike-and-slab parameter and a fully-factoried mean-field assumption. The parameter `n_rep` can be used to train multiple models with different random initilization and choose the best model in terms of ELBO. `th` defines the threshold on the ELBO for convergence in the VB algorithm.
+`fit_grpRR` is the main function of this package, which allows to fit the proposed Bayesian models with different settings on the prior (by setting `spikeslab` to FALSE or TRUE) and the variational approximation (by setting `factoriseQ` to FALSE or TRUE). By default, the model is fit with a sparsity promoting spike-and-slab prior and a fully-factorised mean-field assumption. The parameter `n_rep` can be used to train multiple models with different random initilization. The best model is then chosen in terms of ELBO and returned by the function. `th` defines the threshold on the ELBO for convergence in the variational Bayes (VB) algorithm used for optimization.
 ```{r}
 fit <- fit_grpRR(data$X, data$y, data$annot,
                  n_rep=3, verbose = FALSE, th = 0.001)
 ```
 
 # Training diagnostics
-ELBO monitors the convergence during training.
+The ELBO monitors the convergence during training.
 ```{r}
 plotELBO(fit)
 ```
 
 # Posterior distribtions
-The VB approach directly yields posterior distributions for each parameter. Note, however, that using VB these are often too concentrated and can not be directly used for construciton of confidence intervals etc. However, they do provide good point estimates.
+The VB approach directly yields posterior distributions for each parameter. Note, however, that using VB these are often too concentrated and can not be directly used for construciton of confidence intervals etc. However, they can provide good point estimates.
 ```{r}
 plotPosterior(fit, "gamma", gamma0 = data$gammas, range=c(0,20))
 plotPosterior(fit, "pi", pi0 = data$pis)
 ```
 
 # Model coefficients and intercept
-The fitted coefficients and intercept are contained in the result list.
+The estimated coefficients and intercept are contained in the result list.
 ```{r}
 # get coefficients
 beta <- fit$EW_beta
 # plot estimated versus true beta
 qplot(beta, data$beta) + coord_fixed()
-
 ```
 
 ```{r}
@@ -61,12 +60,14 @@ intercept <- fit$intercept
 
 
 # Comparison to other methods
-Some standard methods like Lasso and Ridge are always included in the comparison, other methods can be added via the options of `cv_compare`. `cv_compare` uses a cross-validation scheme to train and evaluate the different methdods, `RunMethods` can be used to only train different methods on the full data. For time reasons we take a small number of folds in this illustration and the most common methods for comparison.
+Using the functions `cv_compare` or `runMethods` the grpRR method can be compared to various related regression methods.
+Some standard methods like Lasso and Ridge are always included in the comparison. Other methods can be added via the options of `cv_compare`.
+`cv_compare` uses a cross-validation scheme to train and evaluate the different methdods.
+`runMethods` can be used to  train different methods on the full data witout evaluation.
+For time reasons we take a small number of folds in this illustration and only include the most common methods for comparison.
 ```{r}
 comp <- cv_compare(data$X, data$y, data$annot,
-           compareIPF=FALSE, compareGroupLasso=FALSE,
-           compareSparseGroupLasso=FALSE, includeRF=FALSE, 
-           nfolds = 3, plot_cv = FALSE, verbose=FALSE, beta0  = data$beta)
+           nfolds = 3,  verbose=FALSE, beta0  = data$beta)
 plotMethodComparison(comp, methods2plot = c("grpRR_SS", "Lasso"))
 ```
 
