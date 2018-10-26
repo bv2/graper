@@ -38,7 +38,6 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
     #nogamma only of use when spikeslab
     if(!spikeslab & !nogamma) nogamma <- FALSE
 
-    # check structure of annot: needs to be 1:g with 1 <-> frist group etc
     annot <- factor(annot, levels = unique(annot))
 
     # get data dimension
@@ -69,7 +68,7 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE, d_tau = 
             n_rep <-1
     }
 
-    reslist <- lapply(1:n_rep, function(rep){
+    reslist <- lapply(seq_len(n_rep), function(rep){
         message("Fitting with random init ", rep)
 
         if (family == "gaussian") {

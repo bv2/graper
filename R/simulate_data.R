@@ -27,7 +27,7 @@ simulateExplicit <- function(n, p, beta, sigma2, seed, exp_decay_cor =0, block_c
     # construct design
     if(exp_decay_cor>0){
       # option A: construct covariance matrix with exponential decay of covariance
-    pp <- expand.grid(1:p, 1:p)
+    pp <- expand.grid(seq_len(p), seq_len(p))
     Sigma <- matrix(exp(-1/exp_decay_cor*abs(pp[,1]-pp[,2])), nrow=p)
     X <- mvtnorm::rmvnorm(n, rep(0, p), Sigma)
     } else if (block_cor != 0 | equiCor != 0) {
@@ -135,8 +135,8 @@ makeExampleDataWithUnequalGroups <- function(n=100, pg=c(100,100,10,10), gammas=
     X <- scale(X)
 
     # simulate coefficients
-    beta_tilde <- Reduce(c,lapply(1:g, function(k) stats::rnorm(pg[k],0,sqrt(1/gammas[k]))))
-    s <- Reduce(c,lapply(1:g, function(k) stats::rbinom(pg[k],1,pis[k])))
+    beta_tilde <- Reduce(c,lapply(seq_len(g), function(k) stats::rnorm(pg[k],0,sqrt(1/gammas[k]))))
+    s <- Reduce(c,lapply(seq_len(g), function(k) stats::rbinom(pg[k],1,pis[k])))
     beta <- s* beta_tilde
 
     #simulate response
@@ -145,7 +145,7 @@ makeExampleDataWithUnequalGroups <- function(n=100, pg=c(100,100,10,10), gammas=
     } else y <- stats::rbinom(n, 1, 1/(1+exp(- (X%*%beta +intercept)) ))
 
     #group annotations
-    annot <- rep(1:length(pg), times=pg)
+    annot <- rep(seq_along(pg), times=pg)
 
     list(X=X, y=y, annot=annot, gammas=gammas, pis=pis, tau=tau, rho=rho,
          g=g, p=p, n=n, beta=beta, s=s, beta_tilde=beta_tilde, intercept=intercept)

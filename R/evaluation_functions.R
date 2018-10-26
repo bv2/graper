@@ -72,7 +72,7 @@ runMethods <- function(Xtrain, ytrain, annot, beta0 = NULL, trueintercept = NULL
   groupnames <- as.character(annot)
   varnames <- colnames(Xtrain)
   if (length(varnames) == 0)
-    varnames <- factor(paste("Feature", 1:ncol(Xtrain), sep = ""))
+    varnames <- factor(paste("Feature", seq_len(ncol(Xtrain)), sep = ""))
 
   #### RUN DIFFERENT METHODS ####
   summaryList <- list()
@@ -646,8 +646,8 @@ cv_compare <- function(X, y, annot, family="gaussian",
 
 
   if(parallel){
-    resultList <- parallel::mclapply(1:nfolds, runPerFold, mc.cores = ncores)
-  } else resultList <- lapply(1:nfolds, runPerFold)
+    resultList <- parallel::mclapply(seq_len(nfolds), runPerFold, mc.cores = ncores)
+  } else resultList <- lapply(seq_len(nfolds), runPerFold)
 
   # plot results
   if(plot_cv) plotMethodComparison(resultList, family = family)

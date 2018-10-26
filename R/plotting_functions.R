@@ -21,7 +21,7 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL, tau0 = N
     if (param2plot=="beta") {
       beta <- true_beta <- density <- mean_val <- mu_slab <- va_slab <- psi <- j <- NULL # avoid notes on global varibale binding in check
         message("Only plotting the first ", jmax, " coefficients per group.")
-        js <- Reduce(c,lapply(unique(fit$annot), function(gr) which(fit$annot==gr)[1:min(jmax, sum(fit$annot==gr))]))
+        js <- Reduce(c,lapply(unique(fit$annot), function(gr) which(fit$annot==gr)[seq_len(min(jmax, sum(fit$annot==gr))])))
         gr <- lapply(js, function(j) {
             va_slab <- fit$sigma2_tildebeta_s1[j]
             mu_slab <- fit$EW_tildebeta_s1[j]
@@ -50,7 +50,7 @@ theme(
         if (param2plot=="s") {
         s <- true_s <- density <- mean_val <- NULL # avoid notes on global varibale binding in check
         message("Only plotting the first ", jmax, " s per group.")
-        js <- Reduce(c,lapply(unique(fit$annot), function(gr) which(fit$annot==gr)[1:min(jmax, sum(fit$annot==gr))]))
+        js <- Reduce(c,lapply(unique(fit$annot), function(gr) which(fit$annot==gr)[seq_len(min(jmax, sum(fit$annot==gr))])))
         gr <- lapply(js, function(j) {
             psi <- fit$EW_s[j]
             mean_val <- psi
@@ -74,7 +74,7 @@ theme(
         if (param2plot=="pi") {
           pi <- true_pi <- density <- mean_val <- k <- NULL # avoid notes on global varibale binding in check
 
-        gr <- lapply(1:length(fit$EW_pi), function(k) {
+        gr <- lapply(seq_along(fit$EW_pi), function(k) {
             mean_val <- fit$EW_pi[k]
             x <- seq(0, 1, length.out=1000)
             data.frame(pi=x, k=k, mean_val = mean_val)
@@ -90,7 +90,7 @@ theme(
     }
     if (param2plot=="gamma") {
       gamma <- true_gamma <- density <- k <- mean_val <- NULL # avoid notes on global varibale binding in check
-        gr <- lapply(1:length(fit$alpha_gamma), function(k) {
+        gr <- lapply(seq_along(fit$alpha_gamma), function(k) {
             va <- fit$alpha_gamma[k]/fit$beta_gamma[k]^2
             mean_val <- fit$EW_gamma[k]
             if(is.null(range))  x <- seq(0, max(gamma0[k],5 * mean_val), , length.out=1000)
@@ -134,7 +134,7 @@ plotELBO <- function(fit){
   iteration <- ELBO <- NULL # avoid notes in check
     if(is.null(fit$ELB_trace)) stop("ELBO was not computed for this fit.")
 
-    df <- data.frame(iteration=1:length(fit$ELB_trace),
+    df <- data.frame(iteration=seq_along(fit$ELB_trace),
                      ELBO = fit$ELB_trace)
     ggplot(df, aes(x=iteration, y=ELBO)) +geom_line()
 }
