@@ -16,9 +16,9 @@ private:
   mat  X;
   vec y;
   Row<int> annot;
-  int p,n,g;
+  int p,n;
   vec NoPerGroup;
-  double d_gamma, r_gamma;
+  double d_gamma;
   int max_iter;
   double th;
   bool calcELB, verbose, intercept;
@@ -42,7 +42,6 @@ private:
   double diff;
   int n_iter;
   vec EW_betasq;
-  double EW_leastSquares;
   vec ELB_trace;
 public:
 
@@ -55,10 +54,10 @@ public:
   , annot(annot)                        // assignement of each feautre to a group
   , p(X.n_cols)                         //number of samples
   , n(X.n_rows)                         //number of samples
-  , g(g)                                // number of groups
+  //, g(g)                                // number of groups
   , NoPerGroup(NoPerGroup)               //number of features per group
   , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
-  , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
+  //, r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
   , max_iter(max_iter)                  // maximal number of iterations
   , th(th)                              //threshold for ELBO to stop iterations
   , calcELB(calcELB)                    //whether to calculate ELBO

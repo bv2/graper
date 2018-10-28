@@ -165,8 +165,8 @@ fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
                                             d_gamma, r_gamma, max_iter, th, calcELB,
                                             verbose,freqELB, mu_init)
                     } else {
-                      message("You are using no factorization of the variational distribution. \n
-                              This might take some time to compute. \n
+                      message("You are using no factorization of the variational distribution.
+                              This might take some time to compute.
                               Set factoriseQ = TRUE for fast solution.")
                       res <- grRRCpp_dense_nf(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma,
                                               r_gamma, max_iter, th, calcELB, verbose, freqELB)

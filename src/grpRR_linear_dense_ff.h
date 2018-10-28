@@ -20,7 +20,7 @@ private:
   double yty;
   int p,n,g;
   vec NoPerGroup;
-  double d_tau, r_tau, d_gamma, r_gamma;
+  double d_tau, r_tau, d_gamma;
   vec r_gamma_mult;
   int max_iter;
   double th;
@@ -61,7 +61,7 @@ public:
   , d_tau(d_tau)                        // hyperparameters of gamma distribution for tau
   , r_tau(r_tau)                        // hyperparameters of gamma distribution for tau
   , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
-  , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
+//  , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
   , r_gamma_mult(g)                    // hyperparameters of gamma distribution for gamma
   , max_iter(max_iter)                  // maximal number of iterations
   , th(th)                              //threshold for ELBO to stop iterations

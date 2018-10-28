@@ -16,10 +16,9 @@ private:
   mat  X;
   vec y;
   Row<int> annot;
-  double yty;
   int p,n,g;
   vec NoPerGroup;
-  double d_gamma, r_gamma, d_pi, r_pi;
+  double d_gamma, d_pi, r_pi;
   int max_iter;
   double th;
   bool calcELB, verbose, intercept;
@@ -65,7 +64,7 @@ public:
   , g(g)                                // number of groups
   , NoPerGroup(NoPerGroup)               //number of features per group
   , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
-  , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
+  //, r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
   , d_pi(d_pi)                          // hyperparameters of Beta distribution for pi
   , r_pi(r_pi)                          // hyperparameters of Beta distribution for pi
   , max_iter(max_iter)                  // maximal number of iterations

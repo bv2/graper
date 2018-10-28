@@ -21,7 +21,7 @@ private:
   double yty;
   int p,n,g;
   vec NoPerGroup;
-  double d_tau, r_tau, d_gamma, r_gamma, d_pi, r_pi;
+  double d_tau, r_tau, d_gamma, d_pi, r_pi;
  vec r_gamma_mult;
   int max_iter;
   double th;
@@ -69,7 +69,7 @@ public:
   , d_tau(d_tau)                        // hyperparameters of gamma distribution for tau
   , r_tau(r_tau)                        // hyperparameters of gamma distribution for tau
   , d_gamma(d_gamma)                    // hyperparameters of gamma distribution for gamma
-  , r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
+  //, r_gamma(r_gamma)                    // hyperparameters of gamma distribution for gamma
   , d_pi(d_pi)                          // hyperparameters of Beta distribution for pi
   , r_pi(r_pi)                          // hyperparameters of Beta distribution for pi
   , max_iter(max_iter)                  // maximal number of iterations
@@ -167,7 +167,7 @@ public:
 
   //function to calculate updated parameters for beta variational distirbution
   void update_param_beta(){
-    auto start_beta=get_time::now();
+    //auto start_beta=get_time::now();
 
     vec gamma_annot(p);
     for(int i = 0; i< p; i++) {
@@ -206,7 +206,7 @@ public:
 
     }
 
-    auto time_beta = get_time::now() - start_beta;
+   // auto time_beta = get_time::now() - start_beta;
   }
 
   //function to calculate updated parameters for tau variational distribution
@@ -238,7 +238,7 @@ public:
 
   //function to update expected values of beta
   void update_exp_beta(){
-      auto start_beta=get_time::now();
+    // auto start_beta=get_time::now();
     EW_betatildesq=psi%(square(mu_tildebeta_1) +sigma2_tildebeta_1) + (1-psi)% (sigma2_tildebeta_0);
 
 
@@ -252,7 +252,7 @@ public:
     //expected value of least squares expression
       //EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % (Sigma_beta+mu_beta*trans(mu_beta))));
       EW_leastSquares =as_scalar(yty-2*ytX*mu_beta +accu(XtX % Sigma_beta) + trans(mu_beta)*XtX*mu_beta);
-      auto time_beta = get_time::now() - start_beta;
+    // auto time_beta = get_time::now() - start_beta;
   }
 
   //function to update expected values of tau
@@ -282,7 +282,7 @@ public:
   void calculate_ELBO(){
   	
      if(verbose) Rcout<<"Calculating ELB.."<<endl;
-     auto start_ELB=get_time::now();
+     //auto start_ELB=get_time::now();
 
     double ELB_old = ELB;
 
@@ -351,7 +351,6 @@ public:
     ELB=exp_Djoint + entropy_tildebeta_s + entropy_gamma + entropy_tau + entropy_pi;
     diff=ELB-ELB_old;
     //
-    auto time_ELB = get_time::now() - start_ELB;
     if(verbose){
       Rcout<<"ELB="<<ELB<<endl;
       Rcout<<"ELB improved by "<<diff<<endl;
