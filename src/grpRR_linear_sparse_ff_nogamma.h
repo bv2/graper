@@ -135,7 +135,7 @@ public:
     update_exp_gamma();
 
     //optional: calculate ELB every freqELB-th step
-    if(calcELB & n_iter%freqELB==0) calculate_ELBO();
+    if(calcELB && (n_iter%freqELB==0)) calculate_ELBO();
     ELB_trace(n_iter-1)=ELB;
   }
 
@@ -317,7 +317,7 @@ public:
     vec entropy_s_indiv = psi%log(psi) +(1-psi)%log(1-psi);
     //entropy of bernoulli s becomes nan for psi=0 or 1, here the limit it zero in both cases
     for(int i = 0; i< p; i++){
-      if(psi(i)==1 |psi(i)==0) entropy_s_indiv(i) = 0;
+      if((psi(i)==1) || (psi(i)==0)) entropy_s_indiv(i) = 0;
     }
 
     double entropy_tildebeta_s = p/2*(log(2*M_PI)+1)+0.5*accu(psi%log(sigma2_tildebeta_1) +(1-psi)%log(sigma2_tildebeta_0))-accu(entropy_s_indiv);

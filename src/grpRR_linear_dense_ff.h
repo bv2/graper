@@ -124,7 +124,7 @@ public:
       update_exp_gamma();
 
     //calculate ELB every freqELB-th step to monitor convergence
-    if(calcELB & n_iter%freqELB==0) calculate_ELBO();
+    if(calcELB && (n_iter%freqELB==0)) calculate_ELBO();
     ELB_trace(n_iter-1)=ELB;
 
   }

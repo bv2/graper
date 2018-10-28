@@ -150,7 +150,7 @@ public:
       update_param_xi();
 
     //optional: calculate ELB every freqELB-th step
-    if(calcELB & n_iter%freqELB==0) calculate_ELBO();
+    if(calcELB & (n_iter%freqELB==0)) calculate_ELBO();
     ELB_trace(n_iter-1)=ELB;
 
   }
