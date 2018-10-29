@@ -100,8 +100,7 @@ runMethods <- function(Xtrain, ytrain, annot,
                        include_grpRR_SS_ungrouped = FALSE) {
 
   if (!standardize)
-    warning("Group Lasso and GRridge are alwyas standardized,
-            despite of standardized = FALSE.")
+    warning("Group Lasso and GRridge are always standardized despite of standardized = FALSE.")
 
   # sanity checks
   stopifnot(nrow(Xtrain) == length(ytrain))
