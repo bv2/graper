@@ -2,30 +2,26 @@
 % Please edit documentation in R/plotting_functions.R
 \name{plotMethodComparison}
 \alias{plotMethodComparison}
-\title{@title plot comparison of methods
- @name plotMethodComparison
- @description Function to plot method comparison across several runs}
+\title{Plot performance measures for various methods}
 \usage{
 plotMethodComparison(resultList, family = "gaussian",
   methods2plot = "all")
 }
 \arguments{
-\item{resultList}{List as created by \code{\link{cv_compare}}}
+\item{resultList}{list as created by \code{\link{compareMethodsCV}}}
 
-\item{family}{gaussian or binomial (same as used in \code{\link{cv_compare}})}
+\item{family}{gaussian or binomial (same as used in \code{\link{compareMethodsCV}})}
 
-\item{methods2plot}{which method to be plotted}
+\item{methods2plot}{which methods to include into the fit}
 }
 \value{
 a ggplot object
 }
 \description{
-@title plot comparison of methods
- @name plotMethodComparison
- @description Function to plot method comparison across several runs
+Function to plot performance measures of the fits obtained from various regression methods that were evaluated using to \code{\link{compareMethodsCV}}.
 }
 \examples{
 dat <- makeExampleData()
-cv.out <- cv_compare(dat$X, dat$y, dat$annot, nfolds=3)
+cv.out <- compareMethodsCV(dat$X, dat$y, dat$annot, nfolds=3)
 plotMethodComparison(cv.out)
 }

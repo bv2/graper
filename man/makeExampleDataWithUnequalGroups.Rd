@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_data.R
 \name{makeExampleDataWithUnequalGroups}
 \alias{makeExampleDataWithUnequalGroups}
-\title{Simulate example data with groups of unequal size}
+\title{Simulate example data from the grpRR model with groups of unequal size}
 \usage{
 makeExampleDataWithUnequalGroups(n = 100, pg = c(100, 100, 10, 10),
   gammas = c(0.1, 10, 0.1, 10), pis = c(0.5, 0.5, 0.5, 0.5), tau = 1,
@@ -21,7 +21,8 @@ makeExampleDataWithUnequalGroups(n = 100, pg = c(100, 100, 10, 10),
 
 \item{rho}{correlation of design matrix (Toeplitz structure)}
 
-\item{response}{gaussion or bernoulli for linear or logistic regression, respectively}
+\item{response}{"gaussian" for continious response from a linear regression model,
+"bernoulli"  for a binary response from a logisitic regression model.}
 
 \item{intercept}{model intercept (default: 0)}
 }
@@ -31,7 +32,7 @@ list containin the design matrix X, the response y, the feautre annotation to
   and the correlation strength rho
 }
 \description{
-Simulate data from the Bayesian model with specified parameters gamma and tau.
+Simulate data from the grpRR model with groups of unequal size and pre-specified parameters gamma and tau.
 }
 \examples{
 dat <- makeExampleDataWithUnequalGroups()

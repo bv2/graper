@@ -13,7 +13,7 @@ getRunTime(AllFits)
 A vector of run times for each method.
 }
 \description{
-get run times of various methods
+Function to obtain the runtimes of various methods from the fitted regression models.
 }
 \examples{
 dat <- makeExampleData()

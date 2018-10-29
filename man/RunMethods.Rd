@@ -8,11 +8,11 @@ runMethods(Xtrain, ytrain, annot, family = "gaussian",
   intercept = TRUE, standardize = TRUE, beta0 = NULL,
   trueintercept = NULL, max_iter = 5000, freqELB = 10,
   calcELB = TRUE, th = 0.01, n_rep = 1, verbose = FALSE,
-  verbose_progress = TRUE, compareGRridge = FALSE,
-  include_nonfacQ = FALSE, compareSparseGroupLasso = FALSE,
-  compareIPF = FALSE, compareGroupLasso = FALSE, includeRF = FALSE,
-  compareAdaLasso = FALSE, include_varbvs = FALSE,
-  include_nogamma = FALSE, include_grpRR_SS_ungrouped = FALSE)
+  verbose_progress = TRUE, includeGRridge = FALSE,
+  include_grpRR_nonfacQ = FALSE, includeSparseGroupLasso = FALSE,
+  includeIPF = FALSE, includeGroupLasso = FALSE, includeRF = FALSE,
+  includeAdaLasso = FALSE, includeVarbvs = FALSE,
+  include_grpRR_SS_nogamma = FALSE, include_grpRR_SS_ungrouped = FALSE)
 }
 \arguments{
 \item{Xtrain}{design matrix with samples in rows and features in columns (n x p)}
@@ -23,7 +23,7 @@ runMethods(Xtrain, ytrain, annot, family = "gaussian",
 
 \item{family}{likelihood model for the response,
  either "gaussian" for linear regression
-or "binomial" for logisitc regression}
+or "binomial" for logistic regression}
 
 \item{intercept}{whether to include an intercept into the model}
 
@@ -36,38 +36,38 @@ NULL otherwise (default)}
 \item{trueintercept}{true intercept in the linear model if known,
 NULL otherwise (default)}
 
-\item{max_iter}{maximum number of iterations for grpRR methods (see also  \code{\link{fit_grpRR}})}
+\item{max_iter}{maximum number of iterations for grpRR methods (see also  \code{\link{grpRR}})}
 
 \item{freqELB}{frequency at which the evidence lower bound (ELB) is to be calculated for grpRR,
-i.e. each freqELB-th iteration (see also  \code{\link{fit_grpRR}})}
+i.e. each freqELB-th iteration (see also  \code{\link{grpRR}})}
 
-\item{calcELB}{whether to calculate the evidence lower bound (ELB) for grpRR (see also  \code{\link{fit_grpRR}})}
+\item{calcELB}{whether to calculate the evidence lower bound (ELB) for grpRR (see also  \code{\link{grpRR}})}
 
-\item{th}{convergence threshold for the evidence lower bound (ELB) in grpRR (see also  \code{\link{fit_grpRR}})}
+\item{th}{convergence threshold for the evidence lower bound (ELB) in grpRR (see also  \code{\link{grpRR}})}
 
-\item{n_rep}{number of reptitions with different random initilizations to be fit in grpRR (see also  \code{\link{fit_grpRR}})}
+\item{n_rep}{number of reptitions with different random initilizations to be fit in grpRR (see also  \code{\link{grpRR}})}
 
 \item{verbose}{whether to print out intermediate messages during fitting}
 
 \item{verbose_progress}{whether to print out details on the overall progress}
 
-\item{compareGRridge}{whether to fit GRridge}
+\item{includeGRridge}{whether to fit GRridge}
 
-\item{include_nonfacQ}{whether to fit grpRR method with multivariate variational distributon be fitted (can be slow for large data sets)}
+\item{include_grpRR_nonfacQ}{whether to fit grpRR method with multivariate variational distributon be fitted (can be slow for large data sets)}
 
-\item{compareSparseGroupLasso}{whether to fit sparse group Lasso}
+\item{includeSparseGroupLasso}{whether to fit sparse group Lasso}
 
-\item{compareIPF}{whether to fit IPF-Lasso be fitted}
+\item{includeIPF}{whether to fit IPF-Lasso be fitted}
 
-\item{compareGroupLasso}{whether to fit group Lasso}
+\item{includeGroupLasso}{whether to fit group Lasso}
 
 \item{includeRF}{whether to fit random forest}
 
-\item{compareAdaLasso}{whether to fit Lasso}
+\item{includeAdaLasso}{whether to fit Lasso}
 
-\item{include_varbvs}{whether to fit varbvs}
+\item{includeVarbvs}{whether to fit varbvs}
 
-\item{include_nogamma}{whether to fit grpRR with same penalty factor but different sparity levels  per group}
+\item{include_grpRR_SS_nogamma}{whether to fit grpRR with same penalty factor but different sparity levels  per group}
 
 \item{include_grpRR_SS_ungrouped}{whether to fit grpRR without group annotations}
 }
@@ -89,7 +89,17 @@ runtime, estimated penalty factors, coefficients, intercepts, sparsity level and
 }
 }
 \description{
-Function to fit a regression methods using serveral different methods.
+Function to fit a linear or logistic regression model using serveral different methods.
+}
+\details{
+This function fits a linear of logistic regression model to the data using various different methods.
+grpRR is always included in its factorized form (both dense (grpRR_FF) and sparse (grpRR_SS)). In addition, a grpRR model is included with all
+coefficients set to 0 whose posterior inclusion probaility (s) is below 50% (grpRR_SScutoff). As a comparison, ridge regression,
+Lasso and elatic net as well as a intercept-only model are fitted. Other methods can be  included via the respective options, such as GRridge,
+ non-facotized grpRR (grpRR), IPF-Lasso, sparse group Lasso, group Laso, adaptive Lasso, varbvs, random forest and
+ grpRR without group annotations (grpRR_SS_ungrouped) or without different slab precisions (grpRR_nogamma).
+
+ The fitted methods can be evaluated on test data using the function \code{\link{evaluateFits}}.
 }
 \examples{
 dat <- makeExampleData()

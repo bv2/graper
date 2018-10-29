@@ -13,7 +13,7 @@ getPenaltyFactors(AllFits)
 A matrix of penalty factors per group (rows) and method (columns).
 }
 \description{
-get penalty factors from various methods
+Function to obtain the sparsity levels (1=dense, 0=sparse) estimated by various methods from the fitted regression models.
 }
 \examples{
 dat <- makeExampleData()

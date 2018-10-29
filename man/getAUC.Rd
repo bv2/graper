@@ -13,7 +13,7 @@ getAUC(AllFits)
 A vector of the AUC values on the test data for each method.
 }
 \description{
-get AUC of various methods
+Function to obtain the AUC of various methods in a logistic regression model.
 }
 \examples{
 dat <- makeExampleData(response = "bernoulli")

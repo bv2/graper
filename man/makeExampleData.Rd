@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_data.R
 \name{makeExampleData}
 \alias{makeExampleData}
-\title{Simulate example data with groups of equal size}
+\title{Simulate example data from the grpRR model}
 \usage{
 makeExampleData(n = 100, p = 200, g = 4, gammas = c(0.1, 1, 10,
   100), pis = c(0.5, 0.5, 0.5, 0.5), tau = 1, rho = 0,
@@ -24,7 +24,8 @@ of the prior on beta per group}
 
 \item{rho}{correlation of design matrix (Toeplitz structure)}
 
-\item{response}{gaussion or bernoulli for linear or logistic regression, respectively}
+\item{response}{"gaussian" for continious response from a linear regression model,
+"bernoulli"  for a binary response from a logisitic regression model.}
 
 \item{intercept}{model intercept (default: 0)}
 }
@@ -35,8 +36,7 @@ list containin the design matrix X,
  in the Bayesian model and the correlation strength rho
 }
 \description{
-Simulate data from the Bayesian model
- with specified parameters gamma and tau
+Simulate data from the grpRR model with groups of equal size and pre-specified parameters gamma and tau.
 }
 \examples{
 dat <- makeExampleData()

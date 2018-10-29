@@ -1,5 +1,5 @@
 #' @title Fit a regression model with grpRR
-#' @name fit_grpRR
+#' @name grpRR
 #' @description Fit a regression model with grpRR given a matrix of predictors (\code{X}), a response vector (\code{y}) and
 #' a vector of group memberships for each predictor in \code{X} (\code{annot}). For each group a different strength of penalization is determined adaptively.
 #' @param X design matrix of size n (samples) x p (features)
@@ -51,7 +51,7 @@
 #' \item{EW_beta}{estimated model coefficients in liner/logistic regression}
 #' \item{EW_s}{estimated posterior-inclusion probabilities for each feature}
 #' \item{intercept}{estimated intercept term}
-#' \item{annot}{annotation vector of features to the groups as specified when calling \code{\link{fit_grpRR}}}
+#' \item{annot}{annotation vector of features to the groups as specified when calling \code{\link{grpRR}}}
 #' \item{EW_gamma}{estimated penalty factor per group}
 #' \item{EW_pi}{estimated sparsity level per group (from 1 (dense) to 0 (sparse))}
 #' \item{EW_tau}{estimated noise precision}
@@ -59,7 +59,7 @@
 #'  the variational distributions of beta, gamma, tau and pi}
 #' \item{ELB}{final value of the evidence lower bound}
 #' \item{ELB_trace}{values of the  evidence lower bound for all iterations}
-#' \item{Options}{other options used when calling \code{\link{fit_grpRR}}}
+#' \item{Options}{other options used when calling \code{\link{grpRR}}}
 #' }
 #' @useDynLib grpRR
 #' @import Rcpp
@@ -69,18 +69,18 @@
 #' dat <- makeExampleData()
 #'
 #' # fit a sparse model with spike and slab prior
-#' fit <- fit_grpRR(dat$X, dat$y, dat$annot)
+#' fit <- grpRR(dat$X, dat$y, dat$annot)
 #' beta <- fit$EW_beta # model coeffients
 #' pf <- fit$EW_gamma #penalty factors per group
 #'
 #' # fit a dense model without spike and slab prior
-#' fit <- fit_grpRR(dat$X, dat$y, dat$annot, spikeslab = FALSE)
+#' fit <- grpRR(dat$X, dat$y, dat$annot, spikeslab = FALSE)
 #'
 #' # fit a dense model using a multivariate variational distribution
-#' fit <- fit_grpRR(dat$X, dat$y, dat$annot, factoriseQ = TRUE, spikeslab = FALSE)
+#' fit <- grpRR(dat$X, dat$y, dat$annot, factoriseQ = TRUE, spikeslab = FALSE)
 
 
-fit_grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
+grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
                       intercept = TRUE, family = "gaussian",
                       standardize=TRUE, n_rep=1,
                       max_iter = 3000, th = 0.01,

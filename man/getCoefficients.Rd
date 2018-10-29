@@ -13,7 +13,7 @@ getCoefficients(AllFits)
 A matrix of coefficients per feature (rows) and method (columns).
 }
 \description{
-get coefficients estimated from various methods
+Function to obtain the coefficients estimated by various methods from the fitted regression models.
 }
 \examples{
 dat <- makeExampleData()

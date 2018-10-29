@@ -15,10 +15,8 @@ evaluateFits(allFits, Xtest, ytest)
 \item{ytest}{Response vector of size n'}
 }
 \value{
-List as prodcused by \code{\link{runMethods}} with
- additional predicition performance slots in the summaryList
-
-a list containg
+a list as produced by \code{\link{runMethods}} with
+ additional predicition performance slots in the summaryList, i.e. the list contains
 \describe{
 \item{summaryList}{list with the fitted models for each method that was included in the comparison, each containing the
 runtime, estimated penalty factors, coefficients, intercepts, sparsity level and the full output returned by the methods' call (out) as in
@@ -34,7 +32,7 @@ feautre selection properties (if \code{beta0} was specified)}
 }
 }
 \description{
-Function to evaluate results on test data
+Function to evaluate results from \code{\link{runMethods}} on test data.
 }
 \details{
 This function can be used to evaluate the fits of various method as produced by \code{\link{runMethods}} on a test dataset.

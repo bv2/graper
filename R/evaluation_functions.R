@@ -1,6 +1,14 @@
 #' @title Run various regression methods
 #' @name runMethods
-#' @description Function to fit a regression methods using serveral different methods.
+#' @description Function to fit a linear or logistic regression model using serveral different methods.
+#' @details This function fits a linear of logistic regression model to the data using various different methods.
+#' grpRR is always included in its factorized form (both dense (grpRR_FF) and sparse (grpRR_SS)). In addition, a grpRR model is included with all
+#' coefficients set to 0 whose posterior inclusion probaility (s) is below 50% (grpRR_SScutoff). As a comparison, ridge regression,
+#' Lasso and elatic net as well as a intercept-only model are fitted. Other methods can be  included via the respective options, such as GRridge,
+#'  non-facotized grpRR (grpRR), IPF-Lasso, sparse group Lasso, group Laso, adaptive Lasso, varbvs, random forest and
+#'  grpRR without group annotations (grpRR_SS_ungrouped) or without different slab precisions (grpRR_nogamma).
+#'
+#'  The fitted methods can be evaluated on test data using the function \code{\link{evaluateFits}}.
 #' @param Xtrain design matrix with samples in rows and features in columns (n x p)
 #' @param ytrain response vector of length n
 #' @param annot factor of length p indicating group membership of each feature
@@ -11,25 +19,25 @@
 #'  NULL otherwise (default)
 #' @param trueintercept true intercept in the linear model if known,
 #'  NULL otherwise (default)
-#' @param max_iter maximum number of iterations for grpRR methods (see also  \code{\link{fit_grpRR}})
+#' @param max_iter maximum number of iterations for grpRR methods (see also  \code{\link{grpRR}})
 #' @param family likelihood model for the response,
 #'  either "gaussian" for linear regression
-#' or "binomial" for logisitc regression
-#' @param calcELB whether to calculate the evidence lower bound (ELB) for grpRR (see also  \code{\link{fit_grpRR}})
+#' or "binomial" for logistic regression
+#' @param calcELB whether to calculate the evidence lower bound (ELB) for grpRR (see also  \code{\link{grpRR}})
 #' @param freqELB frequency at which the evidence lower bound (ELB) is to be calculated for grpRR,
-#'  i.e. each freqELB-th iteration (see also  \code{\link{fit_grpRR}})
-#' @param th convergence threshold for the evidence lower bound (ELB) in grpRR (see also  \code{\link{fit_grpRR}})
-#' @param n_rep number of reptitions with different random initilizations to be fit in grpRR (see also  \code{\link{fit_grpRR}})
+#'  i.e. each freqELB-th iteration (see also  \code{\link{grpRR}})
+#' @param th convergence threshold for the evidence lower bound (ELB) in grpRR (see also  \code{\link{grpRR}})
+#' @param n_rep number of reptitions with different random initilizations to be fit in grpRR (see also  \code{\link{grpRR}})
 #' @param verbose  whether to print out intermediate messages during fitting
-#' @param compareGRridge  whether to fit GRridge
-#' @param include_nonfacQ  whether to fit grpRR method with multivariate variational distributon be fitted (can be slow for large data sets)
-#' @param compareIPF  whether to fit IPF-Lasso be fitted
-#' @param compareSparseGroupLasso  whether to fit sparse group Lasso
-#' @param compareGroupLasso  whether to fit group Lasso
-#' @param compareAdaLasso  whether to fit Lasso
+#' @param includeGRridge  whether to fit GRridge
+#' @param include_grpRR_nonfacQ  whether to fit grpRR method with multivariate variational distributon be fitted (can be slow for large data sets)
+#' @param includeIPF  whether to fit IPF-Lasso be fitted
+#' @param includeSparseGroupLasso  whether to fit sparse group Lasso
+#' @param includeGroupLasso  whether to fit group Lasso
+#' @param includeAdaLasso  whether to fit Lasso
 #' @param includeRF whether to fit random forest
-#' @param include_varbvs  whether to fit varbvs
-#' @param include_nogamma  whether to fit grpRR with same penalty factor but different sparity levels  per group
+#' @param includeVarbvs  whether to fit varbvs
+#' @param include_grpRR_SS_nogamma  whether to fit grpRR with same penalty factor but different sparity levels  per group
 #' @param include_grpRR_SS_ungrouped whether to fit grpRR without group annotations
 #' @param verbose_progress  whether to print out details on the overall progress
 #' @return List of fitted models and two data frames with
@@ -64,11 +72,12 @@ runMethods <- function(Xtrain, ytrain, annot,
                        beta0 = NULL, trueintercept = NULL,
                        max_iter = 5000, freqELB = 10, calcELB = TRUE, th = 0.01,
                        n_rep=1, verbose = FALSE, verbose_progress = TRUE,
-                       compareGRridge = FALSE, include_nonfacQ = FALSE,
-                       compareSparseGroupLasso =FALSE, compareIPF = FALSE,
-                       compareGroupLasso = FALSE, includeRF = FALSE,
-                       compareAdaLasso = FALSE, include_varbvs=FALSE,
-                       include_nogamma=FALSE, include_grpRR_SS_ungrouped= FALSE) {
+                       includeGRridge = FALSE, include_grpRR_nonfacQ = FALSE,
+                       includeSparseGroupLasso = FALSE, includeIPF = FALSE,
+                       includeGroupLasso = FALSE, includeRF = FALSE,
+                       includeAdaLasso = FALSE, includeVarbvs = FALSE,
+                       include_grpRR_SS_nogamma = FALSE,
+                       include_grpRR_SS_ungrouped = FALSE) {
 
   if (!standardize)
     warning("Group Lasso and GRridge are alwyas standardized,
@@ -94,10 +103,10 @@ runMethods <- function(Xtrain, ytrain, annot,
   summaryList <- list()
 
   # grpRR: multivariate variational distribution, normal prior (dense)
-  if (include_nonfacQ) {
+  if (include_grpRR_nonfacQ) {
     tmp <- Sys.time()
     if(verbose_progress) message(" ### Fitting grpRR model...")
-    grpRR <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = FALSE, spikeslab = FALSE,
+    grpRR <- grpRR(Xtrain, ytrain, annot = annot, factoriseQ = FALSE, spikeslab = FALSE,
                        max_iter = max_iter, intercept = intercept,
                        verbose = verbose, freqELB = freqELB, calcELB = calcELB,
                        family = family, th = th, standardize=standardize, n_rep=n_rep)
@@ -116,7 +125,7 @@ runMethods <- function(Xtrain, ytrain, annot,
   # grpRR_FF : fully factorized variational distribution, normal prior (dense)
   tmp <- Sys.time()
   if(verbose_progress) message(" ### Fitting grpRR_FF model...")
-  grpRR_FF <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = TRUE, spikeslab = FALSE,
+  grpRR_FF <- grpRR(Xtrain, ytrain, annot = annot, factoriseQ = TRUE, spikeslab = FALSE,
                         max_iter = max_iter, intercept = intercept,
                         verbose = verbose, freqELB = freqELB, calcELB = calcELB,
                         family = family, th = th, standardize=standardize, n_rep=n_rep)
@@ -134,7 +143,7 @@ runMethods <- function(Xtrain, ytrain, annot,
   # grpRR_SS: fully factorized variational distribution, spike and slab prior (sparse)
   tmp <- Sys.time()
   if(verbose_progress) message(" ### Fitting grpRR_SS model...")
-  grpRR_SS <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = TRUE, spikeslab = TRUE,
+  grpRR_SS <- grpRR(Xtrain, ytrain, annot = annot, factoriseQ = TRUE, spikeslab = TRUE,
                         max_iter = max_iter, intercept = intercept,
                         verbose = verbose, freqELB = freqELB, calcELB = calcELB,
                         th = th, family = family, standardize=standardize, n_rep=n_rep)
@@ -161,10 +170,10 @@ runMethods <- function(Xtrain, ytrain, annot,
 
   # grpRR_SS_nogamma: fully factorized variational distribution,
   # spike and slab prior (sparse) without different slab precisions
-  if(include_nogamma){
+  if(include_grpRR_SS_nogamma){
     tmp <- Sys.time()
     if(verbose_progress) message(" ### Fitting grpRR_SS model without gamma...")
-    grpRR_SS_nogamma <- fit_grpRR(Xtrain, ytrain, annot = annot, factoriseQ = TRUE,
+    grpRR_SS_nogamma <- grpRR(Xtrain, ytrain, annot = annot, factoriseQ = TRUE,
                                   spikeslab = TRUE, max_iter = max_iter, intercept = intercept,
                                   verbose = verbose, freqELB = freqELB, calcELB = calcELB, th = th,
                                   family = family,  nogamma = TRUE, standardize=standardize, n_rep=n_rep)
@@ -185,7 +194,7 @@ runMethods <- function(Xtrain, ytrain, annot,
   if(include_grpRR_SS_ungrouped){
     tmp <- Sys.time()
     if(verbose_progress) message(" ### Fitting grpRR_SS model without group annotations...")
-    grpRR_SS_ungrouped <- fit_grpRR(Xtrain, ytrain, annot = rep(1,ncol(Xtrain)),
+    grpRR_SS_ungrouped <- grpRR(Xtrain, ytrain, annot = rep(1,ncol(Xtrain)),
                                     factoriseQ = TRUE, spikeslab = TRUE,
                                     max_iter = max_iter, intercept = intercept,
                                     verbose = verbose, freqELB = freqELB,
@@ -264,7 +273,7 @@ runMethods <- function(Xtrain, ytrain, annot,
   summaryList$ElasticNet <- ElasticNet_summary
 
   # varbvs
-  if(include_varbvs){
+  if(includeVarbvs){
     if(!intercept) warning("varbvs always fits an intercept")
     tmp <- Sys.time()
     if(verbose_progress) message(" ### Fitting varbvs...")
@@ -307,7 +316,7 @@ runMethods <- function(Xtrain, ytrain, annot,
   }
 
   # group lasso
-  if (compareGroupLasso) {
+  if (includeGroupLasso) {
     tmp <- Sys.time()
     if(verbose_progress) message(" ### Fitting group Lasso...")
     GrpLassoFit <- try(grpreg::cv.grpreg(Xtrain, ytrain, group = as.factor(annot),
@@ -336,7 +345,7 @@ runMethods <- function(Xtrain, ytrain, annot,
   }
 
   # sparse group lasso
-  if (compareSparseGroupLasso) {
+  if (includeSparseGroupLasso) {
     if(intercept) {
       warning("Sparse group lasso does not fit an intercept, need to center beforehand")
     }
@@ -365,7 +374,7 @@ runMethods <- function(Xtrain, ytrain, annot,
   }
 
   # GRridge
-  if (compareGRridge) {
+  if (includeGRridge) {
     tmp <- Sys.time()
     if(verbose_progress) message(" ### Fitting GRridge...")
     partition <- GRridge::CreatePartition(as.factor(annot))
@@ -431,7 +440,7 @@ runMethods <- function(Xtrain, ytrain, annot,
   }
 
   # IPF -Lasso
-  if (compareIPF) {
+  if (includeIPF) {
     # penalty factors to consider for cross-validation
     # (unclear how to choose, take a very rough grid here to make it applicable to larger number of groups)
     lambda_1d <- c(0.1, 0.5, 1, 2, 10)
@@ -465,7 +474,7 @@ runMethods <- function(Xtrain, ytrain, annot,
   }
 
   # Adaptive Lasso
-  if (compareAdaLasso) {
+  if (includeAdaLasso) {
     tmp <- Sys.time()
     if(verbose_progress) message(" ### Fitting adaptive Lasso...")
     ## Ridge Regression to create the Adaptive Weights Vector
@@ -506,14 +515,13 @@ runMethods <- function(Xtrain, ytrain, annot,
 
 #' @title Evaluate fits from various regression methods
 #' @name evaluateFits
-#' @description Function to evaluate results on test data
+#' @description Function to evaluate results from \code{\link{runMethods}} on test data.
 #' @param allFits List as produced by \code{\link{runMethods}}
 #' @param Xtest Design matrix of size n' x p
 #' (same feature structure as used in \code{\link{runMethods}})
 #' @param ytest Response vector of size n'
-#' @return List as prodcused by \code{\link{runMethods}} with
-#'  additional predicition performance slots in the summaryList
-#' @return a list containg
+#' @return a list as produced by \code{\link{runMethods}} with
+#'  additional predicition performance slots in the summaryList, i.e. the list contains
 #' \describe{
 #' \item{summaryList}{list with the fitted models for each method that was included in the comparison, each containing the
 #' runtime, estimated penalty factors, coefficients, intercepts, sparsity level and the full output returned by the methods' call (out) as in
@@ -564,7 +572,7 @@ evaluateFits <- function(allFits, Xtest, ytest) {
       intercept <- summary$intercept
       if (!is.null(beta)) {
         # for cases with linear coefficients
-        RMSE <- EvaluateModel(beta, intercept = intercept, Xtest, ytest,
+        RMSE <- evaluateModel(beta, intercept = intercept, Xtest, ytest,
                               beta0 = beta0, family = "gaussian")$RMSE_test
         summary$RMSE <- RMSE
       }
@@ -583,7 +591,7 @@ evaluateFits <- function(allFits, Xtest, ytest) {
       intercept <- summary$intercept
       if (!is.null(beta)) {
         # for cases with linear coeeficients
-        eval.out <- EvaluateModel(beta, intercept = intercept, Xtest,
+        eval.out <- evaluateModel(beta, intercept = intercept, Xtest,
                                   ytest, beta0 = beta0, family = "binomial")
         summary$AUC <- eval.out$AUC
         summary$BS <- eval.out$BrierScore
@@ -600,7 +608,7 @@ evaluateFits <- function(allFits, Xtest, ytest) {
       intercept <- summary$intercept
       if (!is.null(beta)) {
         # for cases without linear coeeficients e.g. Random Forest
-        eval.out <- EvaluateModel(beta, intercept = intercept, Xtest,
+        eval.out <- evaluateModel(beta, intercept = intercept, Xtest,
                                   ytest, beta0 = beta0, family = family)
         summary$FPR <- eval.out$FPR
         summary$FNR <- eval.out$FNR
@@ -641,9 +649,9 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 }
 
 #' @title Compare various regression method via cross-validation
-#' @name cv_compare
+#' @name compareMethodsCV
 #' @description  Function to fit a regresion model using serveral different methods
-#' and evaluate them in a cross-validated fashion in terms of prediction and estimation performance
+#' and evaluate them in a cross-validated fashion in terms of prediction and estimation performance.
 #' @param X design matrix with samples in rows and features in columns (n x p)
 #' @param y response vector of length n
 #' @param annot factor of length p indicating group membership of each feature
@@ -666,7 +674,7 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 #' \item{beta_mat}{matrix with estimated coefficients per feature (rows) and method (column)}
 #' \item{intercepts}{estimated intercepts per method}
 #' \item{sparsity_mat}{matrix with learnt sparsity levels per group (rows) and method (column) (0=sparse, 1=dense)}
-#' \item{annot}{annotation of features to groups as specified when calling \code{\link{cv_compare}}}
+#' \item{annot}{annotation of features to groups as specified when calling \code{\link{compareMethodsCV}}}
 #' \item{runtime}{vector of runtimes for the different methods}
 #' \item{l1error_intercept}{absolute error on the estimated intercept  (requires \code{trueintercept} to be specified)}
 #' \item{l1error_beta}{absolute error on the estimated coefficients (requires \code{beta0} to be specified)}
@@ -675,6 +683,8 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 #' @import parallel
 #' @details This function can be used to test various method for regression on a dataset in a cross-validated fashion.
 #' It fits the methods on all except one fold and evaluates their prediction performance on the remaining fold.
+#' See the documentation of \code{\link{runMethods}} on the methods that can be included in the comparison.
+
 #' If the true coefficients of the model are known they can be specified via \code{beta0} and \code{trueintercept}.
 #' Then, additionally the error on the estimates is evaluates as well as the feature selection performance.
 #' Note that for grpRR the selected features are determined by the posterior inclusion probabilities  with
@@ -682,9 +692,9 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 #' @export
 #' @examples
 #' dat <- makeExampleData()
-#' cv.out <- cv_compare(dat$X, dat$y, dat$annot, nfolds=3)
+#' cv.out <- compareMethodsCV(dat$X, dat$y, dat$annot, nfolds=3)
 
-cv_compare <- function(X, y, annot, family="gaussian",
+compareMethodsCV <- function(X, y, annot, family="gaussian",
                        ncores=1, nfolds=10, plot_cv=FALSE,
                        seed=NULL, parallel=FALSE, saveFits=FALSE, ...){
 

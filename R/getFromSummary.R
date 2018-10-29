@@ -1,6 +1,6 @@
 #' @title get penalty factors
 #' @name getPenaltyFactors
-#' @description get penalty factors from various methods
+#' @description Function to obtain the sparsity levels (1=dense, 0=sparse) estimated by various methods from the fitted regression models.
 #' @param AllFits object as produced by \code{\link{runMethods}}
 #' @export
 #' @return A matrix of penalty factors per group (rows) and method (columns).
@@ -22,7 +22,7 @@ getPenaltyFactors <- function(AllFits) {
 
 #' @title get sparsity levels
 #' @name getSparsityLevel
-#' @description get sparsity levels (1=dense, 0=sparse) from various methods
+#' @description Function to obtain the sparsity levels (1=dense, 0=sparse) estimated by various methods from the fitted regression models.
 #' @param AllFits object as produced by \code{\link{runMethods}}
 #' @export
 #' @return A matrix of sparsity levels per group (rows) and method (columns).
@@ -44,7 +44,7 @@ getSparsityLevel <- function(AllFits) {
 
 #' @title get coefficients
 #' @name getCoefficients
-#' @description get coefficients estimated from various methods
+#' @description Function to obtain the coefficients estimated by various methods from the fitted regression models.
 #' @param AllFits object as produced by \code{\link{runMethods}}
 #' @export
 #' @return A matrix of coefficients per feature (rows) and method (columns).
@@ -66,7 +66,7 @@ getCoefficients <- function(AllFits) {
 
 #' @title get intercept
 #' @name getIntercept
-#' @description get intercept estimated from various methods
+#' @description Function to obtain the intercepts estimated by various methods from the fitted regression models.
 #' @param AllFits object as produced by \code{\link{runMethods}}
 #' @export
 #' @return A vector of intercept values for each method.
@@ -86,7 +86,7 @@ getIntercept <- function(AllFits) {
 
 #' @title get run times
 #' @name getRunTime
-#' @description get run times of various methods
+#' @description Function to obtain the runtimes of various methods from the fitted regression models.
 #' @param AllFits object as produced by \code{\link{runMethods}}
 #' @export
 #' @return A vector of run times for each method.
@@ -106,7 +106,7 @@ getRunTime <- function(AllFits) {
 
 #' @title get RMSE
 #' @name getRMSE
-#' @description get RMSE of various methods
+#' @description Function to obtain the root mean squaed error (RMSE) of various methods in a regression model.
 #' @param AllFits object as produced by \code{\link{evaluateFits}}
 #' @export
 #' @return A vector of the root mean squared error on the test data for each method.
@@ -130,7 +130,7 @@ getRMSE <- function(AllFits) {
 
 #' @title get Brier Score
 #' @name getBS
-#' @description get Brier Score of various methods
+#' @description Function to obtain the Brier Score of various methods in a logistic regression model.
 #' @param AllFits object as produced by \code{\link{evaluateFits}}
 #' @export
 #' @return A vector of the Brier score on the test data for each method.
@@ -155,7 +155,7 @@ getBS <- function(AllFits) {
 
 #' @title get AUC
 #' @name getAUC
-#' @description get AUC of various methods
+#' @description  Function to obtain the AUC of various methods in a logistic regression model.
 #' @param AllFits object as produced by \code{\link{evaluateFits}}
 #' @export
 #' @return A vector of the AUC values on the test data for each method.

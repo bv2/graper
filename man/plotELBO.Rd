@@ -2,21 +2,21 @@
 % Please edit documentation in R/plotting_functions.R
 \name{plotELBO}
 \alias{plotELBO}
-\title{plotELBO}
+\title{Plot evidence lower bound}
 \usage{
 plotELBO(fit)
 }
 \arguments{
-\item{fit}{fit as produced by \code{\link{fit_grpRR}}}
+\item{fit}{fit as produced by \code{\link{grpRR}}}
 }
 \value{
 a ggplot object
 }
 \description{
-plot the ELBO over iteration to monitor convergence of the algorithm
+Function to plot the evidence lower bound (ELBO) over iterations to monitor the convergence of the algorithm.
 }
 \examples{
 dat <- makeExampleData()
-fit <- fit_grpRR(dat$X, dat$y, dat$annot)
+fit <- grpRR(dat$X, dat$y, dat$annot)
 plotELBO(fit)
 }

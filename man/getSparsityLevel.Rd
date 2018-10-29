@@ -13,7 +13,7 @@ getSparsityLevel(AllFits)
 A matrix of sparsity levels per group (rows) and method (columns).
 }
 \description{
-get sparsity levels (1=dense, 0=sparse) from various methods
+Function to obtain the sparsity levels (1=dense, 0=sparse) estimated by various methods from the fitted regression models.
 }
 \examples{
 dat <- makeExampleData()

@@ -13,7 +13,7 @@ getRMSE(AllFits)
 A vector of the root mean squared error on the test data for each method.
 }
 \description{
-get RMSE of various methods
+Function to obtain the root mean squaed error (RMSE) of various methods in a regression model.
 }
 \examples{
 dat <- makeExampleData()

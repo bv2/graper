@@ -2,15 +2,15 @@
 % Please edit documentation in R/plotting_functions.R
 \name{plotPosterior}
 \alias{plotPosterior}
-\title{plotPosterior}
+\title{Plot posterior distributions}
 \usage{
 plotPosterior(fit, param2plot, beta0 = NULL, gamma0 = NULL,
   tau0 = NULL, pi0 = NULL, s0 = NULL, jmax = 2, range = NULL)
 }
 \arguments{
-\item{fit}{fit as produced by \code{\link{fit_grpRR}}}
+\item{fit}{fit as produced by \code{\link{grpRR}}}
 
-\item{param2plot}{which parametet to plot (gamma, beta, tau or s)}
+\item{param2plot}{which parameter of the grpRR model to plot (gamma, beta, tau or s)}
 
 \item{beta0}{true beta (if known)}
 
@@ -22,7 +22,7 @@ plotPosterior(fit, param2plot, beta0 = NULL, gamma0 = NULL,
 
 \item{s0}{true s (if known)}
 
-\item{jmax}{maximal number of betas per group to plot}
+\item{jmax}{maximal number of components per group to plot (for beta and s)}
 
 \item{range}{plotting range (x-axis)}
 }
@@ -30,10 +30,10 @@ plotPosterior(fit, param2plot, beta0 = NULL, gamma0 = NULL,
 a ggplot object
 }
 \description{
-plot the posterior of the model parameters
+Function to plot the posterior of the model parameters obtained from the variational inference.
 }
 \examples{
 dat <- makeExampleData()
-fit <- fit_grpRR(dat$X, dat$y, dat$annot)
+fit <- grpRR(dat$X, dat$y, dat$annot)
 plotPosterior(fit, param2plot="gamma")
 }

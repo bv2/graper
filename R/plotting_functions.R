@@ -1,14 +1,14 @@
-#' @title plotPosterior
+#' @title Plot posterior distributions
 #' @name plotPosterior
-#' @description plot the posterior of the model parameters
-#' @param fit fit as produced by \code{\link{fit_grpRR}}
-#' @param param2plot which parametet to plot (gamma, beta, tau or s)
+#' @description Function to plot the posterior of the model parameters obtained from the variational inference.
+#' @param fit fit as produced by \code{\link{grpRR}}
+#' @param param2plot which parameter of the grpRR model to plot (gamma, beta, tau or s)
 #' @param beta0 true beta (if known)
 #' @param gamma0 true gamma (if known)
 #' @param pi0 true pi (if known)
 #' @param tau0 true tau (if known)
 #' @param s0 true s (if known)
-#' @param jmax maximal number of betas per group to plot
+#' @param jmax maximal number of components per group to plot (for beta and s)
 #' @param range plotting range (x-axis)
 #' @export
 #' @importFrom dplyr mutate
@@ -16,7 +16,7 @@
 #' @return a ggplot object
 #' @examples
 #' dat <- makeExampleData()
-#' fit <- fit_grpRR(dat$X, dat$y, dat$annot)
+#' fit <- grpRR(dat$X, dat$y, dat$annot)
 #' plotPosterior(fit, param2plot="gamma")
 
 plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
@@ -169,15 +169,15 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
 }
 
 
-#' @title plotELBO
+#' @title Plot evidence lower bound
 #' @name plotELBO
-#' @description plot the ELBO over iteration to monitor convergence of the algorithm
-#' @param fit fit as produced by \code{\link{fit_grpRR}}
+#' @description Function to plot the evidence lower bound (ELBO) over iterations to monitor the convergence of the algorithm.
+#' @param fit fit as produced by \code{\link{grpRR}}
 #' @export
 #' @return a ggplot object
 #' @examples
 #' dat <- makeExampleData()
-#' fit <- fit_grpRR(dat$X, dat$y, dat$annot)
+#' fit <- grpRR(dat$X, dat$y, dat$annot)
 #' plotELBO(fit)
 plotELBO <- function(fit){
   iteration <- ELBO <- NULL # avoid notes in check
@@ -189,12 +189,12 @@ plotELBO <- function(fit){
 }
 
 
-#'  @title plot comparison of methods
-#'  @name plotMethodComparison
-#'  @description Function to plot method comparison across several runs
-#' @param resultList List as created by \code{\link{cv_compare}}
-#' @param family gaussian or binomial (same as used in \code{\link{cv_compare}})
-#' @param methods2plot which method to be plotted
+#' @title Plot performance measures for various methods
+#' @name plotMethodComparison
+#' @description Function to plot performance measures of the fits obtained from various regression methods that were evaluated using to \code{\link{compareMethodsCV}}.
+#' @param resultList list as created by \code{\link{compareMethodsCV}}
+#' @param family gaussian or binomial (same as used in \code{\link{compareMethodsCV}})
+#' @param methods2plot which methods to include into the fit
 #' @importFrom dplyr filter bind_rows
 #' @importFrom reshape2 melt
 #' @import ggplot2
@@ -203,7 +203,7 @@ plotELBO <- function(fit){
 #' @return a ggplot object
 #' @examples
 #' dat <- makeExampleData()
-#' cv.out <- cv_compare(dat$X, dat$y, dat$annot, nfolds=3)
+#' cv.out <- compareMethodsCV(dat$X, dat$y, dat$annot, nfolds=3)
 #' plotMethodComparison(cv.out)
 
 plotMethodComparison <- function(resultList, family = "gaussian", methods2plot="all") {

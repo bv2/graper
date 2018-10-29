@@ -13,7 +13,7 @@ getIntercept(AllFits)
 A vector of intercept values for each method.
 }
 \description{
-get intercept estimated from various methods
+Function to obtain the intercepts estimated by various methods from the fitted regression models.
 }
 \examples{
 dat <- makeExampleData()

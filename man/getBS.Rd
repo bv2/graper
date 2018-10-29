@@ -13,7 +13,7 @@ getBS(AllFits)
 A vector of the Brier score on the test data for each method.
 }
 \description{
-get Brier Score of various methods
+Function to obtain the Brier Score of various methods in a logistic regression model.
 }
 \examples{
 dat <- makeExampleData(response = "bernoulli")
