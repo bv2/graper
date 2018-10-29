@@ -27,8 +27,9 @@ data <- makeExampleData(n = 400, p=800, g=4,
 # Fit the model
 `fit_grpRR` is the main function of this package, which allows to fit the proposed Bayesian models with different settings on the prior (by setting `spikeslab` to FALSE or TRUE) and the variational approximation (by setting `factoriseQ` to FALSE or TRUE). By default, the model is fit with a sparsity promoting spike-and-slab prior and a fully-factorised mean-field assumption. The parameter `n_rep` can be used to train multiple models with different random initilization. The best model is then chosen in terms of ELBO and returned by the function. `th` defines the threshold on the ELBO for convergence in the variational Bayes (VB) algorithm used for optimization.
 ```{r}
-fit <- fit_grpRR(data$X, data$y, data$annot,
-                 n_rep=3, verbose = FALSE, th = 0.001)
+fit <- grpRR(data$X, data$y, data$annot,
+             n_rep=3, verbose = FALSE, th = 0.001)
+fit
 ```
 
 # Training diagnostics
@@ -38,7 +39,7 @@ plotELBO(fit)
 ```
 
 # Posterior distribtions
-The VB approach directly yields posterior distributions for each parameter. Note, however, that using VB these are often too concentrated and can not be directly used for construciton of confidence intervals etc. However, they can provide good point estimates.
+The variational Bayes (VB) approach directly yields posterior distributions for each parameter. Note, however, that using VB these are often too concentrated and can not be directly used for construciton of confidence intervals etc. However, they can provide good point estimates.
 ```{r}
 plotPosterior(fit, "gamma", gamma0 = data$gammas, range=c(0,20))
 plotPosterior(fit, "pi", pi0 = data$pis)
@@ -47,8 +48,10 @@ plotPosterior(fit, "pi", pi0 = data$pis)
 # Model coefficients and intercept
 The estimated coefficients and intercept are contained in the result list.
 ```{r}
-# get coefficients
-beta <- fit$EW_beta
+# get coefficients (without the intercept)
+beta <- coef(fit, include_intercept = FALSE)
+# beta <- fit$EW_beta
+
 # plot estimated versus true beta
 qplot(beta, data$beta) + coord_fixed()
 ```
@@ -58,6 +61,17 @@ qplot(beta, data$beta) + coord_fixed()
 intercept <- fit$intercept
 ```
 
+```{r}
+# get estimated posterior inclusion probabilities per feature
+pips <- getPIPs(fit)
+```
+
+# Make predictions
+The function `fit.grpRR` can be used to make prediction on new data.
+Here, we illustrate its use by predicting the reponse using the test data itself.
+```{r}
+preds <- predict(fit, data$X)
+```
 
 # Comparison to other methods
 Using the functions `compareMethodsCV` or `runMethods` the grpRR method can be compared to various related regression methods.

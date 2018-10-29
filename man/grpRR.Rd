@@ -61,7 +61,7 @@ i.e. each freqELB-th iteration}
 \item{init_psi}{initial value for the spike variables}
 }
 \value{
-List containing
+A grpRR object containing
 \describe{
 \item{EW_beta}{estimated model coefficients in liner/logistic regression}
 \item{EW_s}{estimated posterior-inclusion probabilities for each feature}

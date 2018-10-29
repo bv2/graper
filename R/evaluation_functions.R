@@ -52,8 +52,30 @@
 #' @importFrom stats coef
 #' @return a list containg
 #' \describe{
-#' \item{summaryList}{list with the fitted models for each method that was included in the comparison, each containing the
-#' runtime, estimated penalty factors, coefficients, intercepts, sparsity level and the full output returned by the methods' call (out)}
+#' \item{summaryList}{list with the fitted models for each method that was included in the comparison, such as
+#' \itemize{
+#' \item grpRR_SS (sparse grpRR model with factorized variational distribution)
+#' \item grpRR_FF (dense grpRR model with factorized variational distribution)
+#' \item grpRR (dense grpRR model with nonfactorized variational distribution)
+#' \item grpRR_SScutoff (as grpRR_SS where coefficients with posterior inclusion probabilities below 0.5 are set to zero)
+#' \item grpRR_SS_nogamma (as grpRR_SS with a common slab precision across groups)
+#' \item grpRR_SS_ungrouped (as grpRR_SS without group annotation)
+#' \item Ridge (ridge regression)
+#' \item Lasso (Lasso regression)
+#' \item ElasticNet (elastic net regression)
+#' \item varbvs (varbvs regression)
+#' \item GroupLasso (group Lasso regression)
+#' \item SparseGroupLasso (sparse group Lasso regression)
+#' \item SparseGroupLasso (sparse group Lasso regression)
+#' \item GRridge (GRridge regression)
+#' \item NullModel (regression with the intercept term only)
+#' \item TrueModel (regression with the true model coefficients (if known))
+#' \item IPFLasso (IPF-Lasso regression)
+#' \item adaptiveLasso (adaptive Lasso regression)
+#' }
+#' Each entry contains the
+#' runtime, estimated penalty factors, coefficients, intercepts, sparsity level and the full output returned by the methods' call (out).
+#' }
 #' \item{groupnames}{groupnames from \code{annot}}
 #' \item{varnames}{predictor names}
 #' \item{family}{likelihoods model used}
@@ -523,9 +545,32 @@ runMethods <- function(Xtrain, ytrain, annot,
 #' @return a list as produced by \code{\link{runMethods}} with
 #'  additional predicition performance slots in the summaryList, i.e. the list contains
 #' \describe{
-#' \item{summaryList}{list with the fitted models for each method that was included in the comparison, each containing the
+#' \item{summaryList}{list with the fitted models for each method that was included in the comparison, such as
+#' \itemize{
+#' \item grpRR_SS (sparse grpRR model with factorized variational distribution)
+#' \item grpRR_FF (dense grpRR model with factorized variational distribution)
+#' \item grpRR (dense grpRR model with nonfactorized variational distribution)
+#' \item grpRR_SScutoff (as grpRR_SS where coefficients with posterior inclusion probabilities below 0.5 are set to zero)
+#' \item grpRR_SS_nogamma (as grpRR_SS with a common slab precision across groups)
+#' \item grpRR_SS_ungrouped (as grpRR_SS without group annotation)
+#' \item Ridge (ridge regression)
+#' \item Lasso (Lasso regression)
+#' \item ElasticNet (elastic net regression)
+#' \item varbvs (varbvs regression)
+#' \item GroupLasso (group Lasso regression)
+#' \item SparseGroupLasso (sparse group Lasso regression)
+#' \item SparseGroupLasso (sparse group Lasso regression)
+#' \item GRridge (GRridge regression)
+#' \item NullModel (regression with the intercept term only)
+#' \item TrueModel (regression with the true model coefficients (if known))
+#' \item IPFLasso (IPF-Lasso regression)
+#' \item adaptiveLasso (adaptive Lasso regression)
+#' }
+#'Each entry contains the
 #' runtime, estimated penalty factors, coefficients, intercepts, sparsity level and the full output returned by the methods' call (out) as in
-#' the output produced by \code{\link{runMethods}}. In addition, it contains performance statistics such as root mean squared error (RMSE) and
+#' the output produced by \code{\link{runMethods}}.
+#'
+#' In addition, it contains performance statistics such as root mean squared error (RMSE) and
 #' feautre selection properties (if \code{beta0} was specified)}
 #' \item{groupnames}{groupnames from \code{annot}}
 #' \item{varnames}{predictor names}

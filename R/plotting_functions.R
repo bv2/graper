@@ -22,6 +22,11 @@
 plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
                           tau0 = NULL, pi0=NULL, s0=NULL, jmax=2, range=NULL) {
 
+  # sanity check
+  if(class(fit) != "grpRR") {
+    stop("fit needs to be a grpRR object.")
+  }
+
     if (param2plot=="beta") {
       # avoid notes on global varibale binding in check
       beta <- true_beta <- density <- mean_val <- mu_slab <- va_slab <- psi <- j <- NULL
@@ -180,6 +185,12 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
 #' fit <- grpRR(dat$X, dat$y, dat$annot)
 #' plotELBO(fit)
 plotELBO <- function(fit){
+
+  # sanity check
+  if(class(fit) != "grpRR") {
+    stop("fit needs to be a grpRR object.")
+  }
+
   iteration <- ELBO <- NULL # avoid notes in check
     if(is.null(fit$ELB_trace)) stop("ELBO was not computed for this fit.")
 

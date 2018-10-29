@@ -46,7 +46,7 @@
 #'  Depending on the response vector a linear regression model (\code{family = "gaussian"}) or a logistic regression model
 #'  (\code{family = "binomial"}) is fitted. Note, that the implementation of logistic regression is still experimental.
 #'
-#' @return List containing
+#' @return A grpRR object containing
 #' \describe{
 #' \item{EW_beta}{estimated model coefficients in liner/logistic regression}
 #' \item{EW_s}{estimated posterior-inclusion probabilities for each feature}
@@ -254,12 +254,13 @@ grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
                             freqELB = freqELB,
                             family = family,
                             nogamma=nogamma,
-                            standardize=standardize)
+                            standardize=standardize,
+                            featurenames = colnames(X))
 
     #remove ELB slot if not calculated
     if(all(is.na(res$ELB_trace) | !is.finite(res$ELB_trace))){
       res$ELB_trace <- NULL
     }
-
+    class(res) <- "grpRR"
     return(res)
 }
