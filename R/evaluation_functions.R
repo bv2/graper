@@ -1,11 +1,11 @@
 #' @title Run various regression methods
 #' @name runMethods
-#' @description Function to fit a linear or logistic regression model using serveral different methods.
+#' @description Function to fit a linear or logistic regression model using several different methods.
 #' @details This function fits a linear of logistic regression model to the data using various different methods.
 #' grpRR is always included in its factorized form (both dense (grpRR_FF) and sparse (grpRR_SS)). In addition, a grpRR model is included with all
-#' coefficients set to 0 whose posterior inclusion probaility (s) is below 50% (grpRR_SScutoff). As a comparison, ridge regression,
-#' Lasso and elatic net as well as a intercept-only model are fitted. Other methods can be  included via the respective options, such as GRridge,
-#'  non-facotized grpRR (grpRR), IPF-Lasso, sparse group Lasso, group Laso, adaptive Lasso, varbvs, random forest and
+#' coefficients set to 0 whose posterior inclusion probability (s) is below 50% (grpRR_SScutoff). As a comparison, ridge regression,
+#' Lasso and elastic net as well as a intercept-only model are fitted. Other methods can be included via the respective options, such as GRridge,
+#'  non-factorized grpRR (grpRR), IPF-Lasso, sparse group Lasso, group Lasso, adaptive Lasso, varbvs, random forest and
 #'  grpRR without group annotations (grpRR_SS_ungrouped) or without different slab precisions (grpRR_nogamma).
 #'
 #'  The fitted methods can be evaluated on test data using the function \code{\link{evaluateFits}}.
@@ -27,21 +27,19 @@
 #' @param freqELB frequency at which the evidence lower bound (ELB) is to be calculated for grpRR,
 #'  i.e. each freqELB-th iteration (see also  \code{\link{grpRR}})
 #' @param th convergence threshold for the evidence lower bound (ELB) in grpRR (see also  \code{\link{grpRR}})
-#' @param n_rep number of reptitions with different random initilizations to be fit in grpRR (see also  \code{\link{grpRR}})
+#' @param n_rep number of repetitions with different random initializations to be fit in grpRR (see also  \code{\link{grpRR}})
 #' @param verbose  whether to print out intermediate messages during fitting
 #' @param includeGRridge  whether to fit GRridge
-#' @param include_grpRR_nonfacQ  whether to fit grpRR method with multivariate variational distributon be fitted (can be slow for large data sets)
+#' @param include_grpRR_nonfacQ  whether to fit grpRR method with multivariate variational distribution be fitted (can be slow for large data sets)
 #' @param includeIPF  whether to fit IPF-Lasso be fitted
 #' @param includeSparseGroupLasso  whether to fit sparse group Lasso
 #' @param includeGroupLasso  whether to fit group Lasso
 #' @param includeAdaLasso  whether to fit Lasso
 #' @param includeRF whether to fit random forest
 #' @param includeVarbvs  whether to fit varbvs
-#' @param include_grpRR_SS_nogamma  whether to fit grpRR with same penalty factor but different sparity levels  per group
+#' @param include_grpRR_SS_nogamma  whether to fit grpRR with same penalty factor but different sparsity levels  per group
 #' @param include_grpRR_SS_ungrouped whether to fit grpRR without group annotations
 #' @param verbose_progress  whether to print out details on the overall progress
-#' @return List of fitted models and two data frames with
-#'  coeffcients and penalty factors
 #' @importFrom glmnet cv.glmnet
 #' @importFrom varbvs varbvs
 #' @importFrom randomForest randomForest
@@ -50,13 +48,13 @@
 #' @importFrom GRridge CreatePartition grridge
 #' @importFrom ipflasso cvr2.ipflasso
 #' @importFrom stats coef
-#' @return a list containg
+#' @return a list containing
 #' \describe{
 #' \item{summaryList}{list with the fitted models for each method that was included in the comparison, such as
 #' \itemize{
 #' \item grpRR_SS (sparse grpRR model with factorized variational distribution)
 #' \item grpRR_FF (dense grpRR model with factorized variational distribution)
-#' \item grpRR (dense grpRR model with nonfactorized variational distribution)
+#' \item grpRR (dense grpRR model with non-factorized variational distribution)
 #' \item grpRR_SScutoff (as grpRR_SS where coefficients with posterior inclusion probabilities below 0.5 are set to zero)
 #' \item grpRR_SS_nogamma (as grpRR_SS with a common slab precision across groups)
 #' \item grpRR_SS_ungrouped (as grpRR_SS without group annotation)
@@ -549,7 +547,7 @@ runMethods <- function(Xtrain, ytrain, annot,
 #' \itemize{
 #' \item grpRR_SS (sparse grpRR model with factorized variational distribution)
 #' \item grpRR_FF (dense grpRR model with factorized variational distribution)
-#' \item grpRR (dense grpRR model with nonfactorized variational distribution)
+#' \item grpRR (dense grpRR model with non-factorized variational distribution)
 #' \item grpRR_SScutoff (as grpRR_SS where coefficients with posterior inclusion probabilities below 0.5 are set to zero)
 #' \item grpRR_SS_nogamma (as grpRR_SS with a common slab precision across groups)
 #' \item grpRR_SS_ungrouped (as grpRR_SS without group annotation)
@@ -584,7 +582,7 @@ runMethods <- function(Xtrain, ytrain, annot,
 #' @details This function can be used to evaluate the fits of various method as produced by \code{\link{runMethods}} on a test dataset.
 #' If the true coefficients of the model are known they can be specified via \code{beta0} and \code{trueintercept}.
 #' Then, additionally the error on the estimates is evaluates as well as the feature selection performance.
-#' Note that for grpRR the selected features are determined by the posterior inclusion probabilities  with
+#' Note that for grpRR the selected features are determined by the posterior inclusion probabilities with
 #' a feature being called active for s>0.5 (The method grpRR_cutoff sets inactive with s<=0.5 coefficients to exactly zero).
 #' @importFrom stats predict
 #' @examples
@@ -695,14 +693,14 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 
 #' @title Compare various regression method via cross-validation
 #' @name compareMethodsCV
-#' @description  Function to fit a regresion model using serveral different methods
+#' @description  Function to fit a regression  model using several different methods
 #' and evaluate them in a cross-validated fashion in terms of prediction and estimation performance.
 #' @param X design matrix with samples in rows and features in columns (n x p)
 #' @param y response vector of length n
 #' @param annot factor of length p indicating group membership of each feature
 #' @param family likelihood model for the response,
 #'  either "gaussian" for linear regression
-#' or "binomial" for logisitc regression
+#' or "binomial" for logistic regression
 #' @param nfolds number of folds for evaluation
 #' @param ncores number of cores to use
 #' @param plot_cv whether to produce summary plots from evaluation
@@ -713,7 +711,7 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 #' @return List with one entry per fold containing a list with
 #' \describe{
 #' \item{FPR}{False positive rate (requires \code{beta0} to be specified)}
-#' \item{FNR}{False neagtive rate (requires \code{beta0} to be specified)}
+#' \item{FNR}{False negative rate (requires \code{beta0} to be specified)}
 #' \item{RMSE}{Root mean squared error on the left-out fold}
 #' \item{pf_mat}{matrix with learnt penalty factors per group (rows) and method (column)}
 #' \item{beta_mat}{matrix with estimated coefficients per feature (rows) and method (column)}
@@ -732,7 +730,7 @@ evaluateFits <- function(allFits, Xtest, ytest) {
 
 #' If the true coefficients of the model are known they can be specified via \code{beta0} and \code{trueintercept}.
 #' Then, additionally the error on the estimates is evaluates as well as the feature selection performance.
-#' Note that for grpRR the selected features are determined by the posterior inclusion probabilities  with
+#' Note that for grpRR the selected features are determined by the posterior inclusion probabilities with
 #' a feature being called active for s>0.5 (The method grpRR_cutoff sets inactive with s<=0.5 coefficients to exactly zero).
 #' @export
 #' @examples

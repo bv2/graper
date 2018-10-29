@@ -17,7 +17,7 @@ compareMethodsCV(X, y, annot, family = "gaussian", ncores = 1,
 
 \item{family}{likelihood model for the response,
  either "gaussian" for linear regression
-or "binomial" for logisitc regression}
+or "binomial" for logistic regression}
 
 \item{ncores}{number of cores to use}
 
@@ -37,7 +37,7 @@ or "binomial" for logisitc regression}
 List with one entry per fold containing a list with
 \describe{
 \item{FPR}{False positive rate (requires \code{beta0} to be specified)}
-\item{FNR}{False neagtive rate (requires \code{beta0} to be specified)}
+\item{FNR}{False negative rate (requires \code{beta0} to be specified)}
 \item{RMSE}{Root mean squared error on the left-out fold}
 \item{pf_mat}{matrix with learnt penalty factors per group (rows) and method (column)}
 \item{beta_mat}{matrix with estimated coefficients per feature (rows) and method (column)}
@@ -50,7 +50,7 @@ List with one entry per fold containing a list with
 }
 }
 \description{
-Function to fit a regresion model using serveral different methods
+Function to fit a regression  model using several different methods
 and evaluate them in a cross-validated fashion in terms of prediction and estimation performance.
 }
 \details{
@@ -59,7 +59,7 @@ It fits the methods on all except one fold and evaluates their prediction perfor
 See the documentation of \code{\link{runMethods}} on the methods that can be included in the comparison.
 If the true coefficients of the model are known they can be specified via \code{beta0} and \code{trueintercept}.
 Then, additionally the error on the estimates is evaluates as well as the feature selection performance.
-Note that for grpRR the selected features are determined by the posterior inclusion probabilities  with
+Note that for grpRR the selected features are determined by the posterior inclusion probabilities with
 a feature being called active for s>0.5 (The method grpRR_cutoff sets inactive with s<=0.5 coefficients to exactly zero).
 }
 \examples{

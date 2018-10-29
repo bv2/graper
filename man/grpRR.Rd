@@ -21,7 +21,7 @@ grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
 \item{factoriseQ}{if set to TRUE, the variational distribution is assumed
 to fully factorize across features (faster, default). FALSE uses a multivariate variational distribution.}
 
-\item{spikeslab}{if set to TRUE, a spike and slab prior on the coeffiecients (default).}
+\item{spikeslab}{if set to TRUE, a spike and slab prior on the coefficients (default).}
 
 \item{intercept}{whether to include an intercept into the model}
 
@@ -30,7 +30,7 @@ either "gaussian" for linear regression or "binomial" for logistic regression}
 
 \item{standardize}{whether to standardize the predictors to unit variance}
 
-\item{n_rep}{number of reptitions with different random initilizations to be fit}
+\item{n_rep}{number of repetitions with different random initializations  to be fit}
 
 \item{max_iter}{maximum number of iterations}
 
@@ -40,9 +40,9 @@ either "gaussian" for linear regression or "binomial" for logistic regression}
 
 \item{r_tau}{hyper-parameters for prior of tau (noise precision)}
 
-\item{d_gamma}{hyper-parameters for prior of gamma (coeffient's prior precision)}
+\item{d_gamma}{hyper-parameters for prior of gamma (coefficients' prior precision)}
 
-\item{r_gamma}{hyper-parameters for prior of gamma (coeffient's prior precision)}
+\item{r_gamma}{hyper-parameters for prior of gamma (coefficients' prior precision)}
 
 \item{r_pi}{hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior}
 
@@ -94,7 +94,7 @@ For each feature group as specified in \code{annot} a penalty factor and sparsit
  scheme based on a multivariate variational distribution, but can be much slower.
 
  As the optimization is non-convex is can
- be helpful to use multiple random initilizations by setting \code{n_rep} to a value larger 1. The returned model is then chosen
+ be helpful to use multiple random initializations by setting \code{n_rep} to a value larger 1. The returned model is then chosen
  as the optimal fit with respect to the evidence lower bound (ELB).
 
  Depending on the response vector a linear regression model (\code{family = "gaussian"}) or a logistic regression model
@@ -106,8 +106,11 @@ dat <- makeExampleData()
 
 # fit a sparse model with spike and slab prior
 fit <- grpRR(dat$X, dat$y, dat$annot)
-beta <- fit$EW_beta # model coeffients
-pf <- fit$EW_gamma #penalty factors per group
+fit # print fitted object
+beta <- coef(fit, include_intercept = FALSE) # model coeffients
+pips <- getPIPs(fit) # posterior inclusion probabilities
+pf <- fit$EW_gamma # penalty factors per group
+sparsities <- fit$EW_pi # sparsity levels per group
 
 # fit a dense model without spike and slab prior
 fit <- grpRR(dat$X, dat$y, dat$annot, spikeslab = FALSE)

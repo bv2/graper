@@ -3,10 +3,10 @@
 #' @description Function to compute marginal regression coefficients using \code{glm}.
 #' @param response response vector
 #' @param data design matrix
-#' @param family liklihood model for the response
+#' @param family likelihood model for the response
 #' @export
 #' @return a matrix containing estimates, standard errors, statistics
-#'  and p-values (rows) for each feature (columns) in the desing matrix
+#'  and p-values (rows) for each feature (columns) in the design matrix
 #' @importFrom stats glm
 #'
 #' @examples
@@ -43,11 +43,11 @@ imputeByMean <- function(x) {
 #'  number of test samples (n_test) times features (p)
 #' @param y_test response vector of length number of test samples (n_test)
 #' @param beta0 true model coefficients (if known)
-#' @param family liklihood model for the response, either
-#'  "gaussian" for linear regression or "binomial" for logisitc regression
+#' @param family likelihood model for the response, either
+#'  "gaussian" for linear regression or "binomial" for logistic regression
 #' @importFrom GRridge auc roc
 #' @export
-#' @return A list containting various performance measures such as RMSE, FNR, FPR etc
+#' @return A list containing various performance measures such as RMSE, FNR, FPR etc.
 #' @examples
 #' dat <- makeExampleData()
 #' # take a null model with all coefficeints set to zero for evaluation

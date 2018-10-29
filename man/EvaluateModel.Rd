@@ -18,11 +18,11 @@ number of test samples (n_test) times features (p)}
 
 \item{beta0}{true model coefficients (if known)}
 
-\item{family}{liklihood model for the response, either
-"gaussian" for linear regression or "binomial" for logisitc regression}
+\item{family}{likelihood model for the response, either
+"gaussian" for linear regression or "binomial" for logistic regression}
 }
 \value{
-A list containting various performance measures such as RMSE, FNR, FPR etc
+A list containing various performance measures such as RMSE, FNR, FPR etc.
 }
 \description{
 Function to evaluate a fitted regression model on test data in terms of their prediction and feature selection properties.

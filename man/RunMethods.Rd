@@ -45,7 +45,7 @@ i.e. each freqELB-th iteration (see also  \code{\link{grpRR}})}
 
 \item{th}{convergence threshold for the evidence lower bound (ELB) in grpRR (see also  \code{\link{grpRR}})}
 
-\item{n_rep}{number of reptitions with different random initilizations to be fit in grpRR (see also  \code{\link{grpRR}})}
+\item{n_rep}{number of repetitions with different random initializations to be fit in grpRR (see also  \code{\link{grpRR}})}
 
 \item{verbose}{whether to print out intermediate messages during fitting}
 
@@ -53,7 +53,7 @@ i.e. each freqELB-th iteration (see also  \code{\link{grpRR}})}
 
 \item{includeGRridge}{whether to fit GRridge}
 
-\item{include_grpRR_nonfacQ}{whether to fit grpRR method with multivariate variational distributon be fitted (can be slow for large data sets)}
+\item{include_grpRR_nonfacQ}{whether to fit grpRR method with multivariate variational distribution be fitted (can be slow for large data sets)}
 
 \item{includeSparseGroupLasso}{whether to fit sparse group Lasso}
 
@@ -67,21 +67,18 @@ i.e. each freqELB-th iteration (see also  \code{\link{grpRR}})}
 
 \item{includeVarbvs}{whether to fit varbvs}
 
-\item{include_grpRR_SS_nogamma}{whether to fit grpRR with same penalty factor but different sparity levels  per group}
+\item{include_grpRR_SS_nogamma}{whether to fit grpRR with same penalty factor but different sparsity levels  per group}
 
 \item{include_grpRR_SS_ungrouped}{whether to fit grpRR without group annotations}
 }
 \value{
-List of fitted models and two data frames with
- coeffcients and penalty factors
-
-a list containg
+a list containing
 \describe{
 \item{summaryList}{list with the fitted models for each method that was included in the comparison, such as
 \itemize{
 \item grpRR_SS (sparse grpRR model with factorized variational distribution)
 \item grpRR_FF (dense grpRR model with factorized variational distribution)
-\item grpRR (dense grpRR model with nonfactorized variational distribution)
+\item grpRR (dense grpRR model with non-factorized variational distribution)
 \item grpRR_SScutoff (as grpRR_SS where coefficients with posterior inclusion probabilities below 0.5 are set to zero)
 \item grpRR_SS_nogamma (as grpRR_SS with a common slab precision across groups)
 \item grpRR_SS_ungrouped (as grpRR_SS without group annotation)
@@ -111,14 +108,14 @@ runtime, estimated penalty factors, coefficients, intercepts, sparsity level and
 }
 }
 \description{
-Function to fit a linear or logistic regression model using serveral different methods.
+Function to fit a linear or logistic regression model using several different methods.
 }
 \details{
 This function fits a linear of logistic regression model to the data using various different methods.
 grpRR is always included in its factorized form (both dense (grpRR_FF) and sparse (grpRR_SS)). In addition, a grpRR model is included with all
-coefficients set to 0 whose posterior inclusion probaility (s) is below 50% (grpRR_SScutoff). As a comparison, ridge regression,
-Lasso and elatic net as well as a intercept-only model are fitted. Other methods can be  included via the respective options, such as GRridge,
- non-facotized grpRR (grpRR), IPF-Lasso, sparse group Lasso, group Laso, adaptive Lasso, varbvs, random forest and
+coefficients set to 0 whose posterior inclusion probability (s) is below 50% (grpRR_SScutoff). As a comparison, ridge regression,
+Lasso and elastic net as well as a intercept-only model are fitted. Other methods can be included via the respective options, such as GRridge,
+ non-factorized grpRR (grpRR), IPF-Lasso, sparse group Lasso, group Lasso, adaptive Lasso, varbvs, random forest and
  grpRR without group annotations (grpRR_SS_ungrouped) or without different slab precisions (grpRR_nogamma).
 
  The fitted methods can be evaluated on test data using the function \code{\link{evaluateFits}}.

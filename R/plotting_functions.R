@@ -69,7 +69,10 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
     }
 
         if (param2plot=="s") {
-        s <- true_s <- density <- mean_val <- NULL
+          if(!fit$Options$spikeslab) {
+            stop("fit needs to be a sparse grpRR object. Use spikeslab = TRUE in grpRR.")
+          }
+        s <- true_s <- density <- mean_val <- psi <-  NULL
         message("Only plotting the first ", jmax, " s per group.")
         js <- Reduce(c,lapply(unique(fit$annot),
                               function(gr) {
@@ -82,7 +85,7 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
             x <- c(0,1)
             data.frame(s=x, j=j, psi=psi,mean_val=mean_val, group=group)
             })
-        gr <- bind_rows()
+        gr <- bind_rows(gr)
         gr <- dplyr::mutate(gr, density = psi^s *(1-psi)^(1-s))
         if(!is.null(s0)) gr <- dplyr::mutate(gr, true_s = s0[j])
         gg <- ggplot(gr, aes(xend=s, x=s, yend=0, y=density)) +
@@ -99,6 +102,9 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
     }
 
         if (param2plot=="pi") {
+          if(!fit$Options$spikeslab) {
+            stop("fit needs to be a sparse grpRR object. Use spikeslab = TRUE in grpRR.")
+          }
         # avoid notes on global varibale binding in check
         pi <- true_pi <- density <- mean_val <- k <- NULL
         gr <- lapply(seq_along(fit$EW_pi), function(k) {
@@ -153,6 +159,9 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
     }
 
     if (param2plot=="tau") {
+      if(fit$Options$family == "binomial") {
+        stop("fit is from a logistic regression model. No tau to plot.")
+      }
         # avoid notes on global varibale binding in check
         tau <- true_tau <- density <- mean_val <- NULL
         va <- fit$alpha_tau/fit$alpha_tau^2

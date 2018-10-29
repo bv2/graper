@@ -11,11 +11,11 @@ getMarginalCoefficient(response, data, family = "gaussian")
 
 \item{data}{design matrix}
 
-\item{family}{liklihood model for the response}
+\item{family}{likelihood model for the response}
 }
 \value{
 a matrix containing estimates, standard errors, statistics
- and p-values (rows) for each feature (columns) in the desing matrix
+ and p-values (rows) for each feature (columns) in the design matrix
 }
 \description{
 Function to compute marginal regression coefficients using \code{glm}.

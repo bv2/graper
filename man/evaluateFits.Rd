@@ -22,7 +22,7 @@ a list as produced by \code{\link{runMethods}} with
 \itemize{
 \item grpRR_SS (sparse grpRR model with factorized variational distribution)
 \item grpRR_FF (dense grpRR model with factorized variational distribution)
-\item grpRR (dense grpRR model with nonfactorized variational distribution)
+\item grpRR (dense grpRR model with non-factorized variational distribution)
 \item grpRR_SScutoff (as grpRR_SS where coefficients with posterior inclusion probabilities below 0.5 are set to zero)
 \item grpRR_SS_nogamma (as grpRR_SS with a common slab precision across groups)
 \item grpRR_SS_ungrouped (as grpRR_SS without group annotation)
@@ -61,7 +61,7 @@ Function to evaluate results from \code{\link{runMethods}} on test data.
 This function can be used to evaluate the fits of various method as produced by \code{\link{runMethods}} on a test dataset.
 If the true coefficients of the model are known they can be specified via \code{beta0} and \code{trueintercept}.
 Then, additionally the error on the estimates is evaluates as well as the feature selection performance.
-Note that for grpRR the selected features are determined by the posterior inclusion probabilities  with
+Note that for grpRR the selected features are determined by the posterior inclusion probabilities with
 a feature being called active for s>0.5 (The method grpRR_cutoff sets inactive with s<=0.5 coefficients to exactly zero).
 }
 \examples{

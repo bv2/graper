@@ -15,28 +15,28 @@ makeExampleData(n = 100, p = 200, g = 4, gammas = c(0.1, 1, 10,
 
 \item{g}{number of groups}
 
-\item{gammas}{vector of length g, sepcifying the slab precision
+\item{gammas}{vector of length g, specifying the slab precision
 of the prior on beta per group}
 
-\item{pis}{vector of length g, sepcifying the probability of s to be 1 (slab)}
+\item{pis}{vector of length g, specifying the probability of s to be 1 (slab)}
 
 \item{tau}{noise precision}
 
 \item{rho}{correlation of design matrix (Toeplitz structure)}
 
-\item{response}{"gaussian" for continious response from a linear regression model,
-"bernoulli"  for a binary response from a logisitic regression model.}
+\item{response}{"gaussian" for continuous response from a linear regression model,
+"bernoulli"  for a binary response from a logistic regression model.}
 
 \item{intercept}{model intercept (default: 0)}
 }
 \value{
-list containin the design matrix X,
- the response y, the feautre annotation to
+list containing the design matrix X,
+ the response y, the feature annotation to
  groups annot as well as the different parameters
  in the Bayesian model and the correlation strength rho
 }
 \description{
-Simulate data from the grpRR model with groups of equal size and pre-specified parameters gamma and tau.
+Simulate data from the grpRR model with groups of equal size and pre-specified parameters gamma, pi and tau.
 }
 \examples{
 dat <- makeExampleData()

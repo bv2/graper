@@ -9,11 +9,11 @@
 #'  either "gaussian" for linear regression or "binomial" for logistic regression
 #' @param factoriseQ if set to TRUE, the variational distribution is assumed
 #'  to fully factorize across features (faster, default). FALSE uses a multivariate variational distribution.
-#' @param spikeslab if set to TRUE, a spike and slab prior on the coeffiecients (default).
+#' @param spikeslab if set to TRUE, a spike and slab prior on the coefficients (default).
 #' @param d_tau hyper-parameters for prior of tau (noise precision)
 #' @param r_tau hyper-parameters for prior of tau (noise precision)
-#' @param d_gamma hyper-parameters for prior of gamma (coeffient's prior precision)
-#' @param r_gamma hyper-parameters for prior of gamma (coeffient's prior precision)
+#' @param d_gamma hyper-parameters for prior of gamma (coefficients' prior precision)
+#' @param r_gamma hyper-parameters for prior of gamma (coefficients' prior precision)
 #' @param r_pi hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior
 #' @param d_pi hyper-parameters for Beta prior of the mixture probabilities in the spike and slab prior
 #' @param max_iter maximum number of iterations
@@ -23,7 +23,7 @@
 #' @param verbose  whether to print out intermediate messages during fitting
 #' @param freqELB frequency at which the evidence lower bound (ELB) is to be calculated,
 #'  i.e. each freqELB-th iteration
-#' @param n_rep number of reptitions with different random initilizations to be fit
+#' @param n_rep number of repetitions with different random initializations  to be fit
 #' @param standardize whether to standardize the predictors to unit variance
 #' @param init_psi initial value for the spike variables
 #' @param nogamma if TRUE, the normal prior will have same variance for all groups
@@ -40,7 +40,7 @@
 #'  scheme based on a multivariate variational distribution, but can be much slower.
 #'
 #'  As the optimization is non-convex is can
-#'  be helpful to use multiple random initilizations by setting \code{n_rep} to a value larger 1. The returned model is then chosen
+#'  be helpful to use multiple random initializations by setting \code{n_rep} to a value larger 1. The returned model is then chosen
 #'  as the optimal fit with respect to the evidence lower bound (ELB).
 #'
 #'  Depending on the response vector a linear regression model (\code{family = "gaussian"}) or a logistic regression model
@@ -70,8 +70,11 @@
 #'
 #' # fit a sparse model with spike and slab prior
 #' fit <- grpRR(dat$X, dat$y, dat$annot)
-#' beta <- fit$EW_beta # model coeffients
-#' pf <- fit$EW_gamma #penalty factors per group
+#' fit # print fitted object
+#' beta <- coef(fit, include_intercept = FALSE) # model coeffients
+#' pips <- getPIPs(fit) # posterior inclusion probabilities
+#' pf <- fit$EW_gamma # penalty factors per group
+#' sparsities <- fit$EW_pi # sparsity levels per group
 #'
 #' # fit a dense model without spike and slab prior
 #' fit <- grpRR(dat$X, dat$y, dat$annot, spikeslab = FALSE)

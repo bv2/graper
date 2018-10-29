@@ -1,19 +1,19 @@
 #' @title Simulate example data from the grpRR model
 #' @name makeExampleData
-#' @description Simulate data from the grpRR model with groups of equal size and pre-specified parameters gamma and tau.
+#' @description Simulate data from the grpRR model with groups of equal size and pre-specified parameters gamma, pi and tau.
 #' @param n number of samples
 #' @param p number of features
 #' @param g number of groups
-#' @param gammas vector of length g, sepcifying the slab precision
+#' @param gammas vector of length g, specifying the slab precision
 #'  of the prior on beta per group
-#' @param pis vector of length g, sepcifying the probability of s to be 1 (slab)
+#' @param pis vector of length g, specifying the probability of s to be 1 (slab)
 #' @param tau noise precision
 #' @param rho correlation of design matrix (Toeplitz structure)
-#' @param response "gaussian" for continious response from a linear regression model,
-#'  "bernoulli"  for a binary response from a logisitic regression model.
+#' @param response "gaussian" for continuous response from a linear regression model,
+#'  "bernoulli"  for a binary response from a logistic regression model.
 #' @param intercept model intercept (default: 0)
-#' @return list containin the design matrix X,
-#'  the response y, the feautre annotation to
+#' @return list containing the design matrix X,
+#'  the response y, the feature annotation to
 #'  groups annot as well as the different parameters
 #'  in the Bayesian model and the correlation strength rho
 #' @export
@@ -35,17 +35,17 @@ makeExampleData <- function(n=100, p=200, g=4,
 
 #' @title Simulate example data from the grpRR model with groups of unequal size
 #' @name makeExampleDataWithUnequalGroups
-#' @description Simulate data from the grpRR model with groups of unequal size and pre-specified parameters gamma and tau.
+#' @description Simulate data from the grpRR model with groups of unequal size and pre-specified parameters gamma, pi and tau.
 #' @param n number of samples
 #' @param pg vector of length g (desired number of groups) with number of features per group
-#' @param gammas vector of length g, sepcifying the slab precision of the prior on beta per group
-#' @param pis vector of length g, sepcifying the probability of s to be 1 (slab)
+#' @param gammas vector of length g, specifying the slab precision of the prior on beta per group
+#' @param pis vector of length g, specifying the probability of s to be 1 (slab)
 #' @param tau noise precision (only relevant for gaussian response)
 #' @param rho correlation of design matrix (Toeplitz structure)
-#' @param response "gaussian" for continious response from a linear regression model,
-#'  "bernoulli"  for a binary response from a logisitic regression model.
+#' @param response "gaussian" for continuous response from a linear regression model,
+#'  "bernoulli"  for a binary response from a logistic regression model.
 #' @param intercept model intercept (default: 0)
-#' @return list containin the design matrix X, the response y, the feautre annotation to
+#' @return list containin the design matrix X, the response y, the feature annotation to
 #'  groups annot as well as the different parameters in the Bayesian model
 #'   and the correlation strength rho
 #' @export
