@@ -27,8 +27,8 @@ makeExampleDataWithUnequalGroups(n = 100, pg = c(100, 100, 10, 10),
 \item{intercept}{model intercept (default: 0)}
 }
 \value{
-list containin the design matrix X, the response y, the feature annotation to
- groups annot as well as the different parameters in the Bayesian model
+list containin the design matrix \code{X}, the response \code{y}, the feature annotation to
+ groups \code{annot} as well as the different parameters in the Bayesian model
   and the correlation strength rho
 }
 \description{

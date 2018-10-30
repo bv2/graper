@@ -30,7 +30,8 @@ plotPosterior(fit, param2plot, beta0 = NULL, gamma0 = NULL,
 a ggplot object
 }
 \description{
-Function to plot the posterior of the model parameters obtained from the variational inference.
+Function to plot the posterior of the model parameters
+ obtained by grpRR from the variational inference framework.
 }
 \examples{
 dat <- makeExampleData()

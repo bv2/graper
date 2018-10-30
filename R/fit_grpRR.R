@@ -8,7 +8,7 @@
 #' @param family Likelihood model for the response,
 #'  either "gaussian" for linear regression or "binomial" for logistic regression
 #' @param factoriseQ if set to TRUE, the variational distribution is assumed
-#'  to fully factorize across features (faster, default). FALSE uses a multivariate variational distribution.
+#'  to fully factorize across features (faster, default). If FALSE, a multivariate variational distribution is used.
 #' @param spikeslab if set to TRUE, a spike and slab prior on the coefficients (default).
 #' @param d_tau hyper-parameters for prior of tau (noise precision)
 #' @param r_tau hyper-parameters for prior of tau (noise precision)

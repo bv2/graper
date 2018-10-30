@@ -12,9 +12,9 @@
 #' @param response "gaussian" for continuous response from a linear regression model,
 #'  "bernoulli"  for a binary response from a logistic regression model.
 #' @param intercept model intercept (default: 0)
-#' @return list containing the design matrix X,
-#'  the response y, the feature annotation to
-#'  groups annot as well as the different parameters
+#' @return list containing the design matrix \code{X},
+#'  the response \code{y}, the feature annotation to
+#'  groups \code{annot} as well as the different parameters
 #'  in the Bayesian model and the correlation strength rho
 #' @export
 #' @examples
@@ -45,8 +45,8 @@ makeExampleData <- function(n=100, p=200, g=4,
 #' @param response "gaussian" for continuous response from a linear regression model,
 #'  "bernoulli"  for a binary response from a logistic regression model.
 #' @param intercept model intercept (default: 0)
-#' @return list containin the design matrix X, the response y, the feature annotation to
-#'  groups annot as well as the different parameters in the Bayesian model
+#' @return list containin the design matrix \code{X}, the response \code{y}, the feature annotation to
+#'  groups \code{annot} as well as the different parameters in the Bayesian model
 #'   and the correlation strength rho
 #' @export
 #' @importFrom stats toeplitz rnorm rbinom

@@ -30,9 +30,9 @@ of the prior on beta per group}
 \item{intercept}{model intercept (default: 0)}
 }
 \value{
-list containing the design matrix X,
- the response y, the feature annotation to
- groups annot as well as the different parameters
+list containing the design matrix \code{X},
+ the response \code{y}, the feature annotation to
+ groups \code{annot} as well as the different parameters
  in the Bayesian model and the correlation strength rho
 }
 \description{

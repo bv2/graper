@@ -18,5 +18,5 @@ Function to plot the group-wise penalty factors (gamma) and sparsity levels.
 \examples{
 dat <- makeExampleData()
 fit <- grpRR(dat$X, dat$y, dat$annot)
-plotELBO(fit)
+plotGroupPenalties(fit)
 }

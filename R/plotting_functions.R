@@ -1,6 +1,7 @@
 #' @title Plot posterior distributions
 #' @name plotPosterior
-#' @description Function to plot the posterior of the model parameters obtained from the variational inference.
+#' @description Function to plot the posterior of the model parameters
+#'  obtained by grpRR from the variational inference framework.
 #' @param fit fit as produced by \code{\link{grpRR}}
 #' @param param2plot which parameter of the grpRR model to plot (gamma, beta, tau or s)
 #' @param beta0 true beta (if known)
@@ -224,7 +225,7 @@ plotELBO <- function(fit){
 #' @examples
 #' dat <- makeExampleData()
 #' fit <- grpRR(dat$X, dat$y, dat$annot)
-#' plotELBO(fit)
+#' plotGroupPenalties(fit)
 plotGroupPenalties <- function(fit){
 
   # sanity check

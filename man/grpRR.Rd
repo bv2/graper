@@ -19,7 +19,7 @@ grpRR(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
 \item{annot}{factor of length p indicating group membership of each feature (column) in X}
 
 \item{factoriseQ}{if set to TRUE, the variational distribution is assumed
-to fully factorize across features (faster, default). FALSE uses a multivariate variational distribution.}
+to fully factorize across features (faster, default). If FALSE, a multivariate variational distribution is used.}
 
 \item{spikeslab}{if set to TRUE, a spike and slab prior on the coefficients (default).}
 
