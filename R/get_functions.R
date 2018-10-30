@@ -4,6 +4,7 @@
 #' @description Function to obtain estimated posterior inclusion probabilities per feature from a fitted grpRR model.
 #' @param object fitted grpRR model as obtained from  \code{\link{grpRR}}
 #' @return 1-Column matrix of estimated posterior inclusion probabilities.
+#' @importFrom methods is
 #' @export
 #' @examples
 #' # create data
@@ -13,7 +14,7 @@
 
 getPIPs <- function(object){
   # sanity check
-  if(class(object) != "grpRR") {
+  if(!is(object, "grpRR")){
     stop("object needs to be a grpRR object.")
   }
   if(!object$Options$spikeslab) {
@@ -23,7 +24,7 @@ getPIPs <- function(object){
   if(!is.null( object$Options$featurenames)){
     rownames(pips) <- object$Options$featurenames
   }
-  
+
   return(pips)
 }
 

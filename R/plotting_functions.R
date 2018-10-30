@@ -11,8 +11,10 @@
 #' @param jmax maximal number of components per group to plot (for beta and s)
 #' @param range plotting range (x-axis)
 #' @export
-#' @importFrom dplyr mutate
+#' @importFrom dplyr mutate bind_rows
 #' @importFrom stats dbinom dnorm dgamma
+#' @importFrom methods is
+#' @import ggplot2
 #' @return a ggplot object
 #' @examples
 #' dat <- makeExampleData()
@@ -23,7 +25,7 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
                           tau0 = NULL, pi0=NULL, s0=NULL, jmax=2, range=NULL) {
 
   # sanity check
-  if(class(fit) != "grpRR") {
+  if(!is(fit, "grpRR")) {
     stop("fit needs to be a grpRR object.")
   }
 
@@ -49,7 +51,7 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
             data.frame(beta=x, j=j, va_slab=va_slab, mean_val=mean_val,
                        mu_slab=mu_slab, psi=psi, group=group)
             })
-      gr <- bind_rows(gr)
+      gr <- dplyr::bind_rows(gr)
       gr <- dplyr::mutate(gr,density = psi* stats::dnorm(beta, mu_slab, sqrt(va_slab)) + (1-psi)*(beta==0))
       if(!is.null(beta0)) {
         gr <- dplyr::mutate(gr, true_beta = beta0[j])
@@ -85,7 +87,7 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
             x <- c(0,1)
             data.frame(s=x, j=j, psi=psi,mean_val=mean_val, group=group)
             })
-        gr <- bind_rows(gr)
+        gr <- dplyr::bind_rows(gr)
         gr <- dplyr::mutate(gr, density = psi^s *(1-psi)^(1-s))
         if(!is.null(s0)) gr <- dplyr::mutate(gr, true_s = s0[j])
         gg <- ggplot(gr, aes(xend=s, x=s, yend=0, y=density)) +
@@ -112,7 +114,7 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
             x <- seq(0, 1, length.out=1000)
             data.frame(pi=x, k=k, mean_val = mean_val)
             })
-        gr <- bind_rows(gr)
+        gr <- dplyr::bind_rows(gr)
         gr <- dplyr::mutate(gr, density = stats::dbeta(pi, fit$alpha_pi[k], fit$beta_pi[k]))
         if(!is.null(pi0)) {
           gr <- dplyr::mutate(gr, true_pi = pi0[k])
@@ -141,7 +143,7 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
             }
             data.frame(gamma=x, k=k, mean_val = mean_val)
             })
-        gr <- bind_rows(gr)
+        gr <- dplyr::bind_rows(gr)
         gr <- dplyr::mutate(gr, density = stats::dgamma(gamma, fit$alpha_gamma[k], fit$beta_gamma[k]))
         if(!is.null(gamma0)) {
           gr <- dplyr::mutate(gr,true_gamma = gamma0[k])
@@ -187,6 +189,8 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
 #' @name plotELBO
 #' @description Function to plot the evidence lower bound (ELBO) over iterations to monitor the convergence of the algorithm.
 #' @param fit fit as produced by \code{\link{grpRR}}
+#' @import ggplot2
+#' @importFrom methods is
 #' @export
 #' @return a ggplot object
 #' @examples
@@ -196,7 +200,7 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
 plotELBO <- function(fit){
 
   # sanity check
-  if(class(fit) != "grpRR") {
+  if(!is(fit, "grpRR")) {
     stop("fit needs to be a grpRR object.")
   }
 
@@ -206,5 +210,39 @@ plotELBO <- function(fit){
     df <- data.frame(iteration=seq_along(fit$ELB_trace),
                      ELBO = fit$ELB_trace)
     ggplot(df, aes(x=iteration, y=ELBO)) +geom_line()
+}
+
+#' @title Plot group-wise penalties
+#' @name plotGroupPenalties
+#' @description Function to plot the group-wise penalty factors (gamma) and sparsity levels.
+#' @param fit fit as produced by \code{\link{grpRR}}
+#' @import ggplot2
+#' @importFrom methods is
+#' @importFrom cowplot plot_grid
+#' @export
+#' @return a ggplot object
+#' @examples
+#' dat <- makeExampleData()
+#' fit <- grpRR(dat$X, dat$y, dat$annot)
+#' plotELBO(fit)
+plotGroupPenalties <- function(fit){
+
+  # sanity check
+  if(!is(fit, "grpRR")) {
+    stop("fit needs to be a grpRR object.")
+  }
+
+  group <- gamma <- pi <- NULL  # avoid notes in check
+  df <- data.frame(group= unique(fit$annot),
+                   gamma = fit$EW_gamma)
+  gg1 <- ggplot(df, aes(x=group, y= gamma, fill=group)) +geom_bar(stat="identity") +
+    ggtitle("Group-wise penalty factor") + theme_bw()
+
+  if(fit$Options$spikeslab) {
+    df$pi = fit$EW_pi
+    gg2 <- ggplot(df, aes(x=group, y= pi, fill=group)) +geom_bar(stat="identity") +
+      ggtitle("Group-wise sparsity level") + ylim(c(0,1))  + theme_bw()
+    cowplot::plot_grid(gg1, gg2)
+  } else print(gg1)
 }
 

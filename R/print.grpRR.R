@@ -4,6 +4,7 @@
 #' @param x fitted grpRR model as obtained from  \code{\link{grpRR}}
 #' @param ... additional print arguments
 #' @return Print output.
+#' @importFrom methods is
 #' @export
 #' @examples
 #' # create data
@@ -13,7 +14,7 @@
 
 print.grpRR <- function(x, ...){
   # sanity check
-  if(class(x) != "grpRR") {
+  if(!is(x, "grpRR")) {
     stop("object needs to be a grpRR object.")
   }
 
@@ -26,5 +27,5 @@ print.grpRR <- function(x, ...){
   cat(paste(unique(as.character(x$annot)), collapse="\t"), "\n")
   cat(paste(round(x$EW_pi,2), collapse="\t"))
   }
-  
+
 }

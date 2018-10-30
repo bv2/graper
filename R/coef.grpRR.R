@@ -6,6 +6,7 @@
 #' @param ... other arguments
 #' @return 1-Column matrix of estimated coefficients.
 #' @export
+#' @importFrom methods is
 #' @examples
 #' # create data
 #' dat <- makeExampleData()
@@ -14,7 +15,7 @@
 
 coef.grpRR <- function(object, include_intercept = TRUE, ...){
   # sanity check
-  if(class(object) != "grpRR") {
+  if(!is(object, "grpRR")) {
     stop("object needs to be a grpRR object.")
   }
 

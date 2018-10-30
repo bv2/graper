@@ -12,6 +12,7 @@
 #'  \item{\strong{inRange}:}{returns linear predictions for linear and class memberships for logistic regression}
 #' }
 #' @param ... other arguments
+#' @importFrom methods is
 #' @return A vector with predictions.
 #' @export
 #' @examples
@@ -35,7 +36,7 @@ predict.grpRR <- function(object, newX, type = c("inRange","response", "link"), 
     stop("Number of columns in newX need to agree with number of predictors in the grpRR object.")
   }
   # sanity check
-  if(class(object) != "grpRR") {
+  if(!is(object, "grpRR")) {
     stop("object needs to be a grpRR object.")
   }
   # Get type of predictions wanted

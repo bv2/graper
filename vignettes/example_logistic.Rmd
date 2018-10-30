@@ -19,17 +19,27 @@ library(ggplot2)
 Note that the implementation of logistic regression is still experimental in some parts.
 
 # Make example data with four groups
-Create an example data set with 4 groups, 400 samples and 800 features.
+Create an example data set with 4 groups, 100 train + 100 test samples and 320 features.
 ```{r}
-set.seed(1234)
-data <- makeExampleData(n = 100, p=320, g=4, pis=c(0.05,0.1,0.05,0.1),
+set.seed(123)
+data <- makeExampleData(n = 200, p=320, g=4, pis=c(0.05,0.1,0.05,0.1),
                         gammas=c(0.1,0.1,10,10), response = "bernoulli")
+# training data set
+Xtrain <- data$X[1:100,]
+ytrain <- data$y[1:100]
+
+# annotations of features to groups
+annot <- data$annot
+
+# test data set
+Xtest <- data$X[101:200,]
+ytest <- data$y[101:200]
 ```
 
 # Fit the model
 `fit_grpRR` is the main function of this package, which allows to fit the proposed Bayesian models with different settings on the prior (by setting `spikeslab` to FALSE or TRUE) and the variational approximation (by setting `factoriseQ` to FALSE or TRUE). By default, the model is fit with a sparsity promoting spike-and-slab prior and a fully-factorised mean-field assumption. The ELBO is currently not calculated in the logisitc regession framework.
 ```{r}
-fit <- grpRR(data$X, data$y, data$annot, verbose = FALSE,
+fit <- grpRR(Xtrain, ytrain, annot, verbose = FALSE,
              family = "binomial", calcELB=FALSE)
 fit
 ```
@@ -42,7 +52,7 @@ plotPosterior(fit, "pi", pi0 = data$pis)
 ```
 
 # Model coefficients and intercept
-The estimated coefficients and intercept are contained in the result list.
+The estimated coefficients, their posterior inclusion probabilities and the intercept are contained in the result list.
 ```{r}
 # get coefficients (without the intercept)
 beta <- coef(fit, include_intercept = FALSE)
@@ -63,10 +73,10 @@ pips <- getPIPs(fit)
 ```
 
 # Make predictions
-The function `fit.grpRR` can be used to make prediction on new data.
-Here, we illustrate its use by predicting the reponse using the test data itself.
+The function `predict` can be used to make prediction on new data.
+Here, we illustrate its use by predicting the reponse on the test data defined above.
 ```{r}
-preds <- predict(fit, data$X)
+preds <- predict(fit, Xtest)
 ```
 
 
