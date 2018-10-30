@@ -70,18 +70,6 @@ preds <- predict(fit, data$X)
 ```
 
 
-# Comparison to other methods
-Using the functions `compareMethodsCV` or `runMethods` the grpRR method can be compared to various related regression methods.
-Some standard methods like Lasso and Ridge are always included in the comparison. Other methods can be added via the options of `compareMethodsCV`.
-`compareMethodsCV` uses a cross-validation scheme to train and evaluate the different methdods.
-`runMethods` can be used to  train different methods on the full data witout evaluation.
-For time reasons we take a small number of folds in this illustration and only include the most common methods for comparison.
-```{r}
-comp <- compareMethodsCV(data$X, data$y, data$annot,
-           nfolds = 3, family = "binomial")
-plotMethodComparison(comp, methods2plot = c("grpRR_SS", "Lasso"), family = "binomial")
-```
-
 #SessionInfo
 ```{r}
 sessionInfo()
