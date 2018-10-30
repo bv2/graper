@@ -7,7 +7,7 @@ Authors@R: c(person("Britta", "Velten", email = "britta.velten@embl.de",
 	person("Wolfgang", "Huber", role=c("aut"), email="wolfgang.huber@embl.de"))
 Date: 2018-10-26
 License: GPL (>= 2)
-Description: This package enables to regression and classification on high-dimensional data with different relative strength of penalization for different feature groups, defined on basis of some external covariates, such as assay or comic type. The optimal relative strengths are chosen adaptively. Optimisation is performed using a variational Bayes approach. 
+Description: This package enables regression and classification on high-dimensional data with different relative strengths of penalization for different feature groups, such as different assays or omic types. The optimal relative strengths are chosen adaptively. Optimisation is performed using a variational Bayes approach. 
 Depends: R (>= 3.5)
 Encoding: UTF-8
 LazyData: TRUE
