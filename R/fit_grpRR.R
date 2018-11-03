@@ -114,8 +114,9 @@ grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
     message(paste("Fitting a model with", g, "groups,", n, "samples and", p , "features."))
 
     if(standardize){
-        X <- scale(X, center = FALSE, scale=TRUE)
-        sf <- attr(X, "scaled:scale")
+      #scale by sd
+        sf <- apply(X, 2, sd)
+        X <- scale(X, center = FALSE, scale=sf)
     } else sf <- rep(1,p)
 
     if(family == "binomial"){
