@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_data.R
 \name{makeExampleData}
 \alias{makeExampleData}
-\title{Simulate example data from the grpRR model}
+\title{Simulate example data from the graper model}
 \usage{
 makeExampleData(n = 100, p = 200, g = 4, gammas = c(0.1, 1, 10,
   100), pis = c(0.5, 0.5, 0.5, 0.5), tau = 1, rho = 0,
@@ -36,7 +36,7 @@ list containing the design matrix \code{X},
  in the Bayesian model and the correlation strength rho
 }
 \description{
-Simulate data from the grpRR model with groups of equal size and pre-specified parameters gamma, pi and tau.
+Simulate data from the graper model with groups of equal size and pre-specified parameters gamma, pi and tau.
 }
 \examples{
 dat <- makeExampleData()

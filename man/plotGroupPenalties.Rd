@@ -7,7 +7,7 @@
 plotGroupPenalties(fit)
 }
 \arguments{
-\item{fit}{fit as produced by \code{\link{grpRR}}}
+\item{fit}{fit as produced by \code{\link{graper}}}
 }
 \value{
 a ggplot object
@@ -17,6 +17,6 @@ Function to plot the group-wise penalty factors (gamma) and sparsity levels.
 }
 \examples{
 dat <- makeExampleData()
-fit <- grpRR(dat$X, dat$y, dat$annot)
+fit <- graper(dat$X, dat$y, dat$annot)
 plotGroupPenalties(fit)
 }

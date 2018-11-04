@@ -7,17 +7,17 @@
 getPIPs(object)
 }
 \arguments{
-\item{object}{fitted grpRR model as obtained from  \code{\link{grpRR}}}
+\item{object}{fitted graper model as obtained from  \code{\link{graper}}}
 }
 \value{
 1-Column matrix of estimated posterior inclusion probabilities.
 }
 \description{
-Function to obtain estimated posterior inclusion probabilities per feature from a fitted grpRR model.
+Function to obtain estimated posterior inclusion probabilities per feature from a fitted graper model.
 }
 \examples{
 # create data
 dat <- makeExampleData()
-fit <- grpRR(dat$X, dat$y, dat$annot)
+fit <- graper(dat$X, dat$y, dat$annot)
 getPIPs(fit)
 }

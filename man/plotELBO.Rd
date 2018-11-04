@@ -7,7 +7,7 @@
 plotELBO(fit)
 }
 \arguments{
-\item{fit}{fit as produced by \code{\link{grpRR}}}
+\item{fit}{fit as produced by \code{\link{graper}}}
 }
 \value{
 a ggplot object
@@ -17,6 +17,6 @@ Function to plot the evidence lower bound (ELBO) over iterations to monitor the 
 }
 \examples{
 dat <- makeExampleData()
-fit <- grpRR(dat$X, dat$y, dat$annot)
+fit <- graper(dat$X, dat$y, dat$annot)
 plotELBO(fit)
 }

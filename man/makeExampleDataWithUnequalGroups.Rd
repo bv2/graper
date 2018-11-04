@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_data.R
 \name{makeExampleDataWithUnequalGroups}
 \alias{makeExampleDataWithUnequalGroups}
-\title{Simulate example data from the grpRR model with groups of unequal size}
+\title{Simulate example data from the graper model with groups of unequal size}
 \usage{
 makeExampleDataWithUnequalGroups(n = 100, pg = c(100, 100, 10, 10),
   gammas = c(0.1, 10, 0.1, 10), pis = c(0.5, 0.5, 0.5, 0.5), tau = 1,
@@ -32,7 +32,7 @@ list containin the design matrix \code{X}, the response \code{y}, the feature an
   and the correlation strength rho
 }
 \description{
-Simulate data from the grpRR model with groups of unequal size and pre-specified parameters gamma, pi and tau.
+Simulate data from the graper model with groups of unequal size and pre-specified parameters gamma, pi and tau.
 }
 \examples{
 dat <- makeExampleDataWithUnequalGroups()

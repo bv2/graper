@@ -8,9 +8,9 @@ plotPosterior(fit, param2plot, beta0 = NULL, gamma0 = NULL,
   tau0 = NULL, pi0 = NULL, s0 = NULL, jmax = 2, range = NULL)
 }
 \arguments{
-\item{fit}{fit as produced by \code{\link{grpRR}}}
+\item{fit}{fit as produced by \code{\link{graper}}}
 
-\item{param2plot}{which parameter of the grpRR model to plot (gamma, beta, tau or s)}
+\item{param2plot}{which parameter of the graper model to plot (gamma, beta, tau or s)}
 
 \item{beta0}{true beta (if known)}
 
@@ -31,10 +31,10 @@ a ggplot object
 }
 \description{
 Function to plot the posterior of the model parameters
- obtained by grpRR from the variational inference framework.
+ obtained by graper from the variational inference framework.
 }
 \examples{
 dat <- makeExampleData()
-fit <- grpRR(dat$X, dat$y, dat$annot)
+fit <- graper(dat$X, dat$y, dat$annot)
 plotPosterior(fit, param2plot="gamma")
 }
