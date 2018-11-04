@@ -1,6 +1,6 @@
-#' @title Fit a regression model with grpRR
-#' @name grpRR
-#' @description Fit a regression model with grpRR given a matrix of predictors (\code{X}), a response vector (\code{y}) and
+#' @title Fit a regression model with graper
+#' @name graper
+#' @description Fit a regression model with graper given a matrix of predictors (\code{X}), a response vector (\code{y}) and
 #' a vector of group memberships for each predictor in \code{X} (\code{annot}). For each group a different strength of penalization is determined adaptively.
 #' @param X design matrix of size n (samples) x p (features)
 #' @param y response vector of size n
@@ -28,7 +28,7 @@
 #' @param init_psi initial value for the spike variables
 #' @param nogamma if TRUE, the normal prior will have same variance for all groups
 #' (only relevant for spikeslab = TRUE)
-#' @details The function trains the grpRR model given a matrix of predictors (\code{X}), a response vector (\code{y}) and
+#' @details The function trains the graper model given a matrix of predictors (\code{X}), a response vector (\code{y}) and
 #' a vector of group memberships for each predictor in \code{X} (\code{annot}).
 #' For each feature group as specified in \code{annot} a penalty factor and sparsity level is learnt.
 #'
@@ -46,12 +46,12 @@
 #'  Depending on the response vector a linear regression model (\code{family = "gaussian"}) or a logistic regression model
 #'  (\code{family = "binomial"}) is fitted. Note, that the implementation of logistic regression is still experimental.
 #'
-#' @return A grpRR object containing
+#' @return A graper object containing
 #' \describe{
 #' \item{EW_beta}{estimated model coefficients in liner/logistic regression}
 #' \item{EW_s}{estimated posterior-inclusion probabilities for each feature}
 #' \item{intercept}{estimated intercept term}
-#' \item{annot}{annotation vector of features to the groups as specified when calling \code{\link{grpRR}}}
+#' \item{annot}{annotation vector of features to the groups as specified when calling \code{\link{graper}}}
 #' \item{EW_gamma}{estimated penalty factor per group}
 #' \item{EW_pi}{estimated sparsity level per group (from 1 (dense) to 0 (sparse))}
 #' \item{EW_tau}{estimated noise precision}
@@ -59,17 +59,18 @@
 #'  the variational distributions of beta, gamma, tau and pi}
 #' \item{ELB}{final value of the evidence lower bound}
 #' \item{ELB_trace}{values of the  evidence lower bound for all iterations}
-#' \item{Options}{other options used when calling \code{\link{grpRR}}}
+#' \item{Options}{other options used when calling \code{\link{graper}}}
 #' }
-#' @useDynLib grpRR
+#' @useDynLib graper
 #' @import Rcpp
+#' @importFrom stats sd
 #' @export
 #' @examples
 #' # create data
 #' dat <- makeExampleData()
 #'
 #' # fit a sparse model with spike and slab prior
-#' fit <- grpRR(dat$X, dat$y, dat$annot)
+#' fit <- graper(dat$X, dat$y, dat$annot)
 #' fit # print fitted object
 #' beta <- coef(fit, include_intercept = FALSE) # model coeffients
 #' pips <- getPIPs(fit) # posterior inclusion probabilities
@@ -77,13 +78,13 @@
 #' sparsities <- fit$EW_pi # sparsity levels per group
 #'
 #' # fit a dense model without spike and slab prior
-#' fit <- grpRR(dat$X, dat$y, dat$annot, spikeslab = FALSE)
+#' fit <- graper(dat$X, dat$y, dat$annot, spikeslab = FALSE)
 #'
 #' # fit a dense model using a multivariate variational distribution
-#' fit <- grpRR(dat$X, dat$y, dat$annot, factoriseQ = TRUE, spikeslab = FALSE)
+#' fit <- graper(dat$X, dat$y, dat$annot, factoriseQ = TRUE, spikeslab = FALSE)
 
 
-grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
+graper <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
                       intercept = TRUE, family = "gaussian",
                       standardize=TRUE, n_rep=1,
                       max_iter = 3000, th = 0.01,
@@ -115,7 +116,7 @@ grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
 
     if(standardize){
       #scale by sd
-        sf <- apply(X, 2, sd)
+        sf <- apply(X, 2, stats::sd)
         X <- scale(X, center = FALSE, scale=sf)
     } else sf <- rep(1,p)
 
@@ -152,12 +153,12 @@ grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
                 # psi_init <- runif(p)
                 psi_init <- rep(init_psi,p)
                 if(!nogamma)
-                res <- grRRCpp_sparse_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau,
+                res <- graperCpp_sparse_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau,
                                          d_gamma, r_gamma, r_pi, d_pi, max_iter,
                                          th, calcELB, verbose, freqELB, mu_init,
                                          psi_init)
                 else
-                res <- grRRCpp_sparse_ff_nogamma(X, y, annot, g, NoPerGroup,
+                res <- graperCpp_sparse_ff_nogamma(X, y, annot, g, NoPerGroup,
                                                  d_tau, r_tau, d_gamma, r_gamma,
                                                  r_pi, d_pi, max_iter, th, calcELB,
                                                  verbose, freqELB, mu_init, psi_init)
@@ -165,14 +166,14 @@ grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
                 if (factoriseQ) {
                     # initialize coefficients mean randomly
                     mu_init <- rnorm(p)
-                    res <- grRRCpp_dense_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau,
+                    res <- graperCpp_dense_ff(X, y, annot, g, NoPerGroup, d_tau, r_tau,
                                             d_gamma, r_gamma, max_iter, th, calcELB,
                                             verbose,freqELB, mu_init)
                     } else {
                       message("You are using no factorization of the variational distribution.
                               This might take some time to compute.
                               Set factoriseQ = TRUE for fast solution.")
-                      res <- grRRCpp_dense_nf(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma,
+                      res <- graperCpp_dense_nf(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma,
                                               r_gamma, max_iter, th, calcELB, verbose, freqELB)
                     }
             }
@@ -198,20 +199,20 @@ grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
                 mu_init <- rnorm(p)
                 # psi_init <- runif(p)
                 psi_init <- rep(init_psi,p)
-                res <- grpRRCpp_sparse_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma,
+                res <- graperCpp_sparse_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma,
                                                    r_pi, d_pi, max_iter, th, calcELB,verbose,
                                                    freqELB, mu_init, psi_init, intercept)
             } else {
                 if (factoriseQ){
                     # initialize coefficients mean randomly
                     mu_init <- rnorm(p)
-                    res <- grpRRCpp_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma,
+                    res <- graperCpp_logistic_ff(X, y, annot, g, NoPerGroup, d_gamma, r_gamma,
                                                 max_iter, th, calcELB, verbose, freqELB,
                                                 mu_init, intercept)
                     } else {
                       warning("factoriseQ=FALSE is not maintained currently for the logistic model.
                               No intercept option and ELB available.")
-                      res <- grpRRCpp_logistic_nf(X, y, annot, g, NoPerGroup,
+                      res <- graperCpp_logistic_nf(X, y, annot, g, NoPerGroup,
                                                   d_gamma, r_gamma, max_iter,
                                                   th, calcELB, verbose, freqELB)
                     }
@@ -265,6 +266,6 @@ grpRR <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
     if(all(is.na(res$ELB_trace) | !is.finite(res$ELB_trace))){
       res$ELB_trace <- NULL
     }
-    class(res) <- "grpRR"
+    class(res) <- "graper"
     return(res)
 }

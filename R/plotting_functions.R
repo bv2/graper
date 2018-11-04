@@ -1,9 +1,9 @@
 #' @title Plot posterior distributions
 #' @name plotPosterior
 #' @description Function to plot the posterior of the model parameters
-#'  obtained by grpRR from the variational inference framework.
-#' @param fit fit as produced by \code{\link{grpRR}}
-#' @param param2plot which parameter of the grpRR model to plot (gamma, beta, tau or s)
+#'  obtained by graper from the variational inference framework.
+#' @param fit fit as produced by \code{\link{graper}}
+#' @param param2plot which parameter of the graper model to plot (gamma, beta, tau or s)
 #' @param beta0 true beta (if known)
 #' @param gamma0 true gamma (if known)
 #' @param pi0 true pi (if known)
@@ -19,15 +19,15 @@
 #' @return a ggplot object
 #' @examples
 #' dat <- makeExampleData()
-#' fit <- grpRR(dat$X, dat$y, dat$annot)
+#' fit <- graper(dat$X, dat$y, dat$annot)
 #' plotPosterior(fit, param2plot="gamma")
 
 plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
                           tau0 = NULL, pi0=NULL, s0=NULL, jmax=2, range=NULL) {
 
   # sanity check
-  if(!is(fit, "grpRR")) {
-    stop("fit needs to be a grpRR object.")
+  if(!is(fit, "graper")) {
+    stop("fit needs to be a graper object.")
   }
 
     if (param2plot=="beta") {
@@ -73,7 +73,7 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
 
         if (param2plot=="s") {
           if(!fit$Options$spikeslab) {
-            stop("fit needs to be a sparse grpRR object. Use spikeslab = TRUE in grpRR.")
+            stop("fit needs to be a sparse graper object. Use spikeslab = TRUE in graper.")
           }
         s <- true_s <- density <- mean_val <- psi <-  NULL
         message("Only plotting the first ", jmax, " s per group.")
@@ -106,7 +106,7 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
 
         if (param2plot=="pi") {
           if(!fit$Options$spikeslab) {
-            stop("fit needs to be a sparse grpRR object. Use spikeslab = TRUE in grpRR.")
+            stop("fit needs to be a sparse graper object. Use spikeslab = TRUE in graper.")
           }
         # avoid notes on global varibale binding in check
         pi <- true_pi <- density <- mean_val <- k <- NULL
@@ -189,20 +189,20 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
 #' @title Plot evidence lower bound
 #' @name plotELBO
 #' @description Function to plot the evidence lower bound (ELBO) over iterations to monitor the convergence of the algorithm.
-#' @param fit fit as produced by \code{\link{grpRR}}
+#' @param fit fit as produced by \code{\link{graper}}
 #' @import ggplot2
 #' @importFrom methods is
 #' @export
 #' @return a ggplot object
 #' @examples
 #' dat <- makeExampleData()
-#' fit <- grpRR(dat$X, dat$y, dat$annot)
+#' fit <- graper(dat$X, dat$y, dat$annot)
 #' plotELBO(fit)
 plotELBO <- function(fit){
 
   # sanity check
-  if(!is(fit, "grpRR")) {
-    stop("fit needs to be a grpRR object.")
+  if(!is(fit, "graper")) {
+    stop("fit needs to be a graper object.")
   }
 
   iteration <- ELBO <- NULL # avoid notes in check
@@ -216,7 +216,7 @@ plotELBO <- function(fit){
 #' @title Plot group-wise penalties
 #' @name plotGroupPenalties
 #' @description Function to plot the group-wise penalty factors (gamma) and sparsity levels.
-#' @param fit fit as produced by \code{\link{grpRR}}
+#' @param fit fit as produced by \code{\link{graper}}
 #' @import ggplot2
 #' @importFrom methods is
 #' @importFrom cowplot plot_grid
@@ -224,13 +224,13 @@ plotELBO <- function(fit){
 #' @return a ggplot object
 #' @examples
 #' dat <- makeExampleData()
-#' fit <- grpRR(dat$X, dat$y, dat$annot)
+#' fit <- graper(dat$X, dat$y, dat$annot)
 #' plotGroupPenalties(fit)
 plotGroupPenalties <- function(fit){
 
   # sanity check
-  if(!is(fit, "grpRR")) {
-    stop("fit needs to be a grpRR object.")
+  if(!is(fit, "graper")) {
+    stop("fit needs to be a graper object.")
   }
 
   group <- gamma <- pi <- NULL  # avoid notes in check

@@ -1,7 +1,7 @@
-#' @title Get estimated coefficients from a grpRR object
-#' @name coef.grpRR
-#' @description Function to obtain estimated coefficients from a fitted grpRR model.
-#' @param object fitted grpRR model as obtained from  \code{\link{grpRR}}
+#' @title Get estimated coefficients from a graper object
+#' @name coef.graper
+#' @description Function to obtain estimated coefficients from a fitted graper model.
+#' @param object fitted graper model as obtained from  \code{\link{graper}}
 #' @param include_intercept whether to include the estimated intercept value in the output
 #' @param ... other arguments
 #' @return 1-Column matrix of estimated coefficients.
@@ -10,13 +10,13 @@
 #' @examples
 #' # create data
 #' dat <- makeExampleData()
-#' fit <- grpRR(dat$X, dat$y, dat$annot)
+#' fit <- graper(dat$X, dat$y, dat$annot)
 #' coef(fit)
 
-coef.grpRR <- function(object, include_intercept = TRUE, ...){
+coef.graper <- function(object, include_intercept = TRUE, ...){
   # sanity check
-  if(!is(object, "grpRR")) {
-    stop("object needs to be a grpRR object.")
+  if(!is(object, "graper")) {
+    stop("object needs to be a graper object.")
   }
 
   if(is.null(object$intercept)){

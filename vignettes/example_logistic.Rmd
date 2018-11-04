@@ -1,5 +1,5 @@
 ---
-title: "Vignette illustrating the use of grpRR in logisitic regression"
+title: "Vignette illustrating the use of graper in logisitic regression"
 author: "Britta Velten"
 date: "`r Sys.Date()`"
 output:
@@ -12,7 +12,7 @@ vignette: >
 ---
 
 ```{r, message=FALSE, warning=FALSE}
-library(grpRR)
+library(graper)
 library(ggplot2)
 ```
 
@@ -37,9 +37,9 @@ ytest <- data$y[101:200]
 ```
 
 # Fit the model
-`fit_grpRR` is the main function of this package, which allows to fit the proposed Bayesian models with different settings on the prior (by setting `spikeslab` to FALSE or TRUE) and the variational approximation (by setting `factoriseQ` to FALSE or TRUE). By default, the model is fit with a sparsity promoting spike-and-slab prior and a fully-factorised mean-field assumption. The ELBO is currently not calculated in the logisitc regession framework.
+`graper` is the main function of this package, which allows to fit the proposed Bayesian models with different settings on the prior (by setting `spikeslab` to FALSE or TRUE) and the variational approximation (by setting `factoriseQ` to FALSE or TRUE). By default, the model is fit with a sparsity promoting spike-and-slab prior and a fully-factorised mean-field assumption. The ELBO is currently not calculated in the logisitc regession framework.
 ```{r}
-fit <- grpRR(Xtrain, ytrain, annot, verbose = FALSE,
+fit <- graper(Xtrain, ytrain, annot, verbose = FALSE,
              family = "binomial", calcELB=FALSE)
 fit
 ```

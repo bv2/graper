@@ -9,7 +9,7 @@ using  namespace  arma;
 using namespace Rcpp;
 
 
-class  grpRR_logistic_ff {
+class  graper_logistic_ff {
 
 private:
   // values remaining constant
@@ -46,7 +46,7 @@ private:
 public:
 
   //initaliser list
-  grpRR_logistic_ff(mat X, vec y, Row<int> annot, int g, vec NoPerGroup,
+  graper_logistic_ff(mat X, vec y, Row<int> annot, int g, vec NoPerGroup,
        double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose,
        int freqELB, vec mu_init, bool intercept):
   X(X)                                // design matrix

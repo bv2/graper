@@ -1,4 +1,4 @@
-Package: grpRR
+Package: graper
 Type: Package
 Title: Adaptive penalization in high-dimensional regression and classification with external covariates using variational Bayes
 Version: 0.99.0

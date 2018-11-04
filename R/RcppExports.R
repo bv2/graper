@@ -2,36 +2,36 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @importClassesFrom Matrix dgTMatrix
-grRRCpp_dense_nf <- function(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB) {
-    .Call('_grpRR_grRRCpp_dense_nf', PACKAGE = 'grpRR', X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB)
+graperCpp_dense_nf <- function(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB) {
+    .Call('_graper_graperCpp_dense_nf', PACKAGE = 'graper', X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB)
 }
 
 #' @importClassesFrom Matrix dgTMatrix
-grRRCpp_dense_ff <- function(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init) {
-    .Call('_grpRR_grRRCpp_dense_ff', PACKAGE = 'grpRR', X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init)
+graperCpp_dense_ff <- function(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init) {
+    .Call('_graper_graperCpp_dense_ff', PACKAGE = 'graper', X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init)
 }
 
 #' @importClassesFrom Matrix dgTMatrix
-grRRCpp_sparse_ff <- function(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init) {
-    .Call('_grpRR_grRRCpp_sparse_ff', PACKAGE = 'grpRR', X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init)
+graperCpp_sparse_ff <- function(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init) {
+    .Call('_graper_graperCpp_sparse_ff', PACKAGE = 'graper', X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init)
 }
 
 #' @importClassesFrom Matrix dgTMatrix
-grRRCpp_sparse_ff_nogamma <- function(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init) {
-    .Call('_grpRR_grRRCpp_sparse_ff_nogamma', PACKAGE = 'grpRR', X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init)
+graperCpp_sparse_ff_nogamma <- function(X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init) {
+    .Call('_graper_graperCpp_sparse_ff_nogamma', PACKAGE = 'graper', X, y, annot, g, NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init)
 }
 
 #' @importClassesFrom Matrix dgTMatrix
-grpRRCpp_logistic_nf <- function(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB) {
-    .Call('_grpRR_grpRRCpp_logistic_nf', PACKAGE = 'grpRR', X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB)
+graperCpp_logistic_nf <- function(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB) {
+    .Call('_graper_graperCpp_logistic_nf', PACKAGE = 'graper', X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB)
 }
 
-grpRRCpp_logistic_ff <- function(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, intercept) {
-    .Call('_grpRR_grpRRCpp_logistic_ff', PACKAGE = 'grpRR', X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, intercept)
+graperCpp_logistic_ff <- function(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, intercept) {
+    .Call('_graper_graperCpp_logistic_ff', PACKAGE = 'graper', X, y, annot, g, NoPerGroup, d_gamma, r_gamma, max_iter, th, calcELB, verbose, freqELB, mu_init, intercept)
 }
 
 #' @importClassesFrom Matrix dgTMatrix
-grpRRCpp_sparse_logistic_ff <- function(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init, intercept) {
-    .Call('_grpRR_grpRRCpp_sparse_logistic_ff', PACKAGE = 'grpRR', X, y, annot, g, NoPerGroup, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init, intercept)
+graperCpp_sparse_logistic_ff <- function(X, y, annot, g, NoPerGroup, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init, intercept) {
+    .Call('_graper_graperCpp_sparse_logistic_ff', PACKAGE = 'graper', X, y, annot, g, NoPerGroup, d_gamma, r_gamma, r_pi, d_pi, max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init, intercept)
 }
 

@@ -9,7 +9,7 @@ using  namespace  arma;
 using namespace Rcpp;
 
 
-class  grpRR {
+class  graper {
 
 private:
   // values remaining constant
@@ -42,7 +42,7 @@ private:
 public:
 
   //initaliser list
-  grpRR(mat X, vec y, Row<int> annot, int g, vec NoPerGroup, double d_tau =0.001, double r_tau =0.001,
+  graper(mat X, vec y, Row<int> annot, int g, vec NoPerGroup, double d_tau =0.001, double r_tau =0.001,
        double d_gamma =0.001, double r_gamma =0.001, int max_iter=5000, double th=1e-7, bool calcELB=true, bool verbose=true,
        int freqELB =10):
   X(X)                                // design matrix

@@ -9,7 +9,7 @@ using  namespace  arma;
 using namespace Rcpp;
 
 
-class  grpRR_dense_ff {
+class  graper_dense_ff {
 
 private:
   // values remaining constant
@@ -43,7 +43,7 @@ private:
 public:
 
   //initaliser list
-  grpRR_dense_ff(mat X, vec y, Row<int> annot, int g, vec NoPerGroup, double d_tau, double r_tau,
+  graper_dense_ff(mat X, vec y, Row<int> annot, int g, vec NoPerGroup, double d_tau, double r_tau,
        double d_gamma, double r_gamma, int max_iter, double th, bool calcELB, bool verbose,
        int freqELB, vec mu_init):
   X(X)                                // design matrix

@@ -1,5 +1,5 @@
 ---
-title: "Vignette illustrating the use of grpRR in linear regression"
+title: "Vignette illustrating the use of graper in linear regression"
 author: "Britta Velten"
 date: "`r Sys.Date()`"
 output:
@@ -12,7 +12,7 @@ vignette: >
 ---
 
 ```{r, message=FALSE, warning=FALSE}
-library(grpRR)
+library(graper)
 library(ggplot2)
 ```
 
@@ -36,9 +36,9 @@ ytest <- data$y[401:500]
 ```
 
 # Fit the model
-`fit_grpRR` is the main function of this package, which allows to fit the proposed Bayesian models with different settings on the prior (by setting `spikeslab` to FALSE or TRUE) and the variational approximation (by setting `factoriseQ` to FALSE or TRUE). By default, the model is fit with a sparsity promoting spike-and-slab prior and a fully-factorised mean-field assumption. The parameter `n_rep` can be used to train multiple models with different random initilization. The best model is then chosen in terms of ELBO and returned by the function. `th` defines the threshold on the ELBO for convergence in the variational Bayes (VB) algorithm used for optimization.
+`graper` is the main function of this package, which allows to fit the proposed Bayesian models with different settings on the prior (by setting `spikeslab` to FALSE or TRUE) and the variational approximation (by setting `factoriseQ` to FALSE or TRUE). By default, the model is fit with a sparsity promoting spike-and-slab prior and a fully-factorised mean-field assumption. The parameter `n_rep` can be used to train multiple models with different random initilization. The best model is then chosen in terms of ELBO and returned by the function. `th` defines the threshold on the ELBO for convergence in the variational Bayes (VB) algorithm used for optimization.
 ```{r}
-fit <- grpRR(Xtrain, ytrain, annot,
+fit <- graper(Xtrain, ytrain, annot,
              n_rep=3, verbose = FALSE, th = 0.001)
 fit
 ```

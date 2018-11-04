@@ -10,7 +10,7 @@ using  namespace  arma;
 using namespace Rcpp;
 
 
-class  grpRR_sparse_ff {
+class  graper_sparse_ff {
 
 private:
   // values remaining constant
@@ -51,7 +51,7 @@ private:
 public:
 
   //initaliser list
-  grpRR_sparse_ff(mat X, vec y, Row<int> annot, int g, vec NoPerGroup, double d_tau, double r_tau,
+  graper_sparse_ff(mat X, vec y, Row<int> annot, int g, vec NoPerGroup, double d_tau, double r_tau,
        double d_gamma, double r_gamma, double r_pi, double d_pi, int max_iter, double th, bool calcELB,
                   bool verbose, int freqELB, vec mu_init, vec psi_init):
   X(X)                                  // design matrix

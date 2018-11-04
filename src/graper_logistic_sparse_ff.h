@@ -9,7 +9,7 @@ using  namespace  arma;
 using namespace Rcpp;
 
 
-class  grpRR_sparse_logistic_ff {
+class  graper_sparse_logistic_ff {
     
 private:
   // values remaining constant
@@ -53,7 +53,7 @@ private:
 public:
     
     //initaliser list
-    grpRR_sparse_logistic_ff(mat X, vec y, Row<int> annot, int g, vec NoPerGroup,
+    graper_sparse_logistic_ff(mat X, vec y, Row<int> annot, int g, vec NoPerGroup,
                       double d_gamma, double r_gamma, double r_pi, double d_pi, int max_iter, double th, bool calcELB, bool verbose,
                       int freqELB, vec mu_init, vec psi_init, bool intercept):
   X(X)                                // design matrix

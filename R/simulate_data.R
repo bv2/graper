@@ -1,6 +1,6 @@
-#' @title Simulate example data from the grpRR model
+#' @title Simulate example data from the graper model
 #' @name makeExampleData
-#' @description Simulate data from the grpRR model with groups of equal size and pre-specified parameters gamma, pi and tau.
+#' @description Simulate data from the graper model with groups of equal size and pre-specified parameters gamma, pi and tau.
 #' @param n number of samples
 #' @param p number of features
 #' @param g number of groups
@@ -33,9 +33,9 @@ makeExampleData <- function(n=100, p=200, g=4,
                                      tau=tau, rho=rho, response=response, intercept = intercept)
 }
 
-#' @title Simulate example data from the grpRR model with groups of unequal size
+#' @title Simulate example data from the graper model with groups of unequal size
 #' @name makeExampleDataWithUnequalGroups
-#' @description Simulate data from the grpRR model with groups of unequal size and pre-specified parameters gamma, pi and tau.
+#' @description Simulate data from the graper model with groups of unequal size and pre-specified parameters gamma, pi and tau.
 #' @param n number of samples
 #' @param pg vector of length g (desired number of groups) with number of features per group
 #' @param gammas vector of length g, specifying the slab precision of the prior on beta per group
