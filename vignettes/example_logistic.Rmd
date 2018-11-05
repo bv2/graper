@@ -45,7 +45,7 @@ fit
 ```
 
 # Posterior distribtions
-The variational Bayes (VB) approach directly yields posterior distributions for each parameter. Note, however, that using VB these are often too concentrated and can not be directly used for construciton of confidence intervals etc. However, they can provide good point estimates.
+The variational Bayes (VB) approach directly yields posterior distributions for each parameter. Note, however, that using VB these are often too concentrated and cannot be directly used for construction of confidence intervals etc. However, they can provide good point estimates.
 ```{r}
 plotPosterior(fit, "gamma", gamma0 = data$gammas)
 plotPosterior(fit, "pi", pi0 = data$pis)
@@ -74,7 +74,7 @@ pips <- getPIPs(fit)
 
 # Make predictions
 The function `predict` can be used to make prediction on new data.
-Here, we illustrate its use by predicting the reponse on the test data defined above.
+Here, we illustrate its use by predicting the response on the test data defined above.
 ```{r}
 preds <- predict(fit, Xtest)
 ```
