@@ -63,7 +63,7 @@
 #' }
 #' @useDynLib graper
 #' @import Rcpp
-#' @importFrom stats sd
+#' @importFrom matrixStats colSds
 #' @export
 #' @examples
 #' # create data
@@ -116,7 +116,7 @@ graper <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
 
     if(standardize){
       #scale by sd
-        sf <- apply(X, 2, stats::sd)
+        sf <-  matrixStats::colSds(X)
         X <- scale(X, center = FALSE, scale=sf)
     } else sf <- rep(1,p)
 
