@@ -23,7 +23,7 @@ print.graper <- function(x, ...){
               "Group-wise shrinkage:\n", paste(unique(as.character(x$annot)), collapse="\t"), "\n",
               paste(round(x$EW_gamma,2), collapse="\t"), sep=""), "\n")
   if(x$Options$spikeslab) {
-  cat(paste("Group-wise sparsity (1=dense, 0=sparse):\n"))
+  cat("Group-wise sparsity (1=dense, 0=sparse):\n")
   cat(paste(unique(as.character(x$annot)), collapse="\t"), "\n")
   cat(paste(round(x$EW_pi,2), collapse="\t"))
   }

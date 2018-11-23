@@ -112,7 +112,7 @@ graper <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
       sum(annot == x)
       }, numeric(1))
     names(NoPerGroup) <- unique(annot)
-    message(paste("Fitting a model with", g, "groups,", n, "samples and", p , "features."))
+    message("Fitting a model with ", g, " groups, ", n, " samples and ", p , " features.")
 
     if(standardize){
       #scale by sd
