@@ -27,7 +27,10 @@ coef.graper <- function(object, include_intercept = TRUE, ...){
     rownames(coefs) <- c("(intercept)", object$Options$featurenames)
   }
   if(include_intercept) {
-    return(coefs)} else return(coefs[-1,,drop=FALSE])
+    coefs
+  } else{
+      coefs[-1,,drop=FALSE]
+    }
 
 }
 
