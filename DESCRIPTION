@@ -18,7 +18,8 @@ Imports:
 	stats,
 	ggplot2,
 	methods,
-	cowplot
+	cowplot,
+	matrixStats
 LinkingTo: Rcpp,
 	RcppArmadillo,
 	BH
