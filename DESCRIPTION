@@ -24,7 +24,9 @@ LinkingTo: Rcpp,
 	BH
 biocViews: Regression, Bayesian, Classification
 RoxygenNote: 6.1.0
-Suggests:  knitr,
+Suggests: 
+    knitr,
     rmarkdown,
-    BiocStyle
+    BiocStyle,
+    testthat
 VignetteBuilder: knitr
