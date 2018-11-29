@@ -23,14 +23,13 @@ coef.graper <- function(object, include_intercept = TRUE, ...){
     object$intercept <- 0
   }
   coefs  <- rbind("(intercept)" = object$intercept, object$EW_beta)
-  if(!is.null( object$Options$featurenames)){
+  if(!is.null( object$Options$featurenames)) {
     rownames(coefs) <- c("(intercept)", object$Options$featurenames)
   }
   if(include_intercept) {
     coefs
-  } else{
+  } else {
       coefs[-1,,drop=FALSE]
-    }
-
+  }
 }
 

@@ -18,14 +18,18 @@ print.graper <- function(x, ...){
     stop("object needs to be a graper object.")
   }
 
-  cat(paste(ifelse(x$Options$spikeslab, "Sparse", "Dense"), " graper object for a ", ifelse(x$Options$family == "gaussian", "linear", "logistic"),
-              " regression model with ", nrow(x$EW_beta), " predictors in ", length(unique(x$annot))," groups.\n",
-              "Group-wise shrinkage:\n", paste(unique(as.character(x$annot)), collapse="\t"), "\n",
-              paste(round(x$EW_gamma,2), collapse="\t"), sep=""), "\n")
+  cat(ifelse(x$Options$spikeslab, "Sparse", "Dense"), "graper object for a",
+      ifelse(x$Options$family == "gaussian", "linear", "logistic"),
+      "regression model with", nrow(x$EW_beta),
+      "predictors in", length(unique(x$annot)), "groups.\n",
+      "Group-wise shrinkage:\n",
+      paste(unique(as.character(x$annot)), collapse="\t"), "\n",
+      paste(round(x$EW_gamma, 2), collapse="\t"), "\n")
+
   if(x$Options$spikeslab) {
-  cat("Group-wise sparsity (1=dense, 0=sparse):\n")
+  cat("Group-wise sparsity (1 = dense, 0 = sparse):\n")
   cat(paste(unique(as.character(x$annot)), collapse="\t"), "\n")
-  cat(paste(round(x$EW_pi,2), collapse="\t"))
+  cat(paste(round(x$EW_pi, 2), collapse="\t"))
   }
 
 }
