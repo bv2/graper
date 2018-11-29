@@ -22,40 +22,42 @@ Note that the implementation of logistic regression is still experimental in som
 Create an example data set with 4 groups, 100 train + 100 test samples and 320 features.
 ```{r}
 set.seed(123)
-data <- makeExampleData(n = 200, p=320, g=4, pis=c(0.05,0.1,0.05,0.1),
-                        gammas=c(0.1,0.1,10,10), response = "bernoulli")
+data <- makeExampleData(n=200, p=320, g=4,
+                        pis=c(0.05, 0.1, 0.05, 0.1),
+                        gammas=c(0.1, 0.1, 10, 10),
+                        response="bernoulli")
 # training data set
-Xtrain <- data$X[1:100,]
+Xtrain <- data$X[1:100, ]
 ytrain <- data$y[1:100]
 
 # annotations of features to groups
 annot <- data$annot
 
 # test data set
-Xtest <- data$X[101:200,]
+Xtest <- data$X[101:200, ]
 ytest <- data$y[101:200]
 ```
 
 # Fit the model
 `graper` is the main function of this package, which allows to fit the proposed Bayesian models with different settings on the prior (by setting `spikeslab` to FALSE or TRUE) and the variational approximation (by setting `factoriseQ` to FALSE or TRUE). By default, the model is fit with a sparsity promoting spike-and-slab prior and a fully-factorised mean-field assumption. The ELBO is currently not calculated in the logisitc regession framework.
 ```{r}
-fit <- graper(Xtrain, ytrain, annot, verbose = FALSE,
-             family = "binomial", calcELB=FALSE)
+fit <- graper(Xtrain, ytrain, annot, verbose=FALSE,
+             family="binomial", calcELB=FALSE)
 fit
 ```
 
 # Posterior distribtions
 The variational Bayes (VB) approach directly yields posterior distributions for each parameter. Note, however, that using VB these are often too concentrated and cannot be directly used for construction of confidence intervals etc. However, they can provide good point estimates.
 ```{r}
-plotPosterior(fit, "gamma", gamma0 = data$gammas)
-plotPosterior(fit, "pi", pi0 = data$pis)
+plotPosterior(fit, "gamma", gamma0=data$gammas)
+plotPosterior(fit, "pi", pi0=data$pis)
 ```
 
 # Model coefficients and intercept
 The estimated coefficients, their posterior inclusion probabilities and the intercept are contained in the result list.
 ```{r}
 # get coefficients (without the intercept)
-beta <- coef(fit, include_intercept = FALSE)
+beta <- coef(fit, include_intercept=FALSE)
 # beta <- fit$EW_beta
 
 # plot estimated versus true beta
