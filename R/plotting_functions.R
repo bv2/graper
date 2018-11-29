@@ -12,7 +12,6 @@
 #' @param jmax maximal number of components per group to plot (for beta and s)
 #' @param range plotting range (x-axis)
 #' @export
-#' @importFrom dplyr mutate bind_rows
 #' @importFrom stats dbinom dnorm dgamma
 #' @importFrom methods is
 #' @import ggplot2
@@ -52,10 +51,10 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
             data.frame(beta=x, j=j, va_slab=va_slab, mean_val=mean_val,
                        mu_slab=mu_slab, psi=psi, group=group)
             })
-      gr <- dplyr::bind_rows(gr)
-      gr <- dplyr::mutate(gr,density = psi* stats::dnorm(beta, mu_slab, sqrt(va_slab)) + (1-psi)*(beta==0))
+      gr <- do.call(rbind, gr)
+      gr$density <- gr$psi* stats::dnorm(gr$beta, gr$mu_slab, sqrt(gr$va_slab)) + (1-gr$psi)*(gr$beta==0)
       if(!is.null(beta0)) {
-        gr <- dplyr::mutate(gr, true_beta = beta0[j])
+        gr$true_beta <- beta0[gr$j]
       }
       gg <- ggplot(gr, aes(x=beta, y=density)) + geom_line() +
         facet_wrap(~j, scales="free", ncol=jmax) +
@@ -88,9 +87,11 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
             x <- c(0,1)
             data.frame(s=x, j=j, psi=psi,mean_val=mean_val, group=group)
             })
-        gr <- dplyr::bind_rows(gr)
-        gr <- dplyr::mutate(gr, density = psi^s *(1-psi)^(1-s))
-        if(!is.null(s0)) gr <- dplyr::mutate(gr, true_s = s0[j])
+        gr <- do.call(rbind, gr)
+        gr$density <- gr$psi^gr$s * (1-gr$psi)^(1-gr$s)
+        if(!is.null(s0)) {
+          gr$true_s <- s0[gr$j]
+        }
         gg <- ggplot(gr, aes(xend=s, x=s, yend=0, y=density)) +
           geom_segment() +geom_point() + facet_wrap(~j, ncol=jmax) +
          geom_vline(aes(xintercept=mean_val, col="mean"), alpha=0.5, linetype="dashed")
@@ -115,10 +116,10 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
             x <- seq(0, 1, length.out=1000)
             data.frame(pi=x, k=k, mean_val = mean_val)
             })
-        gr <- dplyr::bind_rows(gr)
-        gr <- dplyr::mutate(gr, density = stats::dbeta(pi, fit$alpha_pi[k], fit$beta_pi[k]))
+        gr <- do.call(rbind, gr)
+        gr$density <- stats::dbeta(gr$pi, fit$alpha_pi[gr$k], fit$beta_pi[gr$k])
         if(!is.null(pi0)) {
-          gr <- dplyr::mutate(gr, true_pi = pi0[k])
+          gr$true_pi <- pi0[gr$k]
         }
         gg <- ggplot(gr, aes(x=pi, y=density)) + geom_line() +
           facet_wrap(~k, scales="free") +
@@ -144,10 +145,10 @@ plotPosterior <- function(fit, param2plot, beta0 = NULL, gamma0 = NULL,
             }
             data.frame(gamma=x, k=k, mean_val = mean_val)
             })
-        gr <- dplyr::bind_rows(gr)
-        gr <- dplyr::mutate(gr, density = stats::dgamma(gamma, fit$alpha_gamma[k], fit$beta_gamma[k]))
+        gr <- do.call(rbind, gr)
+        gr$density <- stats::dgamma(gr$gamma, fit$alpha_gamma[gr$k], fit$beta_gamma[gr$k])
         if(!is.null(gamma0)) {
-          gr <- dplyr::mutate(gr,true_gamma = gamma0[k])
+          gr$true_gamma <- gamma0[gr$k]
         }
         gg <- ggplot(gr, aes(x=gamma, y=density)) +
           geom_line() + facet_wrap(~k, scales="free") +
