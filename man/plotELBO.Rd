@@ -13,7 +13,8 @@ plotELBO(fit)
 a ggplot object
 }
 \description{
-Function to plot the evidence lower bound (ELBO) over iterations to monitor the convergence of the algorithm.
+Function to plot the evidence lower bound (ELBO) over iterations
+to monitor the convergence of the algorithm.
 }
 \examples{
 dat <- makeExampleData()

@@ -3,12 +3,12 @@ title: "Vignette illustrating the use of graper in linear regression"
 author: "Britta Velten"
 date: "`r Sys.Date()`"
 output:
-  BiocStyle::html_document:
-    toc: true
+    BiocStyle::html_document:
+        toc: true
 vignette: >
-  %\VignetteIndexEntry{Example_scMT}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+    %\VignetteIndexEntry{Example_scMT}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, message=FALSE, warning=FALSE}
@@ -17,7 +17,8 @@ library(ggplot2)
 ```
 
 # Make example data with four groups
-Create an example data set with 4 groups, 400 train + 100 test samples and 800 features.
+Create an example data set with 4 groups,
+400 train + 100 test samples and 800 features.
 ```{r}
 set.seed(123)
 data <- makeExampleData(n = 500, p=800, g=4,
@@ -36,10 +37,19 @@ ytest <- data$y[401:500]
 ```
 
 # Fit the model
-`graper` is the main function of this package, which allows to fit the proposed Bayesian models with different settings on the prior (by setting `spikeslab` to FALSE or TRUE) and the variational approximation (by setting `factoriseQ` to FALSE or TRUE). By default, the model is fit with a sparsity promoting spike-and-slab prior and a fully-factorised mean-field assumption. The parameter `n_rep` can be used to train multiple models with different random initializations. The best model is then chosen in terms of ELBO and returned by the function. `th` defines the threshold on the ELBO for convergence in the variational Bayes (VB) algorithm used for optimization.
+`graper` is the main function of this package,
+which allows to fit the proposed Bayesian models with
+different settings on the prior (by setting `spikeslab` to FALSE or TRUE) and
+the variational approximation (by setting `factoriseQ` to FALSE or TRUE).
+By default, the model is fit with a sparsity promoting spike-and-slab prior
+and a fully-factorised mean-field assumption. The parameter `n_rep` can be used 
+to train multiple models with different random initializations. 
+The best model is then chosen in terms of ELBO and returned by the function.
+`th` defines the threshold on the ELBO for convergence 
+in the variational Bayes (VB) algorithm used for optimization.
 ```{r}
 fit <- graper(Xtrain, ytrain, annot,
-             n_rep=3, verbose=FALSE, th=0.001)
+            n_rep=3, verbose=FALSE, th=0.001)
 fit
 ```
 
@@ -50,14 +60,19 @@ plotELBO(fit)
 ```
 
 # Posterior distribtions
-The variational Bayes (VB) approach directly yields posterior distributions for each parameter. Note, however, that using VB these are often too concentrated and cannot be directly used for construction of confidence intervals etc. However, they can provide good point estimates.
+The variational Bayes (VB) approach directly yields posterior
+distributions for each parameter.
+Note, however, that using VB these are often too concentrated
+and cannot be directly used for construction of confidence intervals etc.
+However, they can provide good point estimates.
 ```{r}
 plotPosterior(fit, "gamma", gamma0=data$gammas, range=c(0, 20))
 plotPosterior(fit, "pi", pi0=data$pis)
 ```
 
 # Model coefficients and intercept
-The estimated coefficients and the intercept are contained in the result list.
+The estimated coefficients and the intercept are contained
+in the result list.
 ```{r}
 # get coefficients (without the intercept)
 beta <- coef(fit, include_intercept=FALSE)
@@ -65,7 +80,7 @@ beta <- coef(fit, include_intercept=FALSE)
 
 # plot estimated versus true beta
 qplot(beta, data$beta) +
-  coord_fixed() + theme_bw()
+    coord_fixed() + theme_bw()
 ```
 
 ```{r}
@@ -74,7 +89,9 @@ intercept <- fit$intercept
 ```
 
 # Posterior inclusion probabilities per feature
-The estimated posterior inclusion probabilities per feature are contained in the result list and can also be accessed using `getPIPs`
+The estimated posterior inclusion probabilities per feature
+are contained in the result list and can also be accessed
+using `getPIPs`
 
 ```{r}
 # get estimated posterior inclusion probabilities per feature
@@ -82,21 +99,24 @@ pips <- getPIPs(fit)
 
 # plot pips for zero versus non-zero features
 df <- data.frame(pips = pips,
-                 nonzero = data$beta != 0)
+                nonzero = data$beta != 0)
 ggplot(df, aes(x=nonzero, y=pips, col=nonzero)) +
-  geom_jitter(height=0, width=0.2) +
-  theme_bw() + ylab("Posterior inclusion probability")
+    geom_jitter(height=0, width=0.2) +
+    theme_bw() + ylab("Posterior inclusion probability")
 ```
 
 # Group-wise penalites
-The function `plotGroupPenalties` can be used to plot the penalty factors and sparsity levels inferred for each feature group.
+The function `plotGroupPenalties` can be used to plot the
+penalty factors and sparsity levels inferred for each
+feature group.
 ```{r}
 plotGroupPenalties(fit)
 ```
 
 # Make predictions
 The function `predict` can be used to make prediction on new data.
-Here, we illustrate its use by predicting the response on the test data defined above.
+Here, we illustrate its use by predicting the response on
+the test data defined above.
 ```{r}
 preds <- predict(fit, Xtest)
 qplot(preds, ytest) +

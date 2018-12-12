@@ -14,19 +14,19 @@
 #' getPIPs(fit)
 
 getPIPs <- function(object){
-  # sanity check
-  if(!is(object, "graper")){
-    stop("object needs to be a graper object.")
-  }
-  if(!object$Options$spikeslab) {
-    stop("object needs to be a sparse graper object.
-         Use spikeslab = TRUE in graper.")
-  }
+    # sanity check
+    if(!is(object, "graper")){
+        stop("object needs to be a graper object.")
+    }
+    if(!object$Options$spikeslab) {
+        stop("object needs to be a sparse graper object.
+            Use spikeslab = TRUE in graper.")
+    }
 
-  pips <- object$EW_s
-  if(!is.null(object$Options$featurenames)){
-    rownames(pips) <- object$Options$featurenames
-  }
-  return(pips)
+    pips <- object$EW_s
+    if(!is.null(object$Options$featurenames)){
+        rownames(pips) <- object$Options$featurenames
+    }
+    return(pips)
 }
 

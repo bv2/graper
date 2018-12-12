@@ -9,7 +9,8 @@
 \arguments{
 \item{object}{fitted graper model as obtained from  \code{\link{graper}}}
 
-\item{include_intercept}{whether to include the estimated intercept value in the output}
+\item{include_intercept}{whether to include the
+estimated intercept value in the output}
 
 \item{...}{other arguments}
 }

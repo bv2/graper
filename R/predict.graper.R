@@ -35,35 +35,35 @@
 #' ypred <- predict(fit, dat$X[seq_len(ntrain) + dat$n / 2, ])
 
 predict.graper <- function(object, newX,
-                           type = c("inRange","response", "link"), ...){
+                        type = c("inRange","response", "link"), ...){
 
-  # sanity check
-  if(ncol(newX) != nrow(object$EW_beta)) {
-    stop("Number of columns in newX need to agree with number
-         of predictors in the graper object.")
-  }
-  # sanity check
-  if(!is(object, "graper")) {
-    stop("object needs to be a graper object.")
-  }
-  # Get type of predictions wanted
-  type = match.arg(type)
+    # sanity check
+    if(ncol(newX) != nrow(object$EW_beta)) {
+        stop("Number of columns in newX need to agree with number
+            of predictors in the graper object.")
+    }
+    # sanity check
+    if(!is(object, "graper")) {
+        stop("object needs to be a graper object.")
+    }
+    # Get type of predictions wanted
+    type = match.arg(type)
 
-  if(is.null(object$intercept)) {
-    object$intercept <- 0
-  }
-  if(object$Options$family == "gaussian"){
-      pred <- object$intercept + newX %*% object$EW_beta
-  } else {
-      predexp <- object$intercept + newX %*%  object$EW_beta
-      probs <- exp(predexp)/(1 + exp(predexp))
-      if(type == "link") {
-          pred <- predexp
-      } else if(type == "response"){
-          pred <- probs
-      } else {
-          pred <- round(probs)
-      }
-  }
-  return(pred)
+    if(is.null(object$intercept)) {
+        object$intercept <- 0
+    }
+    if(object$Options$family == "gaussian"){
+        pred <- object$intercept + newX %*% object$EW_beta
+    } else {
+        predexp <- object$intercept + newX %*%  object$EW_beta
+        probs <- exp(predexp)/(1 + exp(predexp))
+        if(type == "link") {
+            pred <- predexp
+        } else if(type == "response"){
+            pred <- probs
+        } else {
+            pred <- round(probs)
+        }
+    }
+    return(pred)
 }

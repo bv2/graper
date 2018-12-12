@@ -13,7 +13,8 @@ getPIPs(object)
 1-Column matrix of estimated posterior inclusion probabilities.
 }
 \description{
-Function to obtain estimated posterior inclusion probabilities per feature from a fitted graper model.
+Function to obtain estimated posterior inclusion
+probabilities per feature from a fitted graper model.
 }
 \examples{
 # create data

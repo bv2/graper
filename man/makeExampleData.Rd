@@ -5,8 +5,8 @@
 \title{Simulate example data from the graper model}
 \usage{
 makeExampleData(n = 100, p = 200, g = 4, gammas = c(0.1, 1, 10,
-  100), pis = c(0.5, 0.5, 0.5, 0.5), tau = 1, rho = 0,
-  response = "gaussian", intercept = 0)
+    100), pis = c(0.5, 0.5, 0.5, 0.5), tau = 1, rho = 0,
+    response = "gaussian", intercept = 0)
 }
 \arguments{
 \item{n}{number of samples}
@@ -24,19 +24,21 @@ of the prior on beta per group}
 
 \item{rho}{correlation of design matrix (Toeplitz structure)}
 
-\item{response}{"gaussian" for continuous response from a linear regression model,
-"bernoulli"  for a binary response from a logistic regression model.}
+\item{response}{"gaussian" for continuous response
+from a linear regression model, "bernoulli"
+for a binary response from a logistic regression model.}
 
 \item{intercept}{model intercept (default: 0)}
 }
 \value{
 list containing the design matrix \code{X},
- the response \code{y}, the feature annotation to
- groups \code{annot} as well as the different parameters
- in the Bayesian model and the correlation strength rho
+the response \code{y}, the feature annotation to
+groups \code{annot} as well as the different parameters
+in the Bayesian model and the correlation strength rho
 }
 \description{
-Simulate data from the graper model with groups of equal size and pre-specified parameters gamma, pi and tau.
+Simulate data from the graper model with groups of equal size
+and pre-specified parameters gamma, pi and tau.
 }
 \examples{
 dat <- makeExampleData()
