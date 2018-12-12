@@ -117,15 +117,11 @@
 
 
 graper <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
-                    intercept = TRUE, family = "gaussian",
-                    standardize = TRUE, n_rep = 1,
-                    max_iter = 3000, th = 0.01,
-                    d_tau = 0.001, r_tau = 0.001,
-                    d_gamma = 0.001, r_gamma = 0.001,
-                    r_pi = 1, d_pi = 1,
-                    calcELB = TRUE, verbose = TRUE,
-                    freqELB = 1, nogamma = FALSE,
-                    init_psi = 1) {
+                intercept = TRUE, family = "gaussian", standardize = TRUE,
+                n_rep = 1, max_iter = 3000, th = 0.01, d_tau = 0.001,
+                r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001, r_pi = 1,
+                d_pi = 1, calcELB = TRUE, verbose = TRUE, freqELB = 1,
+                nogamma = FALSE, init_psi = 1) {
 
     stopifnot(ncol(X) == length(annot))
 
@@ -137,8 +133,8 @@ graper <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
     annot <- factor(annot, levels=unique(annot))
 
     # get data dimension
-    p <- ncol(X)  #no of features
-    n <- nrow(X)  #no of samples
+    p <- ncol(X)  # no of features
+    n <- nrow(X)  # no of samples
 
     # get group structure
     g <- length(unique(annot))
