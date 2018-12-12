@@ -117,123 +117,112 @@
 
 
 graper <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
-                intercept = TRUE, family = "gaussian", standardize = TRUE,
-                n_rep = 1, max_iter = 3000, th = 0.01, d_tau = 0.001,
-                r_tau = 0.001, d_gamma = 0.001, r_gamma = 0.001, r_pi = 1,
-                d_pi = 1, calcELB = TRUE, verbose = TRUE, freqELB = 1,
-                nogamma = FALSE, init_psi = 1) {
+        intercept = TRUE, family = "gaussian", standardize = TRUE, n_rep = 1,
+        max_iter = 3000, th = 0.01, d_tau = 0.001, r_tau = 0.001,
+        d_gamma = 0.001, r_gamma = 0.001, r_pi = 1, d_pi = 1, calcELB = TRUE,
+        verbose = TRUE, freqELB = 1, nogamma = FALSE, init_psi = 1) {
 
-    stopifnot(ncol(X) == length(annot))
-
-    # nogamma only of use when spikeslab
-    if(!spikeslab & !nogamma) {
-        nogamma <- FALSE
-    }
-
+    stopifnot(ncol(X) == length(annot)) # check correct dimensions of input
+    if(!spikeslab & !nogamma) nogamma <- FALSE # nogamma only with spikeslab
     annot <- factor(annot, levels=unique(annot))
-
-    # get data dimension
-    p <- ncol(X)  # no of features
-    n <- nrow(X)  # no of samples
-
-    # get group structure
-    g <- length(unique(annot))
-    NoPerGroup <- vapply(unique(annot), function(x){
-        sum(annot == x)
-        }, numeric(1))
+    p <- ncol(X)  # no. of features
+    g <- length(unique(annot)) # no. of groups
+    NoPerGroup <- vapply(unique(annot), function(x){ # features per group
+        sum(annot == x)}, numeric(1))
     names(NoPerGroup) <- unique(annot)
-    message("Fitting a model with ", g, " groups, ", n,
+    message("Fitting a model with ", g, " groups, ", nrow(X),
             " samples and ", p , " features.")
-
+    calcELB <- .checkCalcELB(calcELB=calcELB, family=family)
+    n_rep <- .checkNrep(n_rep=n_rep, calcELB=calcELB)
     if(standardize) {
-        # scale by sd
-        sf <-  matrixStats::colSds(X)
+        sf <-  matrixStats::colSds(X) # scale by sd
         X <- scale(X, center = FALSE, scale=sf)
-    } else {
-        sf <- rep(1,p)
-    }
-
-    if(family == "binomial"){
-        if(calcELB) {
-            calcELB <- FALSE
-            warning("The implementation of logistic regression
-                is still experimental. ELB calculations are not
-                yet implemented for logistic regression.")
-        }
-    }
-
-    if(!calcELB & n_rep >1) {
-        warning("For model selection with multiple trials
-            calcELB needs to be set to TRUE.
-            Only using a single trial now.")
-        n_rep <- 1
-    }
+    } else sf <- rep(1,p)
 
     reslist <- lapply(seq_len(n_rep), function(rep){
-        message("Fitting with random init ", rep)
-        if (family == "gaussian") {
-            # remove intercept effect by centering X and y
-            if (intercept) {
-                X <- scale(X, center = TRUE, scale = FALSE)
-                y <- scale(y, center = TRUE, scale = FALSE)
-            }
+        .graperSingle(rep, family, X, y, annot, factoriseQ, spikeslab,
+            intercept, max_iter, th, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi,
+            calcELB, verbose, freqELB, nogamma, init_psi, p, g, NoPerGroup)
+    })
+    res <- .selectBestModel(reslist=reslist, n_rep=n_rep) # select best model
+    if(standardize) { # revert coefficients to original scale
+        res$EW_beta <- res$EW_beta / sf
+        if(!factoriseQ) {
+            res$Sigma_beta <- diag(1 / sf) %*% res$Sigma_beta %*% diag(1 / sf)
+        } else {
+            res$Sigma_beta <- diag(1/(sf^2) * diag(as.matrix(res$Sigma_beta)))
+        }
+    }
+    res$annot <- annot
+    res$Options <- list(factoriseQ = factoriseQ, spikeslab = spikeslab,
+        d_tau = d_tau, r_tau = r_tau, d_gamma = d_gamma, r_gamma = r_gamma,
+        r_pi = r_pi, d_pi = d_pi, max_iter = max_iter, th = th,
+        intercept = intercept, calcELB = calcELB, verbose = verbose,
+        freqELB = freqELB, family = family, nogamma = nogamma,
+        standardize = standardize, featurenames = colnames(X))
+    if(all(is.na(res$ELB_trace) | !is.finite(res$ELB_trace))) {
+        res$ELB_trace <- NULL # remove ELB slot if not calculated
+    }
+    class(res) <- "graper"
+    return(res)
+}
 
-        # call C function depending on factoriseQ and spikeslab argument
+# function to fit the graper model for a Gaussian response
+.graperGaussian <- function(X, y, annot, factoriseQ, spikeslab,
+                intercept, max_iter, th, d_tau, r_tau, d_gamma,
+                r_gamma, r_pi, d_pi, calcELB, verbose, freqELB,
+                nogamma, init_psi, p, g, NoPerGroup) {
+        if (intercept) { # remove intercept effect by centering X and y
+            X <- scale(X, center = TRUE, scale = FALSE)
+            y <- scale(y, center = TRUE, scale = FALSE)
+        }
         if (spikeslab) {
             if (!factoriseQ) {
                 factoriseQ <- TRUE
-                warning("Using fully factorized approach
-                    with a spike and slab prior")
+                warning("Seeting factoriseQ to TRUE")
             }
             # initialize slab mean and spike prob.
             mu_init <- rnorm(p)
-            # psi_init <- runif(p)
             psi_init <- rep(init_psi,p)
             if(!nogamma) {
-                res <- graperCpp_sparse_ff(X, y, annot,
-                        g, NoPerGroup, d_tau, r_tau,
-                        d_gamma, r_gamma, r_pi, d_pi, max_iter,
-                        th, calcELB, verbose, freqELB, mu_init,
-                        psi_init)
+                res <- graperCpp_sparse_ff(X, y, annot, g, NoPerGroup, d_tau,
+                        r_tau, d_gamma, r_gamma, r_pi, d_pi, max_iter, th,
+                        calcELB, verbose, freqELB, mu_init, psi_init)
             } else {
-                res <- graperCpp_sparse_ff_nogamma(X, y, annot,
-                        g, NoPerGroup, d_tau, r_tau,
-                        d_gamma, r_gamma, r_pi, d_pi, max_iter,
-                        th, calcELB, verbose, freqELB,
-                        mu_init, psi_init)
+                res <- graperCpp_sparse_ff_nogamma(X, y, annot, g,
+                    NoPerGroup, d_tau, r_tau, d_gamma, r_gamma, r_pi, d_pi,
+                    max_iter, th, calcELB, verbose, freqELB, mu_init, psi_init)
             }
         } else {
             if (factoriseQ) {
-                # initialize coefficients mean randomly
-                mu_init <- rnorm(p)
-                res <- graperCpp_dense_ff(X, y, annot,
-                        g, NoPerGroup, d_tau, r_tau, d_gamma,
-                        r_gamma, max_iter, th, calcELB,
-                        verbose,freqELB, mu_init)
+                mu_init <- rnorm(p) # initialize randomly
+                res <- graperCpp_dense_ff(X, y, annot, g, NoPerGroup,
+                        d_tau, r_tau, d_gamma, r_gamma, max_iter, th,
+                        calcELB, verbose,freqELB, mu_init)
             } else {
-                message("You are using no factorization of the
-                    variational distribution.
-                    This might take some time to compute.
-                    Set factoriseQ = TRUE for fast solution.")
-                res <- graperCpp_dense_nf(X, y, annot,
-                        g, NoPerGroup, d_tau, r_tau, d_gamma,
-                        r_gamma, max_iter, th, calcELB, verbose, freqELB)
+                message("factoriseQ = FALSE might take some time
+                    to compute. Set factoriseQ = TRUE for fast solution.")
+                res <- graperCpp_dense_nf(X, y, annot, g, NoPerGroup, d_tau,
+                        r_tau, d_gamma, r_gamma, max_iter, th, calcELB,
+                        verbose, freqELB)
             }
         }
-
-        # calculate intercept
-        if (intercept) {
+        res$intercept <- NULL
+        if (intercept) { # calculate intercept
             res$intercept <- attr(y, "scaled:center") -
                     sum(attr(X, "scaled:center") * res$EW_beta)
-            } else {
-                res$intercept <- NULL
-            }
-        # give proper names
+        }
         if(!nogamma) {
             rownames(res$EW_gamma) <- unique(annot)
         }
         res
-        } else if (family == "binomial") {
+}
+
+# function to fit the graper model for a Bernoulli response
+.graperBinomial <- function(X, y, annot, factoriseQ, spikeslab,
+                intercept, max_iter, th, d_gamma, r_gamma,
+                r_pi, d_pi, calcELB, verbose, freqELB,
+                init_psi, p, g, NoPerGroup) {
             if (spikeslab){
                 if (!factoriseQ) {
                     factoriseQ <- TRUE
@@ -271,12 +260,10 @@ graper <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
             }
 
             res
-            } else {
-                stop("Family not implemented.
-                    Needs to be either binomial or gaussian.")
-            }
-})
+}
 
+# function to select the best model (by the ELBO)
+.selectBestModel <- function(reslist, n_rep) {
     if(n_rep == 1) {
         res <- reslist[[1]]
     } else {
@@ -289,37 +276,54 @@ graper <- function(X, y, annot, factoriseQ = TRUE, spikeslab = TRUE,
 
         res <- reslist[[best_idx]]
     }
+}
 
-    # revert coefficients to original scale
-    if(standardize) {
-        res$EW_beta <- res$EW_beta / sf
-        if(!factoriseQ) {
-            res$Sigma_beta <- diag(1 / sf) %*% res$Sigma_beta %*% diag(1 / sf)
+# function to fit a single graper model
+.graperSingle <- function(rep, family, X, y, annot, factoriseQ, spikeslab,
+                intercept, max_iter, th, d_tau, r_tau, d_gamma,
+                r_gamma, r_pi, d_pi, calcELB, verbose, freqELB,
+                nogamma, init_psi, p, g, NoPerGroup) {
+
+        message("Fitting with random init ", rep)
+
+        if (family == "gaussian") {
+            .graperGaussian(X=X, y=y, annot=annot,
+                factoriseQ=factoriseQ, spikeslab=spikeslab,
+                intercept=intercept, max_iter=max_iter, th=th,
+                d_tau=d_tau, r_tau=r_tau, d_gamma=d_gamma,
+                r_gamma=r_gamma, r_pi=r_pi, d_pi=d_pi,
+                calcELB=calcELB, verbose=verbose, freqELB=freqELB,
+                nogamma=nogamma, init_psi=init_psi, p=p, g=g,
+                NoPerGroup=NoPerGroup)
+        } else if (family == "binomial") {
+            .graperBinomial(X=X, y=y, annot=annot,
+                factoriseQ=factoriseQ, spikeslab=spikeslab,
+                intercept=intercept, max_iter=max_iter, th=th,
+                d_gamma=d_gamma, r_gamma=r_gamma, r_pi=r_pi,
+                d_pi=d_pi, calcELB=calcELB, verbose=verbose,
+                freqELB=freqELB, init_psi=init_psi,
+                p=p, g=g, NoPerGroup=NoPerGroup)
         } else {
-            res$Sigma_beta <-diag(1/(sf^2) * diag(as.matrix(res$Sigma_beta)))
+            stop("Family not implemented.
+                Needs to be either binomial or gaussian.")
         }
-    }
+}
 
-    res$annot <- annot
-    res$Options <- list(factoriseQ = factoriseQ,
-                        spikeslab = spikeslab,
-                        d_tau = d_tau, r_tau = r_tau,
-                        d_gamma = d_gamma, r_gamma = r_gamma,
-                        r_pi = r_pi, d_pi = d_pi,
-                        max_iter = max_iter, th = th,
-                        intercept = intercept,
-                        calcELB = calcELB,
-                        verbose = verbose,
-                        freqELB = freqELB,
-                        family = family,
-                        nogamma = nogamma,
-                        standardize = standardize,
-                        featurenames = colnames(X))
-
-    # remove ELB slot if not calculated
-    if(all(is.na(res$ELB_trace) | !is.finite(res$ELB_trace))) {
-        res$ELB_trace <- NULL
+# function to check ELB argument is ok
+.checkCalcELB <- function(calcELB, family){
+    if(family == "binomial" & calcELB){
+        calcELB <- FALSE
+        warning("The implementation of logistic regression
+            is still experimental, ELB is not calculated.")
     }
-    class(res) <- "graper"
-    return(res)
+    calcELB
+}
+
+# function to check n_rep argument is ok
+.checkNrep <- function(n_rep, calcELB){
+    if(!calcELB & n_rep >1) {
+        warning("Only using a single trial now as calcELB = FALSE.")
+        n_rep <- 1
+    }
+    n_rep
 }
