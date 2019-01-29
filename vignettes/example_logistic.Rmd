@@ -1,12 +1,12 @@
 ---
-title: "Vignette illustrating the use of graper in logisitic regression"
+title: "Vignette illustrating the use of graper in logistic regression"
 author: "Britta Velten"
 date: "`r Sys.Date()`"
 output:
     BiocStyle::html_document:
         toc: true
 vignette: >
-    %\VignetteIndexEntry{Example_scMT}
+    %\VignetteIndexEntry{example_logistic}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 ---

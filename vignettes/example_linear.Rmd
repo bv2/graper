@@ -6,7 +6,7 @@ output:
     BiocStyle::html_document:
         toc: true
 vignette: >
-    %\VignetteIndexEntry{Example_scMT}
+    %\VignetteIndexEntry{example_linear}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 ---
