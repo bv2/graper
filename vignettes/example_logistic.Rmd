@@ -17,7 +17,7 @@ library(ggplot2)
 ```
 
 Note that the implementation of logistic regression
-is still experimental in some parts.
+is still experimental in some parts. In particular, it has not yet been optimized in terms of computational speed and can be slow for large data sets. Furthermore, calculations of the evidence lower bound are currently not implemented to monitor convergence of the variational inference and the algorithm will stop only when the maximum number of iterations has been reached. This needs to be set to a sufficiently large number.
 
 # Make example data with four groups
 Create an example data set with 4 groups,

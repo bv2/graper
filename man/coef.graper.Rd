@@ -4,13 +4,13 @@
 \alias{coef.graper}
 \title{Get estimated coefficients from a graper object}
 \usage{
-\method{coef}{graper}(object, include_intercept = TRUE, ...)
+coef.graper(object, include_intercept = TRUE, ...)
 }
 \arguments{
 \item{object}{fitted graper model as obtained from  \code{\link{graper}}}
 
-\item{include_intercept}{whether to include the
-estimated intercept value in the output}
+\item{include_intercept}{whether to include the estimated
+intercept value in the output}
 
 \item{...}{other arguments}
 }
@@ -18,11 +18,14 @@ estimated intercept value in the output}
 1-Column matrix of estimated coefficients.
 }
 \description{
-Function to obtain estimated coefficients from a fitted graper model.
+Function to obtain estimated coefficients
+from a fitted graper model.
 }
 \examples{
 # create data
 dat <- makeExampleData()
+# fit the graper model to the data
 fit <- graper(dat$X, dat$y, dat$annot)
+# extract the model coefficients
 coef(fit)
 }

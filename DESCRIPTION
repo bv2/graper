@@ -23,7 +23,7 @@ LinkingTo: Rcpp,
 	RcppArmadillo,
 	BH
 biocViews: Regression, Bayesian, Classification
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Suggests: 
     knitr,
     rmarkdown,

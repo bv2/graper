@@ -10,7 +10,9 @@
 #' @examples
 #' # create data
 #' dat <- makeExampleData()
+#' # fit the graper model to the data
 #' fit <- graper(dat$X, dat$y, dat$annot)
+#' # extract the posterior inclusion probabilities from the fitted model
 #' getPIPs(fit)
 
 getPIPs <- function(object){

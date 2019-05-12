@@ -9,7 +9,9 @@
 #' @examples
 #' # create data
 #' dat <- makeExampleData()
+#' # fit the graper model
 #' fit <- graper(dat$X, dat$y, dat$annot)
+#' # print a summary of the fitted model
 #' print(fit)
 
 print.graper <- function(x, ...){

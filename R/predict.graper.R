@@ -22,17 +22,24 @@
 #' @examples
 #' # create data
 #' dat <- makeExampleData()
+#' # split data into train and test sets of equal size
 #' ntrain <- dat$n / 2
+#' # fit the model to the train data
 #' fit <- graper(dat$X[seq_len(ntrain), ],
 #'               dat$y[seq_len(ntrain)], dat$annot)
+#' # make predictions on the test data
 #' ypred <- predict(fit, dat$X[seq_len(ntrain) + dat$n / 2, ])
 #'
+#' # create data for logistic regression
 #' dat <- makeExampleData(response="bernoulli")
+#' # split data into train and test sets of equal size
 #' ntrain <- dat$n / 2
+#' # fit the graper model for a logistic model
 #' fit <- graper(dat$X[seq_len(ntrain), ],
 #'               dat$y[seq_len(ntrain)],
 #'               dat$annot, family="binomial")
-#' ypred <- predict(fit, dat$X[seq_len(ntrain) + dat$n / 2, ])
+#' # make predictions on the test data
+#' ypred <- predict(fit, dat$X[seq_len(ntrain) + dat$n / 2, ], type = "inRange")
 
 predict.graper <- function(object, newX,
                         type = c("inRange","response", "link"), ...){

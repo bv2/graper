@@ -13,7 +13,8 @@ plotGroupPenalties(fit)
 a ggplot object
 }
 \description{
-Function to plot the group-wise penalty factors (gamma) and sparsity levels.
+Function to plot the group-wise penalty factors
+ (gamma) and sparsity levels.
 }
 \examples{
 dat <- makeExampleData()

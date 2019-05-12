@@ -5,13 +5,13 @@
 \title{Plot posterior distributions}
 \usage{
 plotPosterior(fit, param2plot, beta0 = NULL, gamma0 = NULL,
-    tau0 = NULL, pi0 = NULL, s0 = NULL, jmax = 2, range = NULL)
+  tau0 = NULL, pi0 = NULL, s0 = NULL, jmax = 2, range = NULL)
 }
 \arguments{
 \item{fit}{fit as produced by \code{\link{graper}}}
 
-\item{param2plot}{which parameter of the graper model to plot
-(gamma, beta, tau or s)}
+\item{param2plot}{which parameter of the graper model to
+plot (gamma, beta, tau or s)}
 
 \item{beta0}{true beta (if known)}
 
@@ -23,8 +23,8 @@ plotPosterior(fit, param2plot, beta0 = NULL, gamma0 = NULL,
 
 \item{s0}{true s (if known)}
 
-\item{jmax}{maximal number of components per group to plot
-(for beta and s)}
+\item{jmax}{maximal number of components per
+group to plot (for beta and s)}
 
 \item{range}{plotting range (x-axis)}
 }
@@ -33,10 +33,13 @@ a ggplot object
 }
 \description{
 Function to plot the posterior of the model parameters
-obtained by graper from the variational inference framework.
+ obtained by graper from the variational inference framework.
 }
 \examples{
+# create data
 dat <- makeExampleData()
+# fit the graper model
 fit <- graper(dat$X, dat$y, dat$annot)
+# plot posterior distribution of the gamma parameter
 plotPosterior(fit, param2plot="gamma")
 }

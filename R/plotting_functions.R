@@ -19,8 +19,11 @@
 #' @import ggplot2
 #' @return a ggplot object
 #' @examples
+#' # create data
 #' dat <- makeExampleData()
+#' # fit the graper model
 #' fit <- graper(dat$X, dat$y, dat$annot)
+#' # plot posterior distribution of the gamma parameter
 #' plotPosterior(fit, param2plot="gamma")
 
 plotPosterior <- function(fit, param2plot, beta0 = NULL,

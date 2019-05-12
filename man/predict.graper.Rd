@@ -5,7 +5,7 @@
 \title{Predict response on new data}
 \usage{
 \method{predict}{graper}(object, newX, type = c("inRange", "response",
-"link"), ...)
+  "link"), ...)
 }
 \arguments{
 \item{object}{fitted graper model as obtained from  \code{\link{graper}}}
@@ -16,12 +16,12 @@
 
 \item{type}{type of prediction returned, either:
 \itemize{
-    \item{\strong{response}:}{returns the linear predictions
-    for linear regression and class probabilities for
-    logistic regression}
-    \item{\strong{link}:}{returns the linear predictions}
-    \item{\strong{inRange}:}{returns linear predictions
-    for linear and class memberships for logistic regression}
+ \item{\strong{response}:}{returns the linear predictions
+  for linear regression and class probabilities
+  for logistic regression}
+ \item{\strong{link}:}{returns the linear predictions}
+ \item{\strong{inRange}:}{returns linear predictions for linear
+  and class memberships for logistic regression}
 }}
 
 \item{...}{other arguments}
@@ -30,19 +30,28 @@
 A vector with predictions.
 }
 \description{
-Function to predict the response on a new data set using a fitted graper model.
+Function to predict the response on a
+new data set using a fitted graper model.
 }
 \examples{
 # create data
 dat <- makeExampleData()
-ntrain <- dat$n/2
-fit <- graper(dat$X[seq_len(ntrain),],
-dat$y[seq_len(ntrain)], dat$annot)
-ypred <- predict(fit, dat$X[seq_len(ntrain) + dat$n/2,])
+# split data into train and test sets of equal size
+ntrain <- dat$n / 2
+# fit the model to the train data
+fit <- graper(dat$X[seq_len(ntrain), ],
+              dat$y[seq_len(ntrain)], dat$annot)
+# make predictions on the test data
+ypred <- predict(fit, dat$X[seq_len(ntrain) + dat$n / 2, ])
 
+# create data for logistic regression
 dat <- makeExampleData(response="bernoulli")
-ntrain <- dat$n/2
-fit <- graper(dat$X[seq_len(ntrain),],
-dat$y[seq_len(ntrain)], dat$annot, family = "binomial")
-ypred <- predict(fit, dat$X[seq_len(ntrain) + dat$n/2,])
+# split data into train and test sets of equal size
+ntrain <- dat$n / 2
+# fit the graper model for a logistic model
+fit <- graper(dat$X[seq_len(ntrain), ],
+              dat$y[seq_len(ntrain)],
+              dat$annot, family="binomial")
+# make predictions on the test data
+ypred <- predict(fit, dat$X[seq_len(ntrain) + dat$n / 2, ], type = "inRange")
 }

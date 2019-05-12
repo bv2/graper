@@ -12,7 +12,9 @@
 #' @examples
 #' # create data
 #' dat <- makeExampleData()
+#' # fit the graper model to the data
 #' fit <- graper(dat$X, dat$y, dat$annot)
+#' # extract the model coefficients
 #' coef(fit)
 
 coef.graper <- function(object, include_intercept = TRUE, ...){

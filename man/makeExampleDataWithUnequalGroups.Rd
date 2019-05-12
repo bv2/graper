@@ -2,17 +2,18 @@
 % Please edit documentation in R/simulate_data.R
 \name{makeExampleDataWithUnequalGroups}
 \alias{makeExampleDataWithUnequalGroups}
-\title{Simulate example data from the graper model with groups of unequal size}
+\title{Simulate example data from the graper model
+with groups of unequal size}
 \usage{
 makeExampleDataWithUnequalGroups(n = 100, pg = c(100, 100, 10, 10),
-    gammas = c(0.1, 10, 0.1, 10), pis = c(0.5, 0.5, 0.5, 0.5), tau = 1,
-    rho = 0, response = "gaussian", intercept = 0)
+  gammas = c(0.1, 10, 0.1, 10), pis = c(0.5, 0.5, 0.5, 0.5), tau = 1,
+  rho = 0, response = "gaussian", intercept = 0)
 }
 \arguments{
 \item{n}{number of samples}
 
-\item{pg}{vector of length g (desired number of groups)
-with number of features per group}
+\item{pg}{vector of length g (desired number of groups) with
+number of features per group}
 
 \item{gammas}{vector of length g, specifying the slab precision
 of the prior on beta per group}
@@ -23,21 +24,22 @@ of the prior on beta per group}
 
 \item{rho}{correlation of design matrix (Toeplitz structure)}
 
-\item{response}{"gaussian" for continuous response from
-a linear regression model, "bernoulli" for a binary response
-from a logistic regression model.}
+\item{response}{"gaussian" for continuous response from a
+linear regression model, "bernoulli"  for a
+binary response from a logistic regression model.}
 
 \item{intercept}{model intercept (default: 0)}
 }
 \value{
-list containin the design matrix \code{X}, the response \code{y},
-the feature annotation to groups \code{annot} as well as
-the different parameters in the Bayesian model
-and the correlation strength rho
+list containin the design matrix \code{X},
+ the response \code{y},
+ the feature annotation to groups \code{annot} as well as
+ the different parameters in the Bayesian model
+ and the correlation strength rho
 }
 \description{
-Simulate data from the graper model with groups of unequal size
-and pre-specified parameters gamma, pi and tau.
+Simulate data from the graper model with groups of unequal
+size and pre-specified parameters gamma, pi and tau.
 }
 \examples{
 dat <- makeExampleDataWithUnequalGroups()
