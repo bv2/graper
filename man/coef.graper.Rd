@@ -4,7 +4,7 @@
 \alias{coef.graper}
 \title{Get estimated coefficients from a graper object}
 \usage{
-coef.graper(object, include_intercept = TRUE, ...)
+\method{coef}{graper}(object, include_intercept = TRUE, ...)
 }
 \arguments{
 \item{object}{fitted graper model as obtained from  \code{\link{graper}}}
