@@ -84,9 +84,8 @@
 #'  (from 1 (dense) to 0 (sparse))}
 #' \item{EW_tau}{estimated noise precision}
 #' \item{sigma2_tildebeta_s1, EW_tildebeta_s1, alpha_gamma,
-#'  alpha_tau, beta_tau, Sigma_beta, alpha_pi, beta_pi}
-#' {parameters of the variational distributions of beta,
-#'  gamma, tau and pi}
+#'  alpha_tau, beta_tau, Sigma_beta, alpha_pi, beta_pi}{parameters
+#'  of the variational distributions of beta, gamma, tau and pi}
 #' \item{ELB}{final value of the evidence lower bound}
 #' \item{ELB_trace}{values of the  evidence lower bound
 #'  for all iterations}
