@@ -1,7 +1,7 @@
 Package: graper
 Type: Package
 Title: Adaptive penalization in high-dimensional regression and classification with external covariates using variational Bayes
-Version: 1.17.0
+Version: 1.17.1
 Authors@R: c(person("Britta", "Velten", email = "britta.velten@gmail.com", 
 	    role = c("aut", "cre")),
 	person("Wolfgang", "Huber", role=c("aut"), email="wolfgang.huber@embl.de"))
